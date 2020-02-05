@@ -3,4 +3,6 @@
  
  Created as a Project for the course CMPUT 301: Introduction to Software Engineering at the University of Alberta.
  
- Collaborators: (Please Add Name Here)
+ Collaborators:
+ 
+ Anthony Ma
