@@ -7,6 +7,8 @@
  
  Anthony Ma
  
- Ryan Kang\n
- Mustafa Khairullah\n
+ Ryan Kang
+
+ Mustafa Khairullah
+ 
  Arden Bautista
