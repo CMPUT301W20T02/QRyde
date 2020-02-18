@@ -1,4 +1,4 @@
-package com.datainfo.QRyde;
+package com.example.qryde;
 
 import org.junit.Test;
 
