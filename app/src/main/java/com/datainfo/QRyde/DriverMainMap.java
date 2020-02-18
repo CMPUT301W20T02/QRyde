@@ -3,8 +3,13 @@ package com.datainfo.QRyde;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +24,9 @@ public class DriverMainMap extends AppCompatActivity {
         setContentView(R.layout.driver_main_map);
 
         ListView availableRideListView = findViewById(R.id.list_view);
+        final EditText startLocationEditText = findViewById(R.id.start_location_et);
+        final EditText endLocationEditText = findViewById(R.id.end_location_et);
+
 
         AvailableRide [] AvailableRideList = {
                 new AvailableRide("Masahiro Sakurai", "ur mom", "ur dad", 20.6f, 0.7f),
@@ -33,6 +41,18 @@ public class DriverMainMap extends AppCompatActivity {
         rideAdapter = new AvailableRideAdapter(this, dataList);
 
         availableRideListView.setAdapter(rideAdapter);
+
+        final SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
+        availableRideListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+                startLocationEditText.setText(dataList.get(position).getStartLocation());
+                endLocationEditText.setText(dataList.get(position).getEndLocation());
+                return true;
+            }
+
+        });
 
     }
 }
