@@ -8,6 +8,7 @@
     tools:context=".DriverMainMap"
     app:umanoDragView="@id/drag_view"
     app:umanoScrollableView="@id/list_view"
+    app:umanoPanelHeight="150dp"
     android:gravity="bottom">
 
     <RelativeLayout
@@ -17,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Main Content"/>
+            android:text="Pretend that this is a map lol"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -27,16 +28,6 @@
         android:clickable="true"
         android:focusable="false"
         android:orientation="vertical">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="68dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="16sp"
-                android:text="Action"/>
-        </RelativeLayout>
-
         <ListView
             android:layout_width="match_parent"
             android:layout_height="0dp"
