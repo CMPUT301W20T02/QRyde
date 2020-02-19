@@ -1,36 +1,44 @@
 package com.datainfo.QRyde;
+import android.location.Location;
 import android.os.Bundle;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private Boolean LocationPermission = false;
     private GoogleMap ActualMap;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private Location locationCurr;
+    private final LatLng EarthDefaultLocation = new LatLng(0, 0); //just center of earth
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("MapActivity", "Map is ready" );
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
         getLocationPermission();
-
-
     }
-    private void MapInit() {
+    private void MapInit() { //creates map fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(MapActivity.this);
@@ -42,6 +50,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if(ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             if(ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 LocationPermission = true;
+                MapInit();
             }else {
                 ActivityCompat.requestPermissions(this, permissions, 1515);
             }
@@ -52,8 +61,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //requests the location permissions
         LocationPermission = false;
-
         switch (requestCode) {
             case 1515: {
                 for (int i = 0; i < grantResults.length; ++i) {
@@ -71,6 +80,59 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         ActualMap = googleMap;
+        if (LocationPermission) {
+            updateLocationUI();
+            DeviceLocation();
+
+        }
+    }
+
+    private void DeviceLocation() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        try {
+            if (LocationPermission) {
+                Task locationResult = fusedLocationProviderClient.getLastLocation();
+                locationResult.addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            locationCurr = (Location) task.getResult();
+                            mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
+
+                        } else {
+                            mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude), 15f);
+                            Toast.makeText(MapActivity.this, "Could not find your location.", Toast.LENGTH_SHORT).show();
+                            ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
+                        }
+                    }
+                });
+            }
+        }catch (SecurityException e) {
+            Log.e("Exception: %s", e.getMessage());
+        }
+    }
+
+    private void mapMove(LatLng latLng, float zoom) { //method for map camera movement
+        ActualMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    }
+
+    private void updateLocationUI() { //shows the blue dot. 
+        if (ActualMap == null) {
+            return;
+        }
+        try {
+            if (LocationPermission) {
+                ActualMap.setMyLocationEnabled(true);
+                ActualMap.getUiSettings().setMyLocationButtonEnabled(true);
+            } else {
+                ActualMap.setMyLocationEnabled(false);
+                ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
+                locationCurr = null;
+                getLocationPermission();
+            }
+        } catch (SecurityException e)  {
+            Log.e("Exception: %s", e.getMessage());
+        }
     }
 }
 
