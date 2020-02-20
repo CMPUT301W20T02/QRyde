@@ -15,7 +15,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class DriverMainMap extends AppCompatActivity implements WaitingUserResponseFragment.OnFragmentInteractionListener{
+public class DriverMainMap extends AppCompatActivity implements OnFragmentInteractionListener{
 
     AvailableRideAdapter rideAdapter;
     ArrayList<AvailableRide> dataList;
@@ -50,6 +50,8 @@ public class DriverMainMap extends AppCompatActivity implements WaitingUserRespo
         availableRideListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
+                slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
                 waitForUser(position);
                 return true;
             }
@@ -58,19 +60,29 @@ public class DriverMainMap extends AppCompatActivity implements WaitingUserRespo
 
     }
     public void waitForUser(int position){
-        final SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
-        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         startLocationEditText.setText(dataList.get(position).getStartLocation());
         endLocationEditText.setText(dataList.get(position).getEndLocation());
         WaitingUserResponseFragment newFrag = new WaitingUserResponseFragment();
         newFrag.show(getSupportFragmentManager(), "WAITING_USER_RESPONSE");
     }
 
+    public void rideInProgress(int position) {
+        RideInProgressFragment newFrag = new RideInProgressFragment();
+        newFrag.show(getSupportFragmentManager(), "RIDE_IN_PROGRESS");
+    }
+
+    public void rideComplete(int position){
+        Bundle bundle = new Bundle();
+        bundle.putFloat("AMOUNT_OFFERED", dataList.get(position).getAmountOffered());
+        RideCompleteFragment newFrag = new RideCompleteFragment();
+        newFrag.show(getSupportFragmentManager(), "RIDE_COMPLETE");
+    }
+
     public void onCanceledPressed(){
-        finish();
-        overridePendingTransition( 0, 0);
-        startActivity(getIntent());
-        overridePendingTransition( 0, 0);
+        final SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
+        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
+        startLocationEditText.setText("");
+        endLocationEditText.setText("");
     }
 
 }

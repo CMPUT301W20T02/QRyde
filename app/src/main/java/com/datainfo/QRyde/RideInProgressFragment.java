@@ -18,9 +18,6 @@ public class RideInProgressFragment extends DialogFragment {
 
     private OnFragmentInteractionListener listener;
 
-    public interface OnFragmentInteractionListener {
-        void onCanceledPressed();
-    }
 
     @Override
     public void onAttach(Context context) {
