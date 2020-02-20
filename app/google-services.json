@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "490897792813",
+    "firebase_url": "https://qryde-7849a.firebaseio.com",
+    "project_id": "qryde-7849a",
+    "storage_bucket": "qryde-7849a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490897792813:android:2a7556f8861c8418303da4",
+        "android_client_info": {
+          "package_name": "com.example.qryde"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "490897792813-qfviardiv15n9s4tg7h54dj93q6md52q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGIwiDccZjXms-QVJavdp8HaOrpct5RDo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "490897792813-qfviardiv15n9s4tg7h54dj93q6md52q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
