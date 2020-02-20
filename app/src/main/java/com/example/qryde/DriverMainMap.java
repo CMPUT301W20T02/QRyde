@@ -1,4 +1,4 @@
-package com.datainfo.QRyde;
+package com.example.qryde;
 
 import androidx.appcompat.app.AppCompatActivity;
 

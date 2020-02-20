@@ -1,4 +1,4 @@
-package com.datainfo.QRyde;
+package com.example.qryde;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,10 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-public class RideInProgressFragment extends DialogFragment {
+import com.example.qryde.OnFragmentInteractionListener;
+
+public class WaitingUserResponseFragment extends DialogFragment {
 
     private OnFragmentInteractionListener listener;
-
 
     @Override
     public void onAttach(Context context) {
@@ -37,7 +38,7 @@ public class RideInProgressFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
-                .setTitle("Ride in progress...")
+                .setTitle("Waiting for user response")
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

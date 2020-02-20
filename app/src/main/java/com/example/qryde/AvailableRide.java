@@ -1,4 +1,4 @@
-package com.datainfo.QRyde;
+package com.example.qryde;
 
 public class AvailableRide {
     private String riderUsername;
