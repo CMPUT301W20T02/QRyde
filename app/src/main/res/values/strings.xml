@@ -2,4 +2,6 @@
     <string name="app_name">QRyde</string>
     <string name="take_barcode_picture">take_barcode_picture</string>
     <string name="scan_barcode">scan_barcode</string>
+    <string name="signup_underlined"><u>Signup</u></string>
+
 </resources>
