@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".signup"></activity>
         <activity android:name=".tempActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".DriverMainMap">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

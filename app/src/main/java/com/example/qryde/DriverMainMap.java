@@ -1,19 +1,29 @@
 package com.example.qryde;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static java.lang.Float.parseFloat;
 
 public class DriverMainMap extends AppCompatActivity implements OnFragmentInteractionListener{
 
@@ -21,30 +31,50 @@ public class DriverMainMap extends AppCompatActivity implements OnFragmentIntera
     ArrayList<AvailableRide> dataList;
     EditText startLocationEditText;
     EditText endLocationEditText;
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.driver_main_map);
 
+        db = FirebaseFirestore.getInstance();
+
         ListView availableRideListView = findViewById(R.id.list_view);
         startLocationEditText = findViewById(R.id.start_location_et);
         endLocationEditText = findViewById(R.id.end_location_et);
 
+        AvailableRide[] AvailableRideList = {};
 
-        AvailableRide[] AvailableRideList = {
-                new AvailableRide("Masahiro Sakurai", "Nintendo", "Super Smash Bros", 20.6f, 0.7f),
-                new AvailableRide("Reggie Fils-Aime", "Nintendo", "Wii Fit", 52.9f, 2.3f),
-                new AvailableRide("Hideo Kojima", "Kojima Productions", "Metal Gear Solid", 17.8f, 1.3f),
-                new AvailableRide("Todd Howard", "Bethesda Softworks", "Fallout 76", 27.7f, 1.7f),
-                new AvailableRide("Sean Murray", "Hello Games", "No Mans Sky", 30.8f, 1.9f),
-        };
         dataList = new ArrayList<>();
         dataList.addAll(Arrays.asList(AvailableRideList));
 
         rideAdapter = new AvailableRideAdapter(this, dataList);
 
         availableRideListView.setAdapter(rideAdapter);
+
+        db.collection("AvailableRides")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("xd", document.getId() + " => " + document.get("rider"));
+                                AvailableRide temp = new AvailableRide(document.getData().get("rider").toString(),
+                                        document.getData().get("startLocation").toString(),
+                                        document.getData().get("endLocation").toString(),
+                                        parseFloat(document.getData().get("amount").toString()),
+                                        1.3f);
+                                dataList.add(temp);
+                                rideAdapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            Log.d("xd", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
 
         final SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
         availableRideListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
