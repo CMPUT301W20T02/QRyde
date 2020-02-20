@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.datainfo.QRyde">
+    package="com.example.qryde">
 
     <application
         android:allowBackup="true"
@@ -9,7 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+<<<<<<< HEAD
         <activity android:name=".DriverMainMap">
+=======
+        <activity android:name=".signup"></activity>
+        <activity android:name=".tempActivity" />
+        <activity android:name=".MainActivity">
+>>>>>>> 0a7a357f365d027ee9321f536fc4e4314f2fc2b7
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
