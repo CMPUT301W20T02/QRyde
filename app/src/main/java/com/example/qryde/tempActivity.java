@@ -62,22 +62,22 @@ public class tempActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         db.collection("AvailableRides")
-            .whereEqualTo("rider", user)
-            .get()
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            startLocation.setText(document.getData().get("startLocation").toString());
-                            endLocation.setText(document.getData().get("endLocation").toString());
+                .whereEqualTo("rider", user)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                startLocation.setText(document.getData().get("startLocation").toString());
+                                endLocation.setText(document.getData().get("endLocation").toString());
 
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
-                    } else {
-                        Log.d(TAG, "Error getting documents: ", task.getException());
                     }
-                }
-            });
+                });
 
         db.collection("AvailableRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -98,28 +98,39 @@ public class tempActivity extends AppCompatActivity {
                         driverRating.setVisibility(View.VISIBLE);
 
                         db.collection("AvailableRides").whereEqualTo("rider", user).get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                            driver = document.getData().get("driver").toString();
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                driver = document.getData().get("driver").toString();
+
+                                                db.collection("Users").whereEqualTo("username", driver)
+                                                        .get()
+                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                        driverName.setText(document.getData().get("name").toString());
+                                                                        driverRating.setText(document.getData().get("thumbsUp").toString() + " | " + document.getData().get("thumbsDown").toString());
+
+                                                                    }
+                                                                } else {
+                                                                    Log.d(TAG, "Error getting documents: ", task.getException());
+                                                                }
+                                                            }
+                                                        });
+                                            }
+
+                                        } else {
+                                            Log.d(TAG, "Error getting documents: ", task.getException());
                                         }
-                                    } else {
-                                        Log.d(TAG, "Error getting documents: ", task.getException());
                                     }
-                                }
-                            });
-
-                        Log.d(TAG, "onEvent: " + driver);
-
-
+                                });
 
                     }
-                } else {
-                    Log.d(TAG, "Current data: null");
                 }
-
             }
         });
     }
