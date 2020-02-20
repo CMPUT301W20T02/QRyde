@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">QRyde</string>
+    <string name="signup_underlined"><u>Signup</u></string>
 </resources>
