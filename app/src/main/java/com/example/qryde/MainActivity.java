@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     if (task.getResult().size() > 0) {
                                         Intent intent = new Intent(getApplicationContext(), tempActivity.class);
+                                        intent.putExtra("username", username.getText().toString());
                                         startActivity(intent);
                                     } else {
                                         usernameBox.setImageResource(R.drawable.rounded_rectangle_red);
