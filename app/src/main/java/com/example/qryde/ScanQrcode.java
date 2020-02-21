@@ -1,4 +1,4 @@
-package com.datainfo.QRyde;
+package com.example.qryde;
 
 import android.Manifest;
 import android.content.Context;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.datainfo.QRyde.R;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
