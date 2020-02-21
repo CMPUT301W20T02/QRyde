@@ -51,7 +51,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
-        PlacesClient placesClient = Places.createClient(this);
+//        PlacesClient placesClient = Places.createClient(this);
 
         getLocationPermission();
     }
@@ -142,6 +142,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             if (LocationPermission) {
                 ActualMap.setMyLocationEnabled(true);
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(true);
+                ActualMap.getUiSettings().setZoomControlsEnabled(true);
+                ActualMap.getUiSettings().setCompassEnabled(true);
             } else {
                 ActualMap.setMyLocationEnabled(false);
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
