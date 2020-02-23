@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     if (task.getResult().size() > 0) {
-                                        Intent intent = new Intent(getApplicationContext(), tempActivity.class);
+                                        Intent intent = new Intent(getApplicationContext(), afterRequestCreated.class);
                                         intent.putExtra("username", username.getText().toString());
                                         startActivity(intent);
                                     } else {

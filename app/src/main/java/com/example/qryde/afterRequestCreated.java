@@ -19,8 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-public class tempActivity extends AppCompatActivity {
-
+public class afterRequestCreated extends AppCompatActivity {
     String TAG = "temp";
     FirebaseFirestore db;
 
@@ -41,8 +40,8 @@ public class tempActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_temp);
 
+        setContentView(R.layout.activity_temp);
         startLocation = findViewById(R.id.startLocationText);
         endLocation = findViewById(R.id.endLocationText);
 
