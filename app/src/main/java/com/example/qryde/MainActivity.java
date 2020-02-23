@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,7 +60,22 @@ public class MainActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     if (task.getResult().size() > 0) {
-                                        Intent intent = new Intent(getApplicationContext(), userMainMap.class);
+
+                                        // choose whether to start the driver or the user branches
+                                        String isDriver = "";
+
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            isDriver = document.getData().get("isDriver").toString();
+                                        }
+
+                                        Intent intent;
+
+                                        if (isDriver == "false") {
+                                            intent = new Intent(getApplicationContext(), userMainMap.class);
+                                        } else {
+                                            intent = new Intent(getApplicationContext(), DriverMainMap.class);
+                                        }
+
                                         intent.putExtra("username", username.getText().toString());
                                         startActivity(intent);
                                     } else {
