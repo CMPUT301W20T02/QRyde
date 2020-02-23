@@ -40,5 +40,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/qryde_logo" />
 
+    <TextView
+        android:id="@+id/request_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Request a"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/qryde_logo"
+        app:layout_constraintEnd_toEndOf="@+id/qryde_logo"
+        app:layout_constraintStart_toStartOf="@+id/qryde_logo" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

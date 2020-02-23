@@ -70,6 +70,7 @@ public class SelectLocation extends AppCompatActivity {
             public void onClick(View v) {
                 pickupLocation.setText("");
                 destination.setText("");
+                finish();
             }
         });
 

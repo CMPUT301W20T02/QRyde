@@ -27,6 +27,9 @@ public class ConfirmAmount extends AppCompatActivity {
     Button confirmButton;
     Button cancelButton;
 
+    TextView start;
+    TextView end;
+
     String user;
 
 
@@ -42,6 +45,9 @@ public class ConfirmAmount extends AppCompatActivity {
         confirmButton = (Button) findViewById(R.id.confirm);
         cancelButton = (Button) findViewById(R.id.cancel);
 
+        start = findViewById(R.id.startLocationText);
+        end = findViewById(R.id.endLocationText);
+
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
             user = incomingData.getString("username");
@@ -53,7 +59,9 @@ public class ConfirmAmount extends AppCompatActivity {
         final String pickupName = intent.getStringExtra("pickup");
         final String destinationName = intent.getStringExtra("destination");
 
-        summarytext.setText("Trip from " + pickupName + " to " + destinationName + ".\n The suggested Price is 20 QRbucks.");
+        summarytext.setText("The suggested Price is 20 QRbucks");
+        start.setText(pickupName);
+        end.setText(destinationName);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
