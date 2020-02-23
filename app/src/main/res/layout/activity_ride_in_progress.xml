@@ -49,7 +49,7 @@
         app:layout_constraintTop_toBottomOf="@+id/startLocationBox"
         app:srcCompat="@drawable/rounded_rectangle" />
     <ImageView
-        android:id="@+id/findingDriverBox"
+        android:id="@+id/ride_in_progress_box"
         android:layout_width="0dp"
         android:layout_height="263dp"
         android:layout_marginStart="16dp"
@@ -64,7 +64,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/rounded_rectangle_white" />
     <TextView
-        android:id="@+id/findingText"
+        android:id="@+id/ride_in_progress_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -73,9 +73,9 @@
         android:textSize="24dp"
         android:textStyle="bold"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="@+id/findingDriverBox"
-        app:layout_constraintStart_toStartOf="@+id/findingDriverBox"
-        app:layout_constraintTop_toTopOf="@+id/findingDriverBox" />
+        app:layout_constraintEnd_toEndOf="@+id/ride_in_progress_box"
+        app:layout_constraintStart_toStartOf="@+id/ride_in_progress_box"
+        app:layout_constraintTop_toTopOf="@+id/ride_in_progress_box" />
     <TextView
         android:id="@+id/startLocationText"
         android:layout_width="wrap_content"
@@ -102,51 +102,8 @@
         app:layout_constraintEnd_toEndOf="@+id/endLocationBox"
         app:layout_constraintStart_toStartOf="@+id/endLocationBox"
         app:layout_constraintTop_toTopOf="@+id/endLocationBox" />
-    <ImageView
-        android:id="@+id/driverFoundBox"
-        android:layout_width="0dp"
-        android:layout_height="263dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/rounded_rectangle_white" />
-    <TextView
-        android:id="@+id/findingDriverText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="We found you a driver!"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/driverFoundBox"
-        app:layout_constraintStart_toStartOf="@+id/driverFoundBox"
-        app:layout_constraintTop_toTopOf="@+id/driverFoundBox" />
-    <TextView
-        android:id="@+id/driverName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/findingDriverText"
-        app:layout_constraintStart_toStartOf="@+id/findingDriverText"
-        app:layout_constraintTop_toBottomOf="@+id/findingDriverText" />
-    <TextView
-        android:id="@+id/driverRating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/findingDriverText"
-        app:layout_constraintStart_toStartOf="@+id/findingDriverText"
-        app:layout_constraintTop_toBottomOf="@+id/driverName" />
+
+
 
 
 
