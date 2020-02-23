@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/edmonton_map" />
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/hamburger_menu"
         android:layout_width="29dp"
         android:layout_height="32dp"
         android:layout_marginStart="16dp"
@@ -36,7 +36,7 @@
         android:alpha="0.7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/hamburger_menu"
         app:srcCompat="@drawable/rounded_rectangle" />
     <ImageView
         android:id="@+id/endLocationBox"
