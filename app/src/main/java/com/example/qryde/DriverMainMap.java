@@ -38,7 +38,7 @@ public class DriverMainMap extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        ListView availableRideListView = findViewById(R.id.list_view);
+        final ListView availableRideListView = findViewById(R.id.list_view);
 
 
         AvailableRide[] AvailableRideList = {};
@@ -78,20 +78,16 @@ public class DriverMainMap extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), WaitingUserResponse.class);
+                intent.putExtra("START_LOCATION", dataList.get(position).getStartLocation());
+                intent.putExtra("END_LOCATION", dataList.get(position).getEndLocation());
                 startActivity(intent);
                 return true;
             }
 
         });
 
+
     }
 
-
-    public void rideComplete(int position){
-        Bundle bundle = new Bundle();
-        bundle.putFloat("AMOUNT_OFFERED", dataList.get(position).getAmountOffered());
-        RideCompleteFragment newFrag = new RideCompleteFragment();
-        newFrag.show(getSupportFragmentManager(), "RIDE_COMPLETE");
-    }
 
 }
