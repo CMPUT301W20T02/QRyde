@@ -8,13 +8,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -25,7 +23,7 @@ import java.util.Arrays;
 
 import static java.lang.Float.parseFloat;
 
-public class DriverMainMap extends AppCompatActivity implements OnFragmentInteractionListener{
+public class DriverMainMap extends AppCompatActivity {
 
     AvailableRideAdapter rideAdapter;
     ArrayList<AvailableRide> dataList;
@@ -36,13 +34,11 @@ public class DriverMainMap extends AppCompatActivity implements OnFragmentIntera
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.driver_main_map);
+        setContentView(R.layout.activity_driver_main_map);
 
         db = FirebaseFirestore.getInstance();
 
         ListView availableRideListView = findViewById(R.id.list_view);
-        startLocationEditText = findViewById(R.id.start_location_et);
-        endLocationEditText = findViewById(R.id.end_location_et);
 
 
         AvailableRide[] AvailableRideList = {};
@@ -81,39 +77,21 @@ public class DriverMainMap extends AppCompatActivity implements OnFragmentIntera
         availableRideListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                final SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
-                slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-                waitForUser(position);
+                Intent intent = new Intent(getApplicationContext(), WaitingUserResponse.class);
+                startActivity(intent);
                 return true;
             }
 
         });
 
     }
-    public void waitForUser(int position){
-        startLocationEditText.setText(dataList.get(position).getStartLocation());
-        endLocationEditText.setText(dataList.get(position).getEndLocation());
-        WaitingUserResponseFragment newFrag = new WaitingUserResponseFragment();
-        newFrag.show(getSupportFragmentManager(), "WAITING_USER_RESPONSE");
-    }
 
-    public void rideInProgress(int position) {
-        RideInProgressFragment newFrag = new RideInProgressFragment();
-        newFrag.show(getSupportFragmentManager(), "RIDE_IN_PROGRESS");
-    }
 
     public void rideComplete(int position){
         Bundle bundle = new Bundle();
         bundle.putFloat("AMOUNT_OFFERED", dataList.get(position).getAmountOffered());
         RideCompleteFragment newFrag = new RideCompleteFragment();
         newFrag.show(getSupportFragmentManager(), "RIDE_COMPLETE");
-    }
-
-    public void onCanceledPressed(){
-        final SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
-        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
-        startLocationEditText.setText("");
-        endLocationEditText.setText("");
     }
 
 }
