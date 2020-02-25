@@ -1,6 +1,7 @@
 package com.example.qryde;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -13,7 +14,10 @@ import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -50,27 +54,23 @@ public class DriverMainMap extends AppCompatActivity {
 
         availableRideListView.setAdapter(rideAdapter);
 
-        db.collection("AvailableRides")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("xd", document.getId() + " => " + document.get("rider"));
-                                AvailableRide temp = new AvailableRide(document.getData().get("rider").toString(),
-                                        document.getData().get("startLocation").toString(),
-                                        document.getData().get("endLocation").toString(),
-                                        parseFloat(document.getData().get("amount").toString()),
-                                        1.3f);
-                                dataList.add(temp);
-                                rideAdapter.notifyDataSetChanged();
-                            }
-                        } else {
-                            Log.d("xd", "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+        final CollectionReference collectionReference = db.collection("AvailableRides");
+
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e){
+                dataList.clear();;
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    AvailableRide temp = new AvailableRide(doc.getData().get("rider").toString(),
+                            doc.getData().get("startLocation").toString(),
+                            doc.getData().get("endLocation").toString(),
+                            parseFloat(doc.getData().get("amount").toString()),
+                            1.3f);
+                    dataList.add(temp);
+                    rideAdapter.notifyDataSetChanged();
+                }
+            }
+        });
 
 
         final SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
