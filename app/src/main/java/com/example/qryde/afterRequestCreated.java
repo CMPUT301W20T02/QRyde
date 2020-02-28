@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +21,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.ObjectStreamException;
+
 public class afterRequestCreated extends AppCompatActivity {
     String TAG = "temp";
     FirebaseFirestore db;
@@ -35,19 +38,27 @@ public class afterRequestCreated extends AppCompatActivity {
     TextView driverName;
     TextView driverRating;
 
+    Button confirm;
+    Button cancel;
+
     String driver;
 
-    int animationDuration = 60;
+    int animationDuration = 100;
 
     ObjectAnimator findingBoxAnimationDown;
     ObjectAnimator findingTextAnimationDown;
     ObjectAnimator driverNameAnimationDown;
     ObjectAnimator driverRatingAnimationDown;
+    ObjectAnimator confirmAnimationDown;
+    ObjectAnimator cancelAnimationDown;
 
     ObjectAnimator findingBoxAnimationUp;
     ObjectAnimator findingTextAnimationUp;
     ObjectAnimator driverNameAnimationUp;
     ObjectAnimator driverRatingAnimationUp;
+    ObjectAnimator confirmAnimationUp;
+    ObjectAnimator cancelAnimationUp;
+
 
 
     @Override
@@ -65,6 +76,9 @@ public class afterRequestCreated extends AppCompatActivity {
         driverName = findViewById(R.id.driverName);
         driverRating = findViewById(R.id.driverRating);
 
+        confirm = findViewById(R.id.confirm);
+        cancel = findViewById(R.id.cancel);
+
         findingBoxAnimationDown = ObjectAnimator.ofFloat(findingBox, "translationY", 1000f);
         findingBoxAnimationDown.setDuration(animationDuration);
 
@@ -76,6 +90,12 @@ public class afterRequestCreated extends AppCompatActivity {
 
         driverRatingAnimationDown = ObjectAnimator.ofFloat(driverRating, "translationY", 1000f);
         driverRatingAnimationDown.setDuration(animationDuration);
+
+        confirmAnimationDown = ObjectAnimator.ofFloat(confirm, "translationY", 1000f);
+        confirmAnimationDown.setDuration(animationDuration);
+
+        cancelAnimationDown = ObjectAnimator.ofFloat(cancel, "translationY", 1000f);
+        cancelAnimationDown.setDuration(animationDuration);
 
         findingBoxAnimationUp = ObjectAnimator.ofFloat(findingBox, "translationY", 0f);
         findingBoxAnimationUp.setDuration(animationDuration);
@@ -89,7 +109,13 @@ public class afterRequestCreated extends AppCompatActivity {
         driverRatingAnimationUp = ObjectAnimator.ofFloat(driverRating, "translationY", 0f);
         driverRatingAnimationUp.setDuration(animationDuration);
 
+        confirmAnimationUp = ObjectAnimator.ofFloat(confirm, "translationY", 0f);
+        confirmAnimationUp.setDuration(animationDuration);
 
+        cancelAnimationUp = ObjectAnimator.ofFloat(cancel, "translationY", 0f);
+        cancelAnimationUp.setDuration(animationDuration);
+
+        confirmAnimationDown.start();
 
 
         Bundle incomingData = getIntent().getExtras();
@@ -131,6 +157,7 @@ public class afterRequestCreated extends AppCompatActivity {
                         findingTextAnimationDown.start();
                         driverNameAnimationDown.start();
                         driverRatingAnimationDown.start();
+                        cancelAnimationDown.start();
 
 
                         db.collection("AvailableRides").whereEqualTo("rider", user).get()
@@ -151,11 +178,16 @@ public class afterRequestCreated extends AppCompatActivity {
                                                                         driverName.setText(document.getData().get("name").toString());
                                                                         driverRating.setText(document.getData().get("thumbsUp").toString() + " | " + document.getData().get("thumbsDown").toString());
                                                                         findingText.setText("Driver found!");
+                                                                        cancel.setText(" DECLINE DRIVER ");
 
                                                                         findingBoxAnimationUp.start();
                                                                         findingTextAnimationUp.start();
                                                                         driverNameAnimationUp.start();
                                                                         driverRatingAnimationUp.start();
+                                                                        confirmAnimationUp.start();
+                                                                        cancelAnimationUp.start();
+
+
                                                                     }
                                                                 } else {
                                                                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -169,7 +201,6 @@ public class afterRequestCreated extends AppCompatActivity {
                                         }
                                     }
                                 });
-
 
 
                     }

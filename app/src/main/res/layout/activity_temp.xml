@@ -18,6 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/edmonton_map" />
+
     <ImageView
         android:id="@+id/hamburger_menu"
         android:layout_width="29dp"
@@ -38,6 +39,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hamburger_menu"
         app:srcCompat="@drawable/rounded_rectangle" />
+
     <ImageView
         android:id="@+id/endLocationBox"
         android:layout_width="323dp"
@@ -48,6 +50,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/startLocationBox"
         app:srcCompat="@drawable/rounded_rectangle" />
+
     <ImageView
         android:id="@+id/findingDriverBox"
         android:layout_width="0dp"
@@ -77,6 +80,7 @@
         app:layout_constraintEnd_toEndOf="@+id/findingDriverBox"
         app:layout_constraintStart_toStartOf="@+id/findingDriverBox"
         app:layout_constraintTop_toTopOf="@+id/findingDriverBox" />
+
     <TextView
         android:id="@+id/startLocationText"
         android:layout_width="wrap_content"
@@ -90,6 +94,7 @@
         app:layout_constraintEnd_toEndOf="@+id/startLocationBox"
         app:layout_constraintStart_toStartOf="@+id/startLocationBox"
         app:layout_constraintTop_toTopOf="@+id/startLocationBox" />
+
     <TextView
         android:id="@+id/endLocationText"
         android:layout_width="wrap_content"
@@ -124,7 +129,34 @@
         app:layout_constraintStart_toStartOf="@+id/findingDriverBox"
         app:layout_constraintTop_toBottomOf="@+id/driverName" />
 
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/rounded_rectangle_blue"
+        android:text="confirm"
+        app:layout_constraintBottom_toBottomOf="@+id/findingDriverBox"
+        app:layout_constraintEnd_toEndOf="@+id/findingDriverBox"
+        app:layout_constraintStart_toStartOf="@+id/guideline" />
 
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/rounded_rectangle_blue"
+        android:text="cancel"
+        app:layout_constraintBottom_toBottomOf="@+id/findingDriverBox"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/findingDriverBox" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.50364965" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
