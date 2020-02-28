@@ -89,6 +89,26 @@ public class PopUpWaitingForDriver extends AppCompatActivity {
         });
     }
 
+    // on leaving driver map activity, deletes activedriver document
+    @Override
+    protected void onStop() {
+        super.onStop();
+        db.collection("AvailableRides1").document(user)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Test", "DocumentSnapshot successfully deleted!");
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("TEST", "Error deleting document", e);
+                    }
+                });
+    }
 
     // live update for AvailableRide
 
