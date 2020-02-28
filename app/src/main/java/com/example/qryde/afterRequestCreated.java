@@ -294,6 +294,29 @@ public class afterRequestCreated extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Log.d(TAG, "onSuccess: Successfully deleted document");
+
+                                    findingBoxAnimationDown.start();
+                                    findingTextAnimationDown.start();
+                                    driverNameAnimationDown.start();
+                                    driverRatingAnimationDown.start();
+                                    cancelAnimationDown.start();
+
+                                    driverName.setText("");
+                                    driverRating.setText("");
+                                    findingText.setText("Finding you a driver ...");
+                                    cancel.setText("Cancel");
+
+                                    isCancelDriver = false;
+
+                                    findingBoxAnimationUp.start();
+                                    findingTextAnimationUp.start();
+                                    driverNameAnimationUp.start();
+                                    driverRatingAnimationUp.start();
+                                    confirmAnimationUp.start();
+                                    cancelAnimationUp.start();
+
+
+
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
