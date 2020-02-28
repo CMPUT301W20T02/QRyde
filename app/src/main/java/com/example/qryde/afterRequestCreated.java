@@ -24,6 +24,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.ObjectStreamException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class afterRequestCreated extends AppCompatActivity {
     String TAG = "temp";
@@ -279,6 +281,46 @@ public class afterRequestCreated extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Log.d(TAG, "onSuccess: Successfully deleted document");
+
+                                    db.collection("AvailableRides").document(user)
+                                            .update("status", false)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d(TAG, "onSuccess: Successfully deleted document");
+
+                                                    findingBoxAnimationDown.start();
+                                                    findingTextAnimationDown.start();
+                                                    driverNameAnimationDown.start();
+                                                    driverRatingAnimationDown.start();
+                                                    cancelAnimationDown.start();
+                                                    confirmAnimationDown.start();
+
+
+                                                    driverName.setText("");
+                                                    driverRating.setText("");
+                                                    findingText.setText("Finding you a driver ...");
+                                                    cancel.setText("Cancel");
+
+                                                    isCancelDriver = false;
+
+                                                    findingBoxAnimationUp.start();
+                                                    findingTextAnimationUp.start();
+                                                    driverNameAnimationUp.start();
+                                                    driverRatingAnimationUp.start();
+                                                    cancelAnimationUp.start();
+
+
+
+
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.d(TAG, "onFailure: Failed to delete document");
+                                                }
+                                            });
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
@@ -288,43 +330,6 @@ public class afterRequestCreated extends AppCompatActivity {
                                 }
                             });
 
-                    db.collection("AvailableRides").document(user)
-                            .update("status", false)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "onSuccess: Successfully deleted document");
-
-                                    findingBoxAnimationDown.start();
-                                    findingTextAnimationDown.start();
-                                    driverNameAnimationDown.start();
-                                    driverRatingAnimationDown.start();
-                                    cancelAnimationDown.start();
-
-                                    driverName.setText("");
-                                    driverRating.setText("");
-                                    findingText.setText("Finding you a driver ...");
-                                    cancel.setText("Cancel");
-
-                                    isCancelDriver = false;
-
-                                    findingBoxAnimationUp.start();
-                                    findingTextAnimationUp.start();
-                                    driverNameAnimationUp.start();
-                                    driverRatingAnimationUp.start();
-                                    confirmAnimationUp.start();
-                                    cancelAnimationUp.start();
-
-
-
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d(TAG, "onFailure: Failed to delete document");
-                                }
-                            });
                 }
 
 
@@ -332,8 +337,68 @@ public class afterRequestCreated extends AppCompatActivity {
             }
         };
 
-
         cancel.setOnClickListener(cancelOnClickListener);
+
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // get all of the information from AvailableRides to migrate to ActiveRides
+                db.collection("AvailableRides")
+                        .whereEqualTo("rider", user)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        String old_amount = document.getData().get("amount").toString();
+                                        String old_datetime = document.getData().get("datetime").toString();
+                                        String old_driverName = document.getData().get("driver").toString();
+                                        String old_endLocation = document.getData().get("endLocation").toString();
+                                        String old_startLocation = document.getData().get("startLocation").toString();
+                                        String old_rider = document.getData().get("rider").toString();
+
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("amount", Float.parseFloat(old_amount));
+                                        data.put("datetime", old_datetime);
+                                        data.put("driver", old_driverName);
+                                        data.put("endLocation", old_endLocation);
+                                        data.put("startLocation", old_startLocation);
+                                        data.put("rider", old_rider);
+                                        data.put("status", false);
+                                        db.collection("ActiveRides").document(user).set(data);
+
+                                        // now change the text to ride in progress
+                                        findingBoxAnimationDown.start();
+                                        findingTextAnimationDown.start();
+                                        driverNameAnimationDown.start();
+                                        driverRatingAnimationDown.start();
+                                        cancelAnimationDown.start();
+                                        confirmAnimationDown.start();
+
+
+                                        findingText.setText("Ride is currently in progress");
+                                        cancel.setText("Cancel");
+
+                                        isCancelDriver = false;
+
+                                        findingBoxAnimationUp.start();
+                                        findingTextAnimationUp.start();
+                                        driverNameAnimationUp.start();
+                                        driverRatingAnimationUp.start();
+                                        cancelAnimationUp.start();
+
+
+                                    }
+                                } else {
+                                    Log.d(TAG, "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
+
+
+            }
+        });
 
     }
 
