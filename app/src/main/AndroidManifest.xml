@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".userMainMap"></activity>
+        <activity android:name=".GenerateQRCode"></activity>
+        <activity android:name=".userMainMap" />
         <activity android:name=".signup" />
         <activity android:name=".afterRequestCreated" />
         <activity android:name=".MainActivity">
@@ -29,9 +30,6 @@
         <activity android:name=".ScanQrcode" />
         <activity android:name=".WaitingUserResponse" />
         <activity android:name=".ConfirmAmount" />
-
-
-
     </application>
 
 </manifest>
