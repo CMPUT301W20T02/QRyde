@@ -1,6 +1,7 @@
 package com.example.qryde;
 
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -44,6 +45,7 @@ public class afterRequestCreated extends AppCompatActivity {
 
     Button confirm;
     Button cancel;
+    float amount;
 
     boolean isCancelDriver = false;
 
@@ -128,43 +130,6 @@ public class afterRequestCreated extends AppCompatActivity {
         if (incomingData != null) {
             user = incomingData.getString("username");
         }
-
-        View.OnClickListener declineDriverOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                db.collection("AvailableRides").document(user)
-                        .update("driver", "")
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "onSuccess: Successfully deleted document");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "onFailure: Failed to delete document");
-                            }
-                        });
-
-                db.collection("AvailableRides").document(user)
-                        .update("status", true)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "onSuccess: Successfully deleted document");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "onFailure: Failed to delete document");
-                            }
-                        });
-
-            }
-        };
 
 
         db = FirebaseFirestore.getInstance();
@@ -253,6 +218,43 @@ public class afterRequestCreated extends AppCompatActivity {
                 }
             }
         });
+
+        View.OnClickListener declineDriverOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                db.collection("AvailableRides").document(user)
+                        .update("driver", "")
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "onSuccess: Successfully deleted document");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "onFailure: Failed to delete document");
+                            }
+                        });
+
+                db.collection("AvailableRides").document(user)
+                        .update("status", true)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "onSuccess: Successfully deleted document");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "onFailure: Failed to delete document");
+                            }
+                        });
+
+            }
+        };
 
         View.OnClickListener cancelOnClickListener = new View.OnClickListener() {
             @Override
@@ -368,6 +370,8 @@ public class afterRequestCreated extends AppCompatActivity {
                                         data.put("status", false);
                                         db.collection("ActiveRides").document(user).set(data);
 
+                                        amount = Float.parseFloat(old_amount);
+
                                         // now change the text to ride in progress
                                         findingBoxAnimationDown.start();
                                         findingTextAnimationDown.start();
@@ -397,6 +401,31 @@ public class afterRequestCreated extends AppCompatActivity {
                         });
 
 
+            }
+        });
+
+
+        // listening for when activeRideRequest is changed to true
+        db.collection("ActiveRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.d(TAG, "Listen failed.", e);
+                    return;
+                }
+
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    if (documentSnapshot.getData().get("status").toString().equals("true")) {
+                        Intent intent = new Intent(getApplicationContext(), GenerateQRCode.class);
+                        intent.putExtra("rider", user);
+                        intent.putExtra("driver", driverName.getText().toString());
+                        intent.putExtra("amount", amount);
+
+                        startActivity(intent);
+
+
+                    }
+                }
             }
         });
 
