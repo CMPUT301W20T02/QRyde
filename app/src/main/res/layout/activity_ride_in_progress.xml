@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WaitingUserResponse">
+
+    <ImageView
+        android:id="@+id/mapBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/edmonton_map" />
+    <ImageView
+        android:id="@+id/hamburger_menu"
+        android:layout_width="29dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/hamburger_icon" />
+
+    <ImageView
+        android:id="@+id/startLocationBox"
+        android:layout_width="323dp"
+        android:layout_height="45dp"
+        android:alpha="0.7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hamburger_menu"
+        app:srcCompat="@drawable/rounded_rectangle" />
+    <ImageView
+        android:id="@+id/endLocationBox"
+        android:layout_width="323dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="16dp"
+        android:alpha="0.7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startLocationBox"
+        app:srcCompat="@drawable/rounded_rectangle" />
+    <ImageView
+        android:id="@+id/ride_in_progress_box"
+        android:layout_width="0dp"
+        android:layout_height="263dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/rounded_rectangle_white" />
+    <TextView
+        android:id="@+id/ride_in_progress_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Ride is in progress..."
+        android:textColor="#000000"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/ride_in_progress_box"
+        app:layout_constraintStart_toStartOf="@+id/ride_in_progress_box"
+        app:layout_constraintTop_toTopOf="@+id/ride_in_progress_box" />
+    <TextView
+        android:id="@+id/startLocationText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/startLocationBox"
+        app:layout_constraintEnd_toEndOf="@+id/startLocationBox"
+        app:layout_constraintStart_toStartOf="@+id/startLocationBox"
+        app:layout_constraintTop_toTopOf="@+id/startLocationBox" />
+    <TextView
+        android:id="@+id/endLocationText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/endLocationBox"
+        app:layout_constraintEnd_toEndOf="@+id/endLocationBox"
+        app:layout_constraintStart_toStartOf="@+id/endLocationBox"
+        app:layout_constraintTop_toTopOf="@+id/endLocationBox" />
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
