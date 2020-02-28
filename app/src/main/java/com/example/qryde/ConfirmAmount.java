@@ -82,6 +82,7 @@ public class ConfirmAmount extends AppCompatActivity {
                     Intent intent3 = new Intent(getApplicationContext(), afterRequestCreated.class);
                     intent3.putExtra("username", user);
                     startActivity(intent3);
+                    finish();
 
 
                 }
@@ -93,7 +94,10 @@ public class ConfirmAmount extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent2 = new Intent(getApplicationContext(), SelectLocation.class);
                 startActivity(intent2);
+                finish();
             }
         });
+
+
     }
 }

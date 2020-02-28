@@ -57,6 +57,7 @@ public class SelectLocation extends AppCompatActivity {
                     intent.putExtra("destination", destinationName);
                     intent.putExtra("username", user);
                     startActivity(intent);
+                    finish();
 
 
                 }

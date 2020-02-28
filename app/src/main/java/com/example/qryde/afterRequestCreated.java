@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -40,6 +42,8 @@ public class afterRequestCreated extends AppCompatActivity {
 
     Button confirm;
     Button cancel;
+
+    boolean isCancelDriver = false;
 
     String driver;
 
@@ -123,6 +127,44 @@ public class afterRequestCreated extends AppCompatActivity {
             user = incomingData.getString("username");
         }
 
+        View.OnClickListener declineDriverOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                db.collection("AvailableRides").document(user)
+                        .update("driver", "")
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "onSuccess: Successfully deleted document");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "onFailure: Failed to delete document");
+                            }
+                        });
+
+                db.collection("AvailableRides").document(user)
+                        .update("status", true)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "onSuccess: Successfully deleted document");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "onFailure: Failed to delete document");
+                            }
+                        });
+
+            }
+        };
+
+
         db = FirebaseFirestore.getInstance();
 
         db.collection("AvailableRides")
@@ -180,6 +222,8 @@ public class afterRequestCreated extends AppCompatActivity {
                                                                         findingText.setText("Driver found!");
                                                                         cancel.setText(" DECLINE DRIVER ");
 
+                                                                        isCancelDriver = true;
+
                                                                         findingBoxAnimationUp.start();
                                                                         findingTextAnimationUp.start();
                                                                         driverNameAnimationUp.start();
@@ -207,5 +251,68 @@ public class afterRequestCreated extends AppCompatActivity {
                 }
             }
         });
+
+        View.OnClickListener cancelOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (!isCancelDriver) {
+                    db.collection("AvailableRides").document(user)
+                            .delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "onSuccess: Successfully deleted document");
+                                    finish();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, "onFailure: Failed to delete document");
+                                }
+                            });
+                } else {
+                    db.collection("AvailableRides").document(user)
+                            .update("driver", "")
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "onSuccess: Successfully deleted document");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, "onFailure: Failed to delete document");
+                                }
+                            });
+
+                    db.collection("AvailableRides").document(user)
+                            .update("status", false)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "onSuccess: Successfully deleted document");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, "onFailure: Failed to delete document");
+                                }
+                            });
+                }
+
+
+
+            }
+        };
+
+
+        cancel.setOnClickListener(cancelOnClickListener);
+
     }
+
+
 }
