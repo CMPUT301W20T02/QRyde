@@ -2,6 +2,7 @@ package com.datainfo.QRyde;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.Manifest;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -53,7 +55,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private Boolean LocationPermission = false;
     private GoogleMap ActualMap;
-    private FusedLocationProviderClient fusedLocationProviderClient;
     private Location locationCurr;
     private final LatLng EarthDefaultLocation = new LatLng(0, 0); //just center of earth
     private AutocompleteSupportFragment autocompleteSupportFragment, autocompleteSupportFragmentdest;
@@ -66,7 +67,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        getLocationPermission();
+
 
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
@@ -85,7 +86,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragmentdest.setCountries("CA", "US"); //sets for now the location for autocomplete
 //        PlacesClient placesClient = Places.createClient(this);
 
-
+        getLocationPermission();
     }
 
     private String getCompleteAddressString(Location location) {
@@ -138,17 +139,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //requests the location permissions
         LocationPermission = false;
-        switch (requestCode) {
-            case 1515: {
-                for (int i = 0; i < grantResults.length; ++i) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                        LocationPermission = false;
-                        return;
-                    }
+        if (requestCode == 1515) {
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    LocationPermission = false;
+                    return;
                 }
-                LocationPermission = true;
-                MapInit();
             }
+            LocationPermission = true;
+            MapInit();
         }
     }
 
@@ -164,7 +163,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void DeviceLocation() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try {
             if (LocationPermission) {
                 Task locationResult = fusedLocationProviderClient.getLastLocation();
@@ -213,7 +212,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
-            public void onPlaceSelected(Place place) {
+            public void onPlaceSelected(@NonNull Place place) {
                 // TODO: Get info about the selected place.
                 Log.i("AutoComplete", "Place: " + place.getName() + ", " + place.getId() + place.getLatLng());
 
@@ -274,6 +273,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Log.d("Directions", "calculateDirections: destination: " + destination.toString());
         directions.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onResult(DirectionsResult result) {
                 Log.d("Directions", "calculateDirections: routes: " + result.routes[0].toString());
@@ -292,6 +292,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void addPolylinesToMap(final DirectionsResult result){ //draws the polylines
         new Handler(Looper.getMainLooper()).post(() -> { // for main thread
             //getting best route only, so only one route
