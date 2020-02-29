@@ -73,7 +73,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
         autocompleteSupportFragmentdest.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
 
-        autocompleteSupportFragment.setHint("Enter a Pickup Address");
+        autocompleteSupportFragment.setHint("Current Location");
         autocompleteSupportFragment.setCountries("CA", "US"); // sets for now the location for autocomplete
         autocompleteSupportFragmentdest.setHint("Enter a Destination");
         autocompleteSupportFragmentdest.setCountries("CA", "US"); //sets for now the location for autocomplete
@@ -201,6 +201,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 // TODO: Handle the error.
                 Log.i("AutoComplete", "An error occurred: " + status);
                 Toast.makeText(MapActivity.this, "Couldn't find place.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        autocompleteSupportFragment.getView().findViewById(R.id.places_autocomplete_clear_button).setOnClickListener(v -> {
+            startPos = null;
+            autocompleteSupportFragment.setText("");
+            if (endPos != null) {
+                calculateDirections();
             }
         });
 
