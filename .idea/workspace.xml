@@ -11,9 +11,8 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8b791b9b-79c9-47f6-bde8-fc6c6e4f2d3b" name="Default Changelist" comment="two lines changed">
+    <list default="true" id="8b791b9b-79c9-47f6-bde8-fc6c6e4f2d3b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/datainfo/QRyde/MapActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/datainfo/QRyde/MapActivity.java" afterDir="false" />
     </list>
@@ -42,11 +41,6 @@
         <option value="resourceFile" />
       </list>
     </option>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>LocationSer</find>
-    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -216,7 +210,14 @@
       <option name="project" value="LOCAL" />
       <updated>1582962293881</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="code cleanup?">
+      <created>1582963471809</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1582963471809</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TodoView">
@@ -244,6 +245,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Current location implementation" />
     <MESSAGE value="two lines changed" />
-    <option name="LAST_COMMIT_MESSAGE" value="two lines changed" />
+    <MESSAGE value="code cleanup?" />
+    <option name="LAST_COMMIT_MESSAGE" value="code cleanup?" />
   </component>
 </project>

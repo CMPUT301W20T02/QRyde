@@ -61,6 +61,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private GeoApiContext geoApiContext = null; //for directions api
     private Place startPos, endPos;
     private Polyline polyline;
+    public String address, city;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
         autocompleteSupportFragmentdest.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
 
-        autocompleteSupportFragment.setText(String.format("%s", getCompleteAddressString(locationCurr)));
+        //autocompleteSupportFragment.setText(String.format("%s", getCompleteAddressString(locationCurr)));
         autocompleteSupportFragment.setCountries("CA", "US"); // sets for now the location for autocomplete
         autocompleteSupportFragmentdest.setHint("Enter a Destination");
         autocompleteSupportFragmentdest.setCountries("CA", "US"); //sets for now the location for autocomplete
@@ -170,6 +171,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 locationResult.addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         locationCurr = (Location) task.getResult();
+                        autocompleteSupportFragment.setText(String.format("%s", getCompleteAddressString((Location) task.getResult())));
                         mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
 
                     } else {
