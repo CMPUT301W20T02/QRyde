@@ -61,14 +61,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private GeoApiContext geoApiContext = null; //for directions api
     private Place startPos, endPos;
     private Polyline polyline;
-    public String address, city;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-
-
 
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
@@ -81,7 +78,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
         autocompleteSupportFragmentdest.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
 
-        //autocompleteSupportFragment.setText(String.format("%s", getCompleteAddressString(locationCurr)));
         autocompleteSupportFragment.setCountries("CA", "US"); // sets for now the location for autocomplete
         autocompleteSupportFragmentdest.setHint("Enter a Destination");
         autocompleteSupportFragmentdest.setCountries("CA", "US"); //sets for now the location for autocomplete
@@ -91,23 +87,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private String getCompleteAddressString(Location location) {
-        String strAdd = "";
+        String returnedAddress = "";
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             if (addresses != null) {
-                Address returnedAddress = addresses.get(0);
-                StringBuilder strReturnedAddress = new StringBuilder("");
-
-                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
-                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
-                }
-                strAdd = strReturnedAddress.toString();
+                returnedAddress = addresses.get(0).getAddressLine(0);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return strAdd;
+        return returnedAddress;
     }
 
     private void MapInit() { //creates map fragment
