@@ -24,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -52,8 +53,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Location locationCurr;
     private final LatLng EarthDefaultLocation = new LatLng(0, 0); //just center of earth
-    private AutocompleteSupportFragment autocompleteSupportFragment;
-    private GeoApiContext geoApiContext = null;
+    private AutocompleteSupportFragment autocompleteSupportFragment, autocompleteSupportFragmentdest;
+    private GeoApiContext geoApiContext = null; //for directions api
+    private Place startPos, endPos;
+    private Polyline polyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +68,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         autocompleteSupportFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteSupportFragmentdest = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragmentdes);
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+        autocompleteSupportFragmentdest.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+
+        autocompleteSupportFragment.setHint("Enter a Pickup Address");
+        autocompleteSupportFragment.setCountries("CA", "US"); // sets for now the location for autocomplete
+        autocompleteSupportFragmentdest.setHint("Enter a Destination");
+        autocompleteSupportFragmentdest.setCountries("CA", "US"); //sets for now the location for autocomplete
 //        PlacesClient placesClient = Places.createClient(this);
 
         getLocationPermission();
@@ -178,11 +189,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
                 Log.i("AutoComplete", "Place: " + place.getName() + ", " + place.getId() + place.getLatLng());
+
+                startPos = place;
                 mapMove(place.getLatLng(),15f);
-                calculateDirections(place);
-
+                if (endPos != null) {
+                    calculateDirections();
+                }
             }
-
             @Override
             public void onError(@NonNull Status status) {
                 // TODO: Handle the error.
@@ -190,24 +203,40 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Toast.makeText(MapActivity.this, "Couldn't find place.", Toast.LENGTH_SHORT).show();
             }
         });
+
+        autocompleteSupportFragmentdest.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                endPos = place;
+                calculateDirections();
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Log.i("AutoComplete", "An error occurred: " + status);
+                Toast.makeText(MapActivity.this, "Couldn't find place.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void calculateDirections(Place place) {
+    private void calculateDirections() {
         Log.d("Directions", "calculateDirections: calculating directions.");
 
+        if (polyline !=null) { //removes a poly line if exists
+            polyline.remove();
+        }
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
-                place.getLatLng().latitude,
-                place.getLatLng().longitude
+                endPos.getLatLng().latitude,
+                endPos.getLatLng().longitude
         );
         DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
 
-        directions.alternatives(true);
-        directions.origin(
-                new com.google.maps.model.LatLng(
-                        locationCurr.getLatitude(),
-                        locationCurr.getLongitude()
-                )
-        );
+        if (startPos == null) {
+            directions.origin(new com.google.maps.model.LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
+        } else {
+            directions.origin(new com.google.maps.model.LatLng(startPos.getLatLng().latitude,startPos.getLatLng().longitude));
+        }
+
         Log.d("Directions", "calculateDirections: destination: " + destination.toString());
         directions.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
@@ -221,27 +250,46 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             @Override
             public void onFailure(Throwable e) {
+                //Toast.makeText(MapActivity.this, "Invalid Route", Toast.LENGTH_SHORT).show();
                 Log.e("Directions", "calculateDirections: Failed to get directions: " + e.getMessage());
 
             }
         });
     }
 
-    private void addPolylinesToMap(final DirectionsResult result){
-        new Handler(Looper.getMainLooper()).post(() -> { // for main thread lambda
+    private void addPolylinesToMap(final DirectionsResult result){ //draws the polylines
+        new Handler(Looper.getMainLooper()).post(() -> { // for main thread
             //getting best route only, so only one route
             List<com.google.maps.model.LatLng> decodedPath = PolylineEncoding.decode(result.routes[0].overviewPolyline.getEncodedPath());
             List<LatLng> newDecodedPath = new ArrayList<>();
-            for(com.google.maps.model.LatLng latLng: decodedPath){
+            for(com.google.maps.model.LatLng latLng: decodedPath){ //for loop goes through several lat/log to make the route. Array holds several lat/longs
                 newDecodedPath.add(new LatLng(latLng.lat, latLng.lng));
             }
             Log.d("addPolylinesToMap", "run: leg: " + decodedPath.get(0).toString());
-            Polyline polyline = ActualMap.addPolyline(new PolylineOptions()
+            polyline = ActualMap.addPolyline(new PolylineOptions()
                     .addAll(newDecodedPath)
                     .color(getColor(R.color.QrydeB)));
             //Polyline polyline = ActualMap.addPolyline(new PolylineOptions().add(new LatLng(result.routes[0].legs[0].endLocation.lat, result.routes[0].legs[0].endLocation.lng )));//.addAll(newDecodedPath));
             //polyline.setClickable(true);
+            polylineZoom(polyline.getPoints());
         });
+    }
+    public void polylineZoom(List<LatLng> lstLatLngRoute) { //this is for animating camera to zoom out or in to the route size
+
+        if (ActualMap == null || lstLatLngRoute == null || lstLatLngRoute.isEmpty()) return;
+
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        for (LatLng latLngPoint : lstLatLngRoute)
+            boundsBuilder.include(latLngPoint);
+
+        int routePadding = 120;
+        LatLngBounds latLngBounds = boundsBuilder.build();
+
+        ActualMap.animateCamera(
+                CameraUpdateFactory.newLatLngBounds(latLngBounds, routePadding),
+                600,
+                null
+        );
     }
 }
 
