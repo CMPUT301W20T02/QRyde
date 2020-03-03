@@ -25,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -34,11 +35,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallback {
@@ -53,6 +57,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private Location locationCurr;
     private final LatLng EarthDefaultLocation = new LatLng(0, 0); //just center of earth
     private String driver;
+    private Integer markernumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +79,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         }
 
         // gets all available rides and puts them in rideadapter
-        // gets mapmarkers from availablerides
+        // gets each mapmarker from availablerides
         // rightnow mapmarkersare set to endlocation because start locations are all the same
         //
         db.collection("AvailableRides1")
@@ -84,12 +89,22 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-//                                Log.d("xd", document.getId() + " => " + document.get("rider"));
+                                // adding object to datalist/view adapter
                                 AvailableRide temp = document.toObject(AvailableRide.class);
                                 dataList.add(temp);
+
+                                // creating marker from temp object lat/long
                                 LatLng tempLatLng = new LatLng(temp.getEndLocationLat(), temp.getEndLocationLng());
-                                ActualMap.addMarker(new MarkerOptions().position(tempLatLng).title(
-                                        temp.getRiderUsername()));
+
+                                // adding marker to show on map
+                                Marker marker = ActualMap.addMarker(new MarkerOptions().position(tempLatLng).title(
+                                        temp.getRiderUsername() + markernumber));
+
+                                // setting integer id for each marker and temp object
+                                marker.setTag(markernumber);
+
+                                // moving to next object, next marker
+                                markernumber++;
                                 rideAdapter.notifyDataSetChanged();
                             }
                         } else {
@@ -176,6 +191,22 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         if (LocationPermission) {
             updateLocationUI();
             DeviceLocation();
+
+            // ADDED CODE IMPORTANT
+            //marker number position listener
+            ActualMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    // TODO Auto-generated method stub
+                    if(marker.equals(marker)){
+                        Log.d("TEST", "test" + marker.getId());
+                        marker.showInfoWindow();
+                        return true;
+                    }
+
+                    return false;
+                }
+            });
         }
     }
 
@@ -191,8 +222,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                             locationCurr = (Location) task.getResult();
                             mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
 
-                            Log.d("TEST", "Error getting documents: " + locationCurr.getLatitude() + locationCurr.getLongitude());
-
+                            // ADDED CODE IMPORTANT
                             // Creates active driver document with driver name, location and blank serving rider needed later
                             // needed to be here because it breaks otherwise IDK
                             DBCreateActiveDriver.activateDriver(driver, locationCurr.getLatitude(), locationCurr.getLongitude(), "");
