@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
                                         }
 
                                         intent.putExtra("username", username.getText().toString());
+                                        intent.putExtra("username", username.getText().toString());
+
                                         startActivity(intent);
                                     } else {
                                         usernameBox.setImageResource(R.drawable.rounded_rectangle_red);

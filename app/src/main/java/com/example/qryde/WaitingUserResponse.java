@@ -2,14 +2,24 @@ package com.example.qryde;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class WaitingUserResponse extends AppCompatActivity {
 
@@ -21,9 +31,8 @@ public class WaitingUserResponse extends AppCompatActivity {
     TextView tvStartLocation;
     TextView tvEndLocation;
 
-    String stringEndLocation;
-    String stringStartLcation;
-
+    String user;
+    String riderPicked;
     Button cancelButton;
 
     @Override
@@ -37,12 +46,45 @@ public class WaitingUserResponse extends AppCompatActivity {
 
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
-            stringStartLcation = incomingData.getString("START_LOCATION");
-            stringEndLocation = incomingData.getString("END_LOCATION");
-
-            tvStartLocation.setText(stringStartLcation);
-            tvEndLocation.setText(stringEndLocation);
+            user = incomingData.getString("username");
+            riderPicked = incomingData.getString("rider");
         }
+
+        db = FirebaseFirestore.getInstance();
+        db.collection("AvailableRides")
+                .whereEqualTo("driver", user)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                tvStartLocation.setText(document.getData().get("startLocation").toString());
+                                tvEndLocation.setText(document.getData().get("endLocation").toString());
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+        db.collection("AvailableRides").document(riderPicked).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.d(TAG, "Listen failed.", e);
+                    return;
+                }
+
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    if (documentSnapshot.getData().get("status").toString().equals("true")) {
+                        Intent intent = new Intent(getApplicationContext(), RideInProgress.class);
+                        intent.putExtra("rider", user);
+
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

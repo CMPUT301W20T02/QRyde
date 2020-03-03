@@ -34,6 +34,7 @@ public class DriverMainMap extends AppCompatActivity {
     EditText startLocationEditText;
     EditText endLocationEditText;
     FirebaseFirestore db;
+    String user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,11 @@ public class DriverMainMap extends AppCompatActivity {
 
 
         AvailableRide[] AvailableRideList = {};
+
+        Bundle incomingData = getIntent().getExtras();
+        if (incomingData != null) {
+            user = incomingData.getString("username");
+        }
 
         dataList = new ArrayList<>();
         dataList.addAll(Arrays.asList(AvailableRideList));
@@ -78,8 +84,8 @@ public class DriverMainMap extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), WaitingUserResponse.class);
-                intent.putExtra("START_LOCATION", dataList.get(position).getStartLocation());
-                intent.putExtra("END_LOCATION", dataList.get(position).getEndLocation());
+                intent.putExtra("rider", dataList.get(position).getRiderUsername());
+                intent.putExtra("username", user);
                 startActivity(intent);
                 return true;
             }
