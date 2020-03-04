@@ -12,9 +12,20 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MapsActivity"
-        />
+        android:layout_height="713dp"
+        tools:context=".MapsActivity" />
+
+    <Button
+        android:id="@+id/current_location_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="302dp"
+        android:layout_marginRight="302dp"
+        android:layout_marginBottom="159dp"
+        android:text="Current Location"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -30,8 +41,7 @@
             android:id="@+id/autocomplete_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-            />
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"/>
 
     </RelativeLayout>
 
@@ -51,5 +61,49 @@
             android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"/>
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="-1dp"
+        android:layout_marginBottom="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="-1dp"
+        android:layout_above="@+id/cost"/>
+
+    <TextView
+        android:id="@+id/cost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginEnd="-416dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="30dp"
+        android:layout_toStartOf="@+id/time"
+        android:layout_toLeftOf="@+id/time" />
+
+    <TextView
+        android:id="@+id/distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/time"
+        android:layout_below="@id/MapRelative"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="-1dp"
+        android:layout_marginLeft="-1dp"
+        android:layout_marginTop="670dp"
+        android:layout_marginBottom="90dp" />
+
+
 
 </RelativeLayout>

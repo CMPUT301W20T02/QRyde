@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,6 +47,10 @@ import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,6 +67,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Place startPos, endPos;
     private Polyline polyline;
 
+    private TextView distanceView;
+    private TextView durationView;
+    private TextView costView;
+
+    private Button updateCurrentLocation;
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,14 +87,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragmentdest = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragmentdes);
 
+        distanceView = findViewById(R.id.distance);
+        durationView = findViewById(R.id.time);
+        costView = findViewById(R.id.cost);
+
+        updateCurrentLocation = findViewById(R.id.current_location_button);
+
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
         autocompleteSupportFragmentdest.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
 
-        autocompleteSupportFragment.setCountries("CA", "US"); // sets for now the location for autocomplete
+        autocompleteSupportFragment.setCountries("CA"); // sets for now the location for autocomplete
         autocompleteSupportFragmentdest.setHint("Enter a Destination");
-        autocompleteSupportFragmentdest.setCountries("CA", "US"); //sets for now the location for autocomplete
-//        PlacesClient placesClient = Places.createClient(this);
+        autocompleteSupportFragmentdest.setCountries("CA"); //sets for now the location for autocomplete
 
+        updateCurrentLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateLocationUI();
+            }
+        });
+
+//        PlacesClient placesClient = Places.createClient(this);
         getLocationPermission();
     }
 
@@ -247,6 +272,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void calculateDirections() {
         Log.d("Directions", "calculateDirections: calculating directions.");
+        double cost = 0.0;
 
         if (polyline !=null) { //removes a poly line if exists
             polyline.remove();
@@ -272,7 +298,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Log.d("Directions", "calculateDirections: duration: " + result.routes[0].legs[0].duration);
                 Log.d("Directions", "calculateDirections: distance: " + result.routes[0].legs[0].distance);
                 Log.d("Directions", "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
+
                 addPolylinesToMap(result);
+
+                double seconds = (double) result.routes[0].legs[0].duration.inSeconds;
+                double minutes = roundUp(seconds/60, 1);
+
+                double kilometres = result.routes[0].legs[0].distance.inMeters;
+                kilometres = roundUp(kilometres/1000, 2);
+
+                double cost = costCalculator(minutes, kilometres);
+                cost = roundUp(cost, 2);
+
+                distanceView.setText(String.format("Distance: %s km", kilometres));
+                durationView.setText(String.format("Time: %s minutes", minutes));
+                costView.setText(String.format("Cost: $%s", cost));
+
+
             }
 
             @Override
@@ -318,6 +360,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 600,
                 null
         );
+    }
+
+    public double costCalculator(double minutes, double distance)
+    {
+        double baseCost = 2.00;
+        double minimumFare = 4.00;
+
+        double perKm = 0.85;
+        double perMinute = 0.25;
+
+        return (baseCost + minimumFare + (minutes*perMinute) + (distance*perKm));
+    }
+
+    public double roundUp(double number, int precision)
+    {
+        BigDecimal bd = new BigDecimal(number).setScale(precision, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }
 
