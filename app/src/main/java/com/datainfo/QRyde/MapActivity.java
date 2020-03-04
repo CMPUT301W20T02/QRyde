@@ -55,9 +55,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    //initialization of variables
     private Boolean LocationPermission = false;
     private GoogleMap ActualMap;
     private Location locationCurr;
@@ -82,6 +84,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
         }
+
+        //Finding views from layout files
         autocompleteSupportFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         autocompleteSupportFragmentdest = (AutocompleteSupportFragment)
@@ -96,24 +100,29 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
         autocompleteSupportFragmentdest.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
 
+        //initializing countries to search from and adding hints to the search bar
         autocompleteSupportFragment.setCountries("CA"); // sets for now the location for autocomplete
         autocompleteSupportFragmentdest.setHint("Enter a Destination");
         autocompleteSupportFragmentdest.setCountries("CA"); //sets for now the location for autocomplete
 
+        //button to focus back on current location from anything else entered
         updateCurrentLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateLocationUI();
+                DeviceLocation();
             }
         });
 
-//        PlacesClient placesClient = Places.createClient(this);
+        //Getting permission to access location from the user
         getLocationPermission();
     }
 
+    //converting a location to an address
     private String getCompleteAddressString(Location location) {
         String returnedAddress = "";
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        //catching for null locations
         try {
             List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             if (addresses != null) {
@@ -125,7 +134,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return returnedAddress;
     }
 
-    private void MapInit() { //creates map fragment
+    //creates map fragment
+    private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(MapActivity.this);
@@ -136,8 +146,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
+    //getting permissions to access location of the device from the user
+    //if permission is granted current user location is accessed
     private void getLocationPermission() {
-        //checks for location permissions on phone
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
         if(ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             if(ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
@@ -151,9 +162,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
+    //requests the location permissions
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //requests the location permissions
         LocationPermission = false;
         if (requestCode == 1515) {
             for (int grantResult : grantResults) {
@@ -167,6 +178,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
+    //getting the google map ready once location is permitted
     @Override
     public void onMapReady(GoogleMap googleMap) {
         ActualMap = googleMap;
@@ -178,6 +190,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
+    //getting the current GPS location of the user and setting that as the current location
     private void DeviceLocation() {
         FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try {
@@ -201,11 +214,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    private void mapMove(LatLng latLng, float zoom) { //method for map camera movement
+    //allows the user to move through the map and adjust zoom
+    private void mapMove(LatLng latLng, float zoom) {
+        //method for map camera movement
         ActualMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
-    private void updateLocationUI() { //shows the blue dot. 
+    //shows the blue dot on the map as the current GPs location of the user
+    private void updateLocationUI() {
         if (ActualMap == null) {
             return;
         }
@@ -222,11 +238,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 getLocationPermission();
             }
         } catch (SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage());
+            Log.e("Exception: %s", Objects.requireNonNull(e.getMessage()));
         }
     }
-    private void searchInit() {
 
+    //searching for a location to route to using the autocomplete API methods provided by Google
+    private void searchInit() {
         autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
@@ -247,7 +264,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
-        autocompleteSupportFragment.getView().findViewById(R.id.places_autocomplete_clear_button).setOnClickListener(v -> {
+        //clearing the user input in the autocomplete search fragment when clicked on
+        Objects.requireNonNull(autocompleteSupportFragment.getView()).findViewById(R.id.places_autocomplete_clear_button).setOnClickListener(v -> {
             startPos = null;
             autocompleteSupportFragment.setText("");
             if (endPos != null) {
@@ -255,6 +273,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
+        //routing from the addresses provided in the fragments on click
         autocompleteSupportFragmentdest.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
@@ -262,6 +281,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 calculateDirections();
             }
 
+            //error on failure to route
             @Override
             public void onError(@NonNull Status status) {
                 Log.i("AutoComplete", "An error occurred: " + status);
@@ -270,9 +290,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
+    //method to add the best possible route from one point entered to another
     private void calculateDirections() {
         Log.d("Directions", "calculateDirections: calculating directions.");
-        double cost = 0.0;
 
         if (polyline !=null) { //removes a poly line if exists
             polyline.remove();
@@ -299,6 +319,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Log.d("Directions", "calculateDirections: distance: " + result.routes[0].legs[0].distance);
                 Log.d("Directions", "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
 
+                //adding the route calculated to the map
                 addPolylinesToMap(result);
 
                 double seconds = (double) result.routes[0].legs[0].duration.inSeconds;
@@ -310,13 +331,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 double cost = costCalculator(minutes, kilometres);
                 cost = roundUp(cost, 2);
 
+                //displaying the variables calculated onto the activity
                 distanceView.setText(String.format("Distance: %s km", kilometres));
                 durationView.setText(String.format("Time: %s minutes", minutes));
                 costView.setText(String.format("Cost: $%s", cost));
-
-
             }
 
+            //throwing an error on failure to route
             @Override
             public void onFailure(Throwable e) {
                 //Toast.makeText(MapActivity.this, "Invalid Route", Toast.LENGTH_SHORT).show();
@@ -326,25 +347,32 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
+    //adding the route polylines to the map
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void addPolylinesToMap(final DirectionsResult result){ //draws the polylines
-        new Handler(Looper.getMainLooper()).post(() -> { // for main thread
+    private void addPolylinesToMap(final DirectionsResult result){
+        // for main thread
+        new Handler(Looper.getMainLooper()).post(() -> {
+
             //getting best route only, so only one route
             List<com.google.maps.model.LatLng> decodedPath = PolylineEncoding.decode(result.routes[0].overviewPolyline.getEncodedPath());
             List<LatLng> newDecodedPath = new ArrayList<>();
-            for(com.google.maps.model.LatLng latLng: decodedPath){ //for loop goes through several lat/log to make the route. Array holds several lat/longs
+
+            //for loop goes through several lat/log to make the route. Array holds several lat/longs
+            for(com.google.maps.model.LatLng latLng: decodedPath){
                 newDecodedPath.add(new LatLng(latLng.lat, latLng.lng));
             }
             Log.d("addPolylinesToMap", "run: leg: " + decodedPath.get(0).toString());
+
             polyline = ActualMap.addPolyline(new PolylineOptions()
                     .addAll(newDecodedPath)
                     .color(getColor(R.color.QrydeB)));
-            //Polyline polyline = ActualMap.addPolyline(new PolylineOptions().add(new LatLng(result.routes[0].legs[0].endLocation.lat, result.routes[0].legs[0].endLocation.lng )));//.addAll(newDecodedPath));
-            //polyline.setClickable(true);
+
             polylineZoom(polyline.getPoints());
         });
     }
-    public void polylineZoom(List<LatLng> lstLatLngRoute) { //this is for animating camera to zoom out or in to the route size
+
+    //this is for animating camera to zoom out or in to the route size
+    public void polylineZoom(List<LatLng> lstLatLngRoute) {
 
         if (ActualMap == null || lstLatLngRoute == null || lstLatLngRoute.isEmpty()) return;
 
@@ -362,6 +390,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         );
     }
 
+    //calculating the cost for a ride using time and distance
     public double costCalculator(double minutes, double distance)
     {
         double baseCost = 2.00;
@@ -373,6 +402,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return (baseCost + minimumFare + (minutes*perMinute) + (distance*perKm));
     }
 
+    //rounding up decimal numbers to a precision point
     public double roundUp(double number, int precision)
     {
         BigDecimal bd = new BigDecimal(number).setScale(precision, RoundingMode.HALF_UP);
