@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,7 +19,9 @@ public class RideComplete extends AppCompatActivity {
     String user;
     String riderPicked;
     Button ScanButton;
-    int amount;
+    float amountOffered;
+    String amountOfferedString;
+    TextView amountOfferedTv;
 
 
     @Override
@@ -27,10 +30,18 @@ public class RideComplete extends AppCompatActivity {
         setContentView(R.layout.activity_ride_complete);
         Bundle incomingData = getIntent().getExtras();
         ScanButton = findViewById(R.id.scan_qr_button);
+        amountOfferedTv = findViewById(R.id.qr_amount_text);
+
+
         if (incomingData != null) {
             user = incomingData.getString("username");
             riderPicked = incomingData.getString("rider");
+            amountOffered = incomingData.getFloat("amount");
         }
+
+        amountOfferedString = "$"+amountOffered;
+        amountOfferedTv.setText(amountOfferedString);
+
         ScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

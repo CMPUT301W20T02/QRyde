@@ -25,7 +25,7 @@ public class RideInProgress extends AppCompatActivity {
     FirebaseFirestore db;
     String user;
     String riderPicked;
-    int amount;
+    float amountOffered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +35,12 @@ public class RideInProgress extends AppCompatActivity {
         if (incomingData != null) {
             user = incomingData.getString("username");
             riderPicked = incomingData.getString("rider");
+            amountOffered = incomingData.getFloat("amount");
         }
 
-        db.collection("ActiveRides").document(riderPicked).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        db = FirebaseFirestore.getInstance();
+
+        db.collection("AvailableRides").document(riderPicked).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -50,6 +53,7 @@ public class RideInProgress extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(), RideComplete.class);
                         intent.putExtra("rider", riderPicked);
                         intent.putExtra("user", user);
+                        intent.putExtra("amount", amountOffered);
                         startActivity(intent);
                     }
                 }

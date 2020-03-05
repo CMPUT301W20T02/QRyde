@@ -27,6 +27,7 @@
         <activity android:name=".SelectLocation" />
         <activity android:name=".AvailableRide" />
         <activity android:name=".AvailableRideAdapter" />
+        <activity android:name=".RideComplete" />
         <activity android:name=".DriverMainMap" />
         <activity android:name=".OnFragmentInteractionListener" />
         <activity android:name=".RideCompleteFragment" />

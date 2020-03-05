@@ -33,6 +33,7 @@ public class WaitingUserResponse extends AppCompatActivity {
 
     String user;
     String riderPicked;
+    float amountOffered;
     Button cancelButton;
 
     @Override
@@ -48,6 +49,7 @@ public class WaitingUserResponse extends AppCompatActivity {
         if (incomingData != null) {
             user = incomingData.getString("username");
             riderPicked = incomingData.getString("rider");
+            amountOffered = incomingData.getFloat("amount");
         }
 
         db = FirebaseFirestore.getInstance();
@@ -77,10 +79,11 @@ public class WaitingUserResponse extends AppCompatActivity {
 
                 if (documentSnapshot != null && documentSnapshot.exists()) {
                     if (documentSnapshot.getData().get("status").toString().equals("true")) {
+                        Log.d(TAG, "xd.", e);
                         Intent intent = new Intent(getApplicationContext(), RideInProgress.class);
                         intent.putExtra("rider", riderPicked);
                         intent.putExtra("user", user);
-
+                        intent.putExtra("amount", amountOffered);
                         startActivity(intent);
                     }
                 }
