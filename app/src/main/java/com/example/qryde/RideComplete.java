@@ -2,20 +2,12 @@ package com.example.qryde;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 public class RideComplete extends AppCompatActivity {
 
@@ -25,6 +17,8 @@ public class RideComplete extends AppCompatActivity {
     FirebaseFirestore db;
     String user;
     String riderPicked;
+    Button ScanButton;
+    int amount;
 
 
     @Override
@@ -32,10 +26,19 @@ public class RideComplete extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ride_complete);
         Bundle incomingData = getIntent().getExtras();
+        ScanButton = findViewById(R.id.scan_qr_button);
         if (incomingData != null) {
             user = incomingData.getString("username");
             riderPicked = incomingData.getString("rider");
         }
+        ScanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ScanQRCode.class);
+                intent.putExtra("username", user);
+                startActivity(intent);
+            }
+        });
     }
 
 }

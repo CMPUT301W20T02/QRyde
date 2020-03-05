@@ -62,7 +62,7 @@
 
 
     <Button
-        android:id="@+id/scan_qr_bucks"
+        android:id="@+id/scan_qr_button"
         android:layout_width="159dp"
         android:layout_height="61dp"
         android:layout_marginStart="124dp"

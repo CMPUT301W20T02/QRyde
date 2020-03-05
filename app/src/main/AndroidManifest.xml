@@ -31,7 +31,7 @@
         <activity android:name=".OnFragmentInteractionListener" />
         <activity android:name=".RideCompleteFragment" />
         <activity android:name=".RideInProgress" />
-        <activity android:name=".ScanQrcode" />
+        <activity android:name=".ScanQRCode" />
         <activity android:name=".WaitingUserResponse" />
         <activity android:name=".ConfirmAmount" />
     </application>

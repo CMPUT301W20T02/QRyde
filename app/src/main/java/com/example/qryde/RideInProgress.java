@@ -46,7 +46,7 @@ public class RideInProgress extends AppCompatActivity {
                 }
 
                 if (documentSnapshot != null && documentSnapshot.exists()) {
-                    if (documentSnapshot.getData().get("status").toString().equals("false")) {
+                    if (documentSnapshot.getData().get("status").toString().equals("true")) {
                         Intent intent = new Intent(getApplicationContext(), RideComplete.class);
                         intent.putExtra("rider", riderPicked);
                         intent.putExtra("user", user);
