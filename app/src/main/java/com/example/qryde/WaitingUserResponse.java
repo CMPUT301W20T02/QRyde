@@ -78,7 +78,8 @@ public class WaitingUserResponse extends AppCompatActivity {
                 if (documentSnapshot != null && documentSnapshot.exists()) {
                     if (documentSnapshot.getData().get("status").toString().equals("true")) {
                         Intent intent = new Intent(getApplicationContext(), RideInProgress.class);
-                        intent.putExtra("rider", user);
+                        intent.putExtra("rider", riderPicked);
+                        intent.putExtra("user", user);
 
                         startActivity(intent);
                     }
