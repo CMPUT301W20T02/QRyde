@@ -68,12 +68,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private GeoApiContext geoApiContext = null; //for directions api
     private Place startPos, endPos;
     private Polyline polyline;
+    private View mapView;
 
     private TextView distanceView;
     private TextView durationView;
     private TextView costView;
-
-    private Button updateCurrentLocation;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -95,28 +94,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         durationView = findViewById(R.id.time);
         costView = findViewById(R.id.cost);
 
-        updateCurrentLocation = findViewById(R.id.current_location_button);
-
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
         autocompleteSupportFragmentdest.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
 
         //initializing countries to search from and adding hints to the search bar
         autocompleteSupportFragment.setCountries("CA"); // sets for now the location for autocomplete
+        autocompleteSupportFragment.setHint("Current Location");
         autocompleteSupportFragmentdest.setHint("Enter a Destination");
         autocompleteSupportFragmentdest.setCountries("CA"); //sets for now the location for autocomplete
-
-        //button to focus back on current location from anything else entered
-        updateCurrentLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DeviceLocation();
-            }
-        });
 
         //Getting permission to access location from the user
         getLocationPermission();
     }
-
     //converting a location to an address
     private String getCompleteAddressString(Location location) {
         String returnedAddress = "";
@@ -138,6 +127,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        mapView = mapFragment.getView();
         mapFragment.getMapAsync(MapActivity.this);
         if (geoApiContext == null) {
             geoApiContext = new GeoApiContext.Builder()
@@ -181,6 +171,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     //getting the google map ready once location is permitted
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        googleMap.setPadding(0,310,0,0);
         ActualMap = googleMap;
         if (LocationPermission) {
             updateLocationUI();
@@ -188,6 +179,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             searchInit();
 
         }
+
     }
 
     //getting the current GPS location of the user and setting that as the current location
@@ -214,10 +206,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    //allows the user to move through the map and adjust zoom
     private void mapMove(LatLng latLng, float zoom) {
         //method for map camera movement
-        ActualMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom), 600, null);
     }
 
     //shows the blue dot on the map as the current GPs location of the user
@@ -228,9 +219,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         try {
             if (LocationPermission) {
                 ActualMap.setMyLocationEnabled(true);
+                View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+                locationButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (polyline !=null) polyline.remove();
+                        startPos = null;
+                        calculateDirections();
+                    }
+                });
+
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(true);
                 ActualMap.getUiSettings().setZoomControlsEnabled(true);
-                ActualMap.getUiSettings().setCompassEnabled(true);
             } else {
                 ActualMap.setMyLocationEnabled(false);
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -270,6 +270,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             autocompleteSupportFragment.setText("");
             if (endPos != null) {
                 calculateDirections();
+            }
+        });
+        autocompleteSupportFragmentdest.getView().findViewById(R.id.places_autocomplete_clear_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                polyline.remove();
+                endPos = null;
+                if (startPos == null) {
+                    mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
+                    autocompleteSupportFragmentdest.setText("");
+                }
+                else {
+                    mapMove(startPos.getLatLng(),15f);
+                    autocompleteSupportFragmentdest.setText("");
+                }
+
             }
         });
 
