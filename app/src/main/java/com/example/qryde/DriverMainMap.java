@@ -86,6 +86,7 @@ public class DriverMainMap extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), WaitingUserResponse.class);
                 intent.putExtra("rider", dataList.get(position).getRiderUsername());
                 intent.putExtra("username", user);
+                intent.putExtra("amount", dataList.get(position).getAmountOffered());
                 startActivity(intent);
                 return true;
             }
