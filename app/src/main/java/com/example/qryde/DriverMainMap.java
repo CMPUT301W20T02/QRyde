@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
@@ -28,6 +30,8 @@ import java.util.Arrays;
 import static java.lang.Float.parseFloat;
 
 public class DriverMainMap extends AppCompatActivity {
+
+    String TAG = "DriverMainMap";
 
     AvailableRideAdapter rideAdapter;
     ArrayList<AvailableRide> dataList;
@@ -87,6 +91,39 @@ public class DriverMainMap extends AppCompatActivity {
                 intent.putExtra("rider", dataList.get(position).getRiderUsername());
                 intent.putExtra("username", user);
                 intent.putExtra("amount", dataList.get(position).getAmountOffered());
+
+                // updating firebase
+                db.collection("AvailableRides").document(dataList.get(position).getRiderUsername())
+                        .update("driver", user)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "onSuccess: Successfully updated document");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "onFailure: Failed to updated document");
+                            }
+                        });
+                db.collection("AvailableRides").document(dataList.get(position).getRiderUsername())
+                        .update("status", true)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "onSuccess: Successfully updated document");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "onFailure: Failed to updated document");
+                            }
+                        });
+
+
+
                 startActivity(intent);
                 return true;
             }
