@@ -106,6 +106,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         //Getting permission to access location from the user
         getLocationPermission();
     }
+
     //converting a location to an address
     private String getCompleteAddressString(Location location) {
         String returnedAddress = "";
@@ -177,9 +178,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             updateLocationUI();
             DeviceLocation();
             searchInit();
-
         }
-
     }
 
     //getting the current GPS location of the user and setting that as the current location
@@ -357,9 +356,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             //throwing an error on failure to route
             @Override
             public void onFailure(Throwable e) {
-                //Toast.makeText(MapActivity.this, "Invalid Route", Toast.LENGTH_SHORT).show();
                 Log.e("Directions", "calculateDirections: Failed to get directions: " + e.getMessage());
-
             }
         });
     }

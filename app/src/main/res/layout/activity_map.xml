@@ -12,55 +12,8 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="713dp"
+        android:layout_height="match_parent"
         tools:context=".MapsActivity" />
-
-<!--    <Button-->
-<!--        android:id="@+id/current_location_button"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentEnd="true"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_marginEnd="302dp"-->
-<!--        android:layout_marginRight="302dp"-->
-<!--        android:layout_marginBottom="159dp"-->
-<!--        android:text="Current Location"/>-->
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:elevation="10dp"
-        android:background="@drawable/border"
-        android:id="@+id/MapRelative">
-
-        <fragment
-            android:id="@+id/autocomplete_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="70dp"
-        android:elevation="10dp"
-        android:background="@drawable/border">
-
-        <fragment
-            android:id="@+id/autocomplete_fragmentdes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"/>
-
-    </RelativeLayout>
 
     <TextView
         android:id="@+id/time"
@@ -105,5 +58,39 @@
         android:layout_marginBottom="90dp" />
 
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:elevation="10dp"
+        android:background="@drawable/border"
+        android:id="@+id/MapRelative">
+
+        <fragment
+            android:id="@+id/autocomplete_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="70dp"
+        android:elevation="10dp"
+        android:background="@drawable/border">
+
+        <fragment
+            android:id="@+id/autocomplete_fragmentdes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>
