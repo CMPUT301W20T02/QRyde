@@ -225,6 +225,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     public void onClick(View v) {
                         if (polyline !=null) polyline.remove();
                         startPos = null;
+                        autocompleteSupportFragment.setText(String.format("%s", getCompleteAddressString(locationCurr)));
                         calculateDirections();
                     }
                 });
