@@ -345,97 +345,60 @@ public class afterRequestCreated extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // get all of the information from AvailableRides to migrate to ActiveRides
-                if (confirm.getText().toString().equals("confirm")) {
-                    db.collection("AvailableRides")
-                            .whereEqualTo("rider", user)
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                            String old_amount = document.getData().get("amount").toString();
-                                            String old_datetime = document.getData().get("datetime").toString();
-                                            String old_driverName = document.getData().get("driver").toString();
-                                            String old_endLocation = document.getData().get("endLocation").toString();
-                                            String old_startLocation = document.getData().get("startLocation").toString();
-                                            String old_rider = document.getData().get("rider").toString();
+                db.collection("AvailableRides")
+                        .whereEqualTo("rider", user)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        String old_amount = document.getData().get("amount").toString();
+                                        String old_datetime = document.getData().get("datetime").toString();
+                                        String old_driverName = document.getData().get("driver").toString();
+                                        String old_endLocation = document.getData().get("endLocation").toString();
+                                        String old_startLocation = document.getData().get("startLocation").toString();
+                                        String old_rider = document.getData().get("rider").toString();
 
-                                            Map<String, Object> data = new HashMap<>();
-                                            data.put("amount", Float.parseFloat(old_amount));
-                                            data.put("datetime", old_datetime);
-                                            data.put("driver", old_driverName);
-                                            data.put("endLocation", old_endLocation);
-                                            data.put("startLocation", old_startLocation);
-                                            data.put("rider", old_rider);
-                                            data.put("status", false);
-                                            db.collection("ActiveRides").document(user).set(data);
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("amount", Float.parseFloat(old_amount));
+                                        data.put("datetime", old_datetime);
+                                        data.put("driver", old_driverName);
+                                        data.put("endLocation", old_endLocation);
+                                        data.put("startLocation", old_startLocation);
+                                        data.put("rider", old_rider);
+                                        data.put("status", false);
+                                        db.collection("ActiveRides").document(user).set(data);
 
-                                            amount = Float.parseFloat(old_amount);
+                                        amount = Float.parseFloat(old_amount);
 
-                                            // now change the text to ride in progress
-                                            findingBoxAnimationDown.start();
-                                            findingTextAnimationDown.start();
-                                            driverNameAnimationDown.start();
-                                            driverRatingAnimationDown.start();
-                                            cancelAnimationDown.start();
-                                            confirmAnimationDown.start();
-
-
-                                            findingText.setText("Ride is currently in progress");
-                                            cancel.setText("Cancel");
-                                            confirm.setText("Ride Complete");
-
-                                            isCancelDriver = false;
-
-                                            findingBoxAnimationUp.start();
-                                            findingTextAnimationUp.start();
-                                            driverNameAnimationUp.start();
-                                            driverRatingAnimationUp.start();
-                                            cancelAnimationUp.start();
-                                            confirmAnimationUp.start();
-
-                                            // delete the document in AvailableRides
-                                            db.collection("AvailableRides").document(user)
-                                                    .delete()
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            Log.d(TAG, "onSuccess: Successfully deleted document");
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Log.d(TAG, "onFailure: Failed to delete document");
-                                                        }
-                                                    });
+                                        // now change the text to ride in progress
+                                        findingBoxAnimationDown.start();
+                                        findingTextAnimationDown.start();
+                                        driverNameAnimationDown.start();
+                                        driverRatingAnimationDown.start();
+                                        cancelAnimationDown.start();
+                                        confirmAnimationDown.start();
 
 
+                                        findingText.setText("Ride is currently in progress");
+                                        cancel.setText("Cancel");
 
-                                        }
-                                    } else {
-                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                        isCancelDriver = false;
+
+                                        findingBoxAnimationUp.start();
+                                        findingTextAnimationUp.start();
+                                        driverNameAnimationUp.start();
+                                        driverRatingAnimationUp.start();
+                                        cancelAnimationUp.start();
+
+
                                     }
+                                } else {
+                                    Log.d(TAG, "Error getting documents: ", task.getException());
                                 }
-                            });
-                } else if (confirm.getText().toString().equals("Ride Complete")) {
-                    db.collection("ActiveRides").document(user)
-                            .update("status", true)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "onSuccess: Successfully deleted document");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d(TAG, "onFailure: Failed to delete document");
-                                }
-                            });
-
-                }
+                            }
+                        });
 
 
             }
