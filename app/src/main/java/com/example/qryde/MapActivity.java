@@ -47,6 +47,7 @@ import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -178,6 +179,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             updateLocationUI();
             DeviceLocation();
             searchInit();
+
+            // adds destination marker and sets locationend latitude longitude, sets destination text
+            ActualMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng point) {
+                    Location tempEndLocation = new Location("");
+                    tempEndLocation.setLatitude(point.latitude);
+                    tempEndLocation.setLongitude(point.longitude);
+                    autocompleteSupportFragmentdest.setText(String.format("%s", getCompleteAddressString((tempEndLocation))));
+                }
+            });
         }
     }
 
@@ -422,4 +434,5 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         BigDecimal bd = new BigDecimal(number).setScale(precision, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
+
 }
