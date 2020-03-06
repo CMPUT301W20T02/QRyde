@@ -30,6 +30,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -187,6 +188,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     Location tempEndLocation = new Location("");
                     tempEndLocation.setLatitude(point.latitude);
                     tempEndLocation.setLongitude(point.longitude);
+                    ActualMap.clear();
+                    ActualMap.addMarker(new MarkerOptions().position(point));
                     autocompleteSupportFragmentdest.setText(String.format("%s", getCompleteAddressString((tempEndLocation))));
                 }
             });
