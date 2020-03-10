@@ -1,4 +1,4 @@
-package com.datainfo.QRyde;
+package com.example.qryde;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;

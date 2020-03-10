@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                                         Intent intent;
 
                                         if (isDriver == "false") {
-                                            intent = new Intent(getApplicationContext(), userMainMap.class);
+                                            intent = new Intent(getApplicationContext(), MapActivity.class);
                                         } else {
                                             intent = new Intent(getApplicationContext(), DriverMainMap.class);
                                         }
