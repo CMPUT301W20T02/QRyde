@@ -4,52 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".afterRequestCreated">
+    tools:context=".afterRequestCreated"
+    android:theme="@style/Theme.AppCompat.Dialog.Alert">
 
-    <ImageView
-        android:id="@+id/mapBackground"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/edmonton_map" />
-
-    <ImageView
-        android:id="@+id/hamburger_menu"
-        android:layout_width="29dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/hamburger_icon" />
-
-    <ImageView
-        android:id="@+id/startLocationBox"
-        android:layout_width="323dp"
-        android:layout_height="45dp"
-        android:alpha="0.7"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hamburger_menu"
-        app:srcCompat="@drawable/rounded_rectangle" />
-
-    <ImageView
-        android:id="@+id/endLocationBox"
-        android:layout_width="323dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="16dp"
-        android:alpha="0.7"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startLocationBox"
-        app:srcCompat="@drawable/rounded_rectangle" />
 
     <ImageView
         android:id="@+id/findingDriverBox"
@@ -81,33 +38,6 @@
         app:layout_constraintStart_toStartOf="@+id/findingDriverBox"
         app:layout_constraintTop_toTopOf="@+id/findingDriverBox" />
 
-    <TextView
-        android:id="@+id/startLocationText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="@+id/startLocationBox"
-        app:layout_constraintEnd_toEndOf="@+id/startLocationBox"
-        app:layout_constraintStart_toStartOf="@+id/startLocationBox"
-        app:layout_constraintTop_toTopOf="@+id/startLocationBox" />
-
-    <TextView
-        android:id="@+id/endLocationText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="@+id/endLocationBox"
-        app:layout_constraintEnd_toEndOf="@+id/endLocationBox"
-        app:layout_constraintStart_toStartOf="@+id/endLocationBox"
-        app:layout_constraintTop_toTopOf="@+id/endLocationBox" />
 
     <TextView
         android:id="@+id/driverName"
@@ -156,7 +86,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.50364965" />
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

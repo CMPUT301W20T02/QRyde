@@ -58,6 +58,26 @@
         android:layout_marginBottom="90dp" />
 
 
+    <ImageView
+        android:id="@+id/qryde_logo"
+        android:layout_width="312dp"
+        android:layout_height="172dp"
+        app:srcCompat="@drawable/qryde_logo"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/request_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Request"
+        android:textSize="20sp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="120dp"
+        android:layout_centerHorizontal="true"
+        />
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"

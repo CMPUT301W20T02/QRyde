@@ -10,7 +10,8 @@
     app:umanoDragView="@id/drag_view"
     app:umanoScrollableView="@id/list_view"
     app:umanoPanelHeight="150dp"
-    android:gravity="bottom">
+    android:gravity="bottom"
+    >
 
     <RelativeLayout
         android:layout_width="match_parent"

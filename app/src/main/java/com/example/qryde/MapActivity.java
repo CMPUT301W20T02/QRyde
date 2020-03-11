@@ -1,4 +1,5 @@
 package com.example.qryde;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -11,7 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,12 +34,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.maps.DirectionsApiRequest;
@@ -46,12 +45,9 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.PendingResult;
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
-import com.google.maps.model.DirectionsRoute;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -74,6 +70,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private TextView distanceView;
     private TextView durationView;
     private TextView costView;
+
+    Location latlngtotempEndLocation = new Location("");
+
+    private String user;
+    private String pickupName;
+    private String destinationName;
+    private ImageView logo;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -106,6 +109,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         //Getting permission to access location from the user
         getLocationPermission();
+
+        // Getting username from logon activity
+        Bundle incomingData = getIntent().getExtras();
+        if (incomingData != null) {
+            user = incomingData.getString("username");
+        }
+
+        logo = findViewById(R.id.qryde_logo);
+        logo.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(pickupName != "" && destinationName != "") {
+                    Intent intent = new Intent(getApplicationContext(), ConfirmAmount.class);
+                    intent.putExtra("username", user);
+                    intent.putExtra("pickup", pickupName);
+                    intent.putExtra("destination", destinationName);
+                    startActivity(intent);
+                }
+            }
+        });
+
     }
 
     //converting a location to an address
@@ -182,13 +206,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             // adds destination marker and sets location end latitude longitude, sets destination text
             ActualMap.setOnMapClickListener(point -> {
-                Location tempEndLocation = new Location("");
-                tempEndLocation.setLatitude(point.latitude);
-                tempEndLocation.setLongitude(point.longitude);
+                latlngtotempEndLocation.setLatitude(point.latitude);
+                latlngtotempEndLocation.setLongitude(point.longitude);
                 ActualMap.clear();
                 ActualMap.addMarker(new MarkerOptions().position(point));
-                autocompleteSupportFragmentdest.setText(String.format("%s", getCompleteAddressString((tempEndLocation))));
+                autocompleteSupportFragmentdest.setText(String.format("%s", getCompleteAddressString((latlngtotempEndLocation))));
+                destinationName = getCompleteAddressString(latlngtotempEndLocation);
             });
+
         }
     }
 
@@ -201,8 +226,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 locationResult.addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         locationCurr = (Location) task.getResult();
+                        Log.d("test", "TESTING PICKUPNAME22" + getCompleteAddressString(locationCurr));
                         autocompleteSupportFragment.setText(String.format("%s", getCompleteAddressString((Location) task.getResult())));
                         mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
+                        pickupName = getCompleteAddressString(locationCurr);
 
                     } else {
                         mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude), 15f);

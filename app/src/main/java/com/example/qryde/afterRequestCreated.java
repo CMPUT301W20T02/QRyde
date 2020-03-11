@@ -142,8 +142,8 @@ public class afterRequestCreated extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                startLocation.setText(document.getData().get("startLocation").toString());
-                                endLocation.setText(document.getData().get("endLocation").toString());
+//                                startLocation.setText(document.getData().get("startLocation").toString());
+//                                endLocation.setText(document.getData().get("endLocation").toString());
 
                             }
                         } else {

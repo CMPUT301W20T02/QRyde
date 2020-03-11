@@ -2,6 +2,8 @@ package com.example.qryde;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,6 +11,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DateFormat;
@@ -26,13 +31,11 @@ public class ConfirmAmount extends AppCompatActivity {
     EditText amount;
     Button confirmButton;
     Button cancelButton;
-
-    TextView start;
-    TextView end;
+//
+//    TextView start;
+//    TextView end;
 
     String user;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +48,20 @@ public class ConfirmAmount extends AppCompatActivity {
         confirmButton = (Button) findViewById(R.id.confirm);
         cancelButton = (Button) findViewById(R.id.cancel);
 
-        start = findViewById(R.id.startLocationText);
-        end = findViewById(R.id.endLocationText);
+//        start = findViewById(R.id.startLocationText);
+//        end = findViewById(R.id.endLocationText);
 
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
             user = incomingData.getString("username");
         }
+
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+        getWindow().setLayout(width, (height/9)*4);
+        getWindow().setGravity(Gravity.BOTTOM);
 
         dateformat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
@@ -60,8 +70,9 @@ public class ConfirmAmount extends AppCompatActivity {
         final String destinationName = intent.getStringExtra("destination");
 
         summarytext.setText("The suggested Price is 20 QRbucks");
-        start.setText(pickupName);
-        end.setText(destinationName);
+        summarytext.bringToFront();
+//        start.setText(pickupName);
+//        end.setText(destinationName);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
