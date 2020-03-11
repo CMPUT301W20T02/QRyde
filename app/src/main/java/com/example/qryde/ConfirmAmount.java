@@ -34,6 +34,7 @@ public class ConfirmAmount extends AppCompatActivity {
 //
 //    TextView start;
 //    TextView end;
+    float amount_value = 0;
 
     String user;
 
@@ -71,6 +72,7 @@ public class ConfirmAmount extends AppCompatActivity {
 
         summarytext.setText("The suggested Price is 20 QRbucks");
         summarytext.bringToFront();
+        amount.setText("");
 //        start.setText(pickupName);
 //        end.setText(destinationName);
         confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -78,9 +80,10 @@ public class ConfirmAmount extends AppCompatActivity {
             public void onClick(View v) {
                 Date date = new Date();
                 Boolean status = false;
-                float amount_value = Float.valueOf(amount.getText().toString());
+
                 HashMap<String, Object> data = new HashMap<>();
                 if(amount.getText().toString().length() > 0){
+                    amount_value = Float.valueOf(amount.getText().toString());
                     data.put("amount", amount_value);
                     data.put("datetime", dateformat.format(date));
                     data.put("driver", "");
@@ -103,8 +106,6 @@ public class ConfirmAmount extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent2 = new Intent(getApplicationContext(), SelectLocation.class);
-                startActivity(intent2);
                 finish();
             }
         });
