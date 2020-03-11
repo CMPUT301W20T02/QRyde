@@ -71,7 +71,6 @@ public class ConfirmAmount extends AppCompatActivity {
         final String destinationName = intent.getStringExtra("destination");
 
         summarytext.setText("The suggested Price is 20 QRbucks");
-        summarytext.bringToFront();
         amount.setText("");
 //        start.setText(pickupName);
 //        end.setText(destinationName);

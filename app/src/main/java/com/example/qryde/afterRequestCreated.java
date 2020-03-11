@@ -3,7 +3,9 @@ package com.example.qryde;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -69,6 +71,7 @@ public class afterRequestCreated extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +89,13 @@ public class afterRequestCreated extends AppCompatActivity {
 
         confirm = findViewById(R.id.confirm);
         cancel = findViewById(R.id.cancel);
+
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+        getWindow().setLayout(width, (height/9)*4);
+        getWindow().setGravity(Gravity.BOTTOM);
 
         findingBoxAnimationDown = ObjectAnimator.ofFloat(findingBox, "translationY", 1000f);
         findingBoxAnimationDown.setDuration(animationDuration);
@@ -187,7 +197,7 @@ public class afterRequestCreated extends AppCompatActivity {
                                                                         driverName.setText(document.getData().get("name").toString());
                                                                         driverRating.setText(document.getData().get("thumbsUp").toString() + " | " + document.getData().get("thumbsDown").toString());
                                                                         findingText.setText("Driver found!");
-                                                                        cancel.setText(" DECLINE DRIVER ");
+                                                                        cancel.setText(" DECLINE ");
 
                                                                         isCancelDriver = true;
 

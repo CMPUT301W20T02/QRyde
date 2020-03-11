@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-
         username = findViewById(R.id.username_edittext);
         password = findViewById(R.id.password_edittext);
         signup = findViewById(R.id.SignupClick);
