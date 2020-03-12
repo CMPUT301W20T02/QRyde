@@ -20,18 +20,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class MainActivity extends AppCompatActivity {
 
-    String TAG = "MainActivity";
+    private String TAG = "MainActivity";
 
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
-    EditText username;
-    EditText password;
-    TextView signup;
-    Button login;
-    ImageView usernameBox;
-    ImageView passwordBox;
-    TextView incorrect;
-
+    private EditText username;
+    private EditText password;
+    private TextView signup;
+    private Button login;
+    private ImageView usernameBox;
+    private ImageView passwordBox;
+    private TextView incorrect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         db = FirebaseFirestore.getInstance();
-
 
         username = findViewById(R.id.username_edittext);
         password = findViewById(R.id.password_edittext);
@@ -49,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
         passwordBox = findViewById(R.id.passwordBox);
         incorrect = findViewById(R.id.incorrect);
 
+        loginButton();
+        signUpButton();
+    }
+
+    private void loginButton() {
         login.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                                         Intent intent;
 
                                         if (isDriver == "false") {
-                                            intent = new Intent(getApplicationContext(), userMainMap.class);
+                                            intent = new Intent(getApplicationContext(), MapActivity.class);
                                         } else {
                                             intent = new Intent(getApplicationContext(), DriverMainMap.class);
                                         }
@@ -87,13 +90,14 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 } else {
                                     Log.d(TAG, "onComplete: failed to execute query");
-
                                 }
                             }
                         });
             }
         });
+    }
 
+    private void signUpButton() {
         signup.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,10 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
-
-
-
 
 }

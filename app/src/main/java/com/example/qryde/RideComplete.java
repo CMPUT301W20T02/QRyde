@@ -12,16 +12,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class RideComplete extends AppCompatActivity {
 
-    String TAG = "RideInProgress";
+    private String TAG = "RideInProgress";
 
-
-    FirebaseFirestore db;
-    String user;
-    String riderPicked;
-    Button ScanButton;
-    float amountOffered;
-    String amountOfferedString;
-    TextView amountOfferedTv;
+    private FirebaseFirestore db;
+    private String user;
+    private String riderPicked;
+    private Button ScanButton;
+    private float amountOffered;
+    private String amountOfferedString;
+    private TextView amountOfferedTv;
 
 
     @Override
