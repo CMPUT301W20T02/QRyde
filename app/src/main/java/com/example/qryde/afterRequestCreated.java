@@ -154,10 +154,10 @@ public class afterRequestCreated extends AppCompatActivity {
         declineDriverButton();
         cancelButton();
         confirmButton();
-        activeRiderConverter();
+        activeRideConverter();
     }
 
-    private void activeRiderConverter() {
+    private void activeRideConverter() {
         // listening for when activeRideRequest is changed to true
         db.collection("ActiveRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
