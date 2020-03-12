@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView passwordBox;
     private TextView incorrect;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
         passwordBox = findViewById(R.id.passwordBox);
         incorrect = findViewById(R.id.incorrect);
 
+        loginButton();
+        signUpButton();
+    }
+
+    private void loginButton() {
         login.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,13 +90,14 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 } else {
                                     Log.d(TAG, "onComplete: failed to execute query");
-
                                 }
                             }
                         });
             }
         });
+    }
 
+    private void signUpButton() {
         signup.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,10 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
-
-
-
 
 }

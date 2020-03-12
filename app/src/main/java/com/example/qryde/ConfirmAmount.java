@@ -35,6 +35,8 @@ public class ConfirmAmount extends AppCompatActivity {
     private float amount_value = 0;
 
     private String user;
+    private String pickupName;
+    private String destinationName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,31 +49,18 @@ public class ConfirmAmount extends AppCompatActivity {
         confirmButton = (Button) findViewById(R.id.confirm);
         cancelButton = (Button) findViewById(R.id.cancel);
 
-//        start = findViewById(R.id.startLocationText);
-//        end = findViewById(R.id.endLocationText);
-
-        Bundle incomingData = getIntent().getExtras();
-        if (incomingData != null) {
-            user = incomingData.getString("username");
-        }
-
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
-        getWindow().setLayout(width, (height/9)*4);
-        getWindow().setGravity(Gravity.BOTTOM);
+        setWindowSize();
+        getRideInfo();
 
         dateformat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-
-        Intent intent = getIntent();
-        final String pickupName = intent.getStringExtra("pickup");
-        final String destinationName = intent.getStringExtra("destination");
-
         summarytext.setText("The suggested Price is 20 QRbucks");
         amount.setText("");
-//        start.setText(pickupName);
-//        end.setText(destinationName);
+
+        confirmButton();
+        cancelButton();
+    }
+
+    private void confirmButton() {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,19 +83,36 @@ public class ConfirmAmount extends AppCompatActivity {
                     intent3.putExtra("username", user);
                     startActivity(intent3);
                     finish();
-
-
                 }
             }
         });
+    }
 
+    private void cancelButton() {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+    }
 
+    private void setWindowSize() {
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+        getWindow().setLayout(width, (height/9)*4);
+        getWindow().setGravity(Gravity.BOTTOM);
+    }
 
+    public void getRideInfo() {
+        Bundle incomingData = getIntent().getExtras();
+        if (incomingData != null) {
+            user = incomingData.getString("username");
+        }
+        Intent intent = getIntent();
+        pickupName = intent.getStringExtra("pickup");
+        destinationName = intent.getStringExtra("destination");
     }
 }
