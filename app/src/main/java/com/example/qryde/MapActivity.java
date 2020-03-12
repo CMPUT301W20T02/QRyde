@@ -72,6 +72,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private TextView costView;
 
     Location latlngtotempEndLocation = new Location("");
+    Location endPostotempEndLocation = new Location("");
 
     private String user;
     private String pickupName;
@@ -334,6 +335,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onPlaceSelected(@NonNull Place place) {
                 endPos = place;
+                endPos.getLatLng();
+                endPostotempEndLocation.setLatitude(endPos.getLatLng().latitude);
+                endPostotempEndLocation.setLongitude(endPos.getLatLng().longitude);
+                destinationName = getCompleteAddressString(latlngtotempEndLocation);
                 calculateDirections();
             }
 
@@ -356,6 +361,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
                 endPos.getLatLng().latitude,
                 endPos.getLatLng().longitude
+
         );
         DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
 
