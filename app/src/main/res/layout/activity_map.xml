@@ -60,11 +60,11 @@
 
     <ImageView
         android:id="@+id/qryde_logo"
-        android:layout_width="308dp"
-        android:layout_height="160dp"
+        android:layout_width="312dp"
+        android:layout_height="172dp"
+        app:srcCompat="@drawable/qryde_logo"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        app:srcCompat="@drawable/qryde_logo" />
+        android:layout_centerHorizontal="true"/>
 
     <TextView
         android:id="@+id/request_text"
