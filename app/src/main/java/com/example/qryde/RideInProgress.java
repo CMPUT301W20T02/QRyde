@@ -19,12 +19,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class RideInProgress extends AppCompatActivity {
 
-    String TAG = "RideInProgress";
+    private String TAG = "RideInProgress";
 
-
-    FirebaseFirestore db;
-    String user;
-    String riderPicked;
+    private FirebaseFirestore db;
+    private String user;
+    private String riderPicked;
     float amountOffered;
 
     @Override

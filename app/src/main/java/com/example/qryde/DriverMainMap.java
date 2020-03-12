@@ -50,14 +50,14 @@ import static java.lang.Float.parseFloat;
 
 public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallback{
 
-    String TAG = "DriverMainMap";
+    private String TAG = "DriverMainMap";
 
-    AvailableRideAdapter rideAdapter;
-    ArrayList<AvailableRide> dataList;
-    EditText startLocationEditText;
-    EditText endLocationEditText;
-    FirebaseFirestore db;
-    String user;
+    private AvailableRideAdapter rideAdapter;
+    private ArrayList<AvailableRide> dataList;
+    private EditText startLocationEditText;
+    private EditText endLocationEditText;
+    private FirebaseFirestore db;
+    private String user;
 
     private Boolean LocationPermission = false;
     private GoogleMap ActualMap;

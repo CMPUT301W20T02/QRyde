@@ -10,9 +10,9 @@ import android.widget.ImageView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class userMainMap extends AppCompatActivity {
-    FirebaseFirestore db;
-    String user;
-    ImageView logo;
+    private FirebaseFirestore db;
+    private String user;
+    private ImageView logo;
 
 
     @Override

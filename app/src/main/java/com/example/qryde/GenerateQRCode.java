@@ -8,11 +8,11 @@ import android.widget.ImageView;
 
 public class GenerateQRCode extends AppCompatActivity {
 
-    String TAG = "GenerateQRCode";
+    private String TAG = "GenerateQRCode";
 
-    ImageView imageView;
-    String driver;
-    String rider;
+    private ImageView imageView;
+    private String driver;
+    private String rider;
     float amount;
 
     @Override

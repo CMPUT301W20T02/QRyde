@@ -12,17 +12,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SelectLocation extends AppCompatActivity {
 
-    String TAG = "SelectLocation";
+    private String TAG = "SelectLocation";
 
+    private FirebaseFirestore db;
 
-    FirebaseFirestore db;
+    private EditText pickupLocation;
+    private EditText destination;
+    private Button confirmButton;
+    private Button cancelButton;
 
-    EditText pickupLocation;
-    EditText destination;
-    Button confirmButton;
-    Button cancelButton;
-
-    String user;
+    private String user;
 
 
     @Override

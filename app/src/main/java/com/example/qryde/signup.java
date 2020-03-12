@@ -24,17 +24,17 @@ import java.util.Map;
 
 public class signup extends AppCompatActivity {
 
-    String TAG = "Signup";
+    private String TAG = "Signup";
 
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
-    EditText username;
-    EditText email;
-    EditText password;
-    EditText reenterPassword;
-    Button signupButton;
-    TextView error;
-    Switch userType;
+    private EditText username;
+    private EditText email;
+    private EditText password;
+    private EditText reenterPassword;
+    private Button signupButton;
+    private TextView error;
+    private Switch userType;
     EditText name;
     EditText phoneNumber;
 

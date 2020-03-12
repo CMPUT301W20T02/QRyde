@@ -23,20 +23,18 @@ import java.util.HashMap;
 
 public class ConfirmAmount extends AppCompatActivity {
 
-    DateFormat dateformat;
+    private DateFormat dateformat;
 
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
-    TextView summarytext;
-    EditText amount;
-    Button confirmButton;
-    Button cancelButton;
-//
-//    TextView start;
-//    TextView end;
-    float amount_value = 0;
+    private TextView summarytext;
+    private EditText amount;
+    private Button confirmButton;
+    private Button cancelButton;
 
-    String user;
+    private float amount_value = 0;
+
+    private String user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

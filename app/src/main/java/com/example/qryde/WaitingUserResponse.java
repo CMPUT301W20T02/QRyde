@@ -23,18 +23,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class WaitingUserResponse extends AppCompatActivity {
 
-    String TAG = "WaitingUserResponse";
+    private String TAG = "WaitingUserResponse";
 
+    private FirebaseFirestore db;
 
-    FirebaseFirestore db;
+    private TextView tvStartLocation;
+    private TextView tvEndLocation;
 
-    TextView tvStartLocation;
-    TextView tvEndLocation;
-
-    String user;
-    String riderPicked;
+    private String user;
+    private String riderPicked;
     float amountOffered;
-    Button cancelButton;
+    private Button cancelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

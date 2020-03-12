@@ -20,17 +20,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class MainActivity extends AppCompatActivity {
 
-    String TAG = "MainActivity";
+    private String TAG = "MainActivity";
 
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
-    EditText username;
-    EditText password;
-    TextView signup;
-    Button login;
-    ImageView usernameBox;
-    ImageView passwordBox;
-    TextView incorrect;
+    private EditText username;
+    private EditText password;
+    private TextView signup;
+    private Button login;
+    private ImageView usernameBox;
+    private ImageView passwordBox;
+    private TextView incorrect;
 
 
     @Override

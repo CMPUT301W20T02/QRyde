@@ -203,18 +203,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             updateLocationUI();
             DeviceLocation();
             searchInit();
-
-            // adds destination marker and sets location end latitude longitude, sets destination text
-            ActualMap.setOnMapClickListener(point -> {
-                latlngtotempEndLocation.setLatitude(point.latitude);
-                latlngtotempEndLocation.setLongitude(point.longitude);
-                ActualMap.clear();
-                ActualMap.addMarker(new MarkerOptions().position(point));
-                autocompleteSupportFragmentdest.setText(String.format("%s", getCompleteAddressString((latlngtotempEndLocation))));
-                destinationName = getCompleteAddressString(latlngtotempEndLocation);
-            });
-
+            mapClicker();
         }
+    }
+
+    // adds destination marker and sets location end latitude longitude, sets destination text
+    private void mapClicker() {
+        ActualMap.setOnMapClickListener(point -> {
+            latlngtotempEndLocation.setLatitude(point.latitude);
+            latlngtotempEndLocation.setLongitude(point.longitude);
+            ActualMap.clear();
+            ActualMap.addMarker(new MarkerOptions().position(point));
+            autocompleteSupportFragmentdest.setText(String.format("%s", getCompleteAddressString((latlngtotempEndLocation))));
+            destinationName = getCompleteAddressString(latlngtotempEndLocation);
+        });
     }
 
     //getting the current GPS location of the user and setting that as the current location

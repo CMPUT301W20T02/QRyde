@@ -31,29 +31,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class afterRequestCreated extends AppCompatActivity {
-    String TAG = "temp";
-    FirebaseFirestore db;
+    private String TAG = "temp";
+    private FirebaseFirestore db;
 
-    TextView startLocation;
-    TextView endLocation;
-    String user;
+    private TextView startLocation;
+    private TextView endLocation;
+    private String user;
 
-    ImageView findingBox;
-    TextView findingText;
+    private ImageView findingBox;
+    private TextView findingText;
 
-    ImageView driverFoundBox;
-    TextView driverName;
-    TextView driverRating;
+    private ImageView driverFoundBox;
+    private TextView driverName;
+    private TextView driverRating;
 
-    Button confirm;
-    Button cancel;
-    float amount;
+    private Button confirm;
+    private Button cancel;
+    private float amount;
 
-    boolean isCancelDriver = false;
+    private boolean isCancelDriver = false;
 
-    String driver;
+    private String driver;
 
-    int animationDuration = 100;
+    private int animationDuration = 100;
 
     ObjectAnimator findingBoxAnimationDown;
     ObjectAnimator findingTextAnimationDown;
