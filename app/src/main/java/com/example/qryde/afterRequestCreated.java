@@ -69,9 +69,6 @@ public class afterRequestCreated extends AppCompatActivity {
     ObjectAnimator confirmAnimationUp;
     ObjectAnimator cancelAnimationUp;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,13 +86,6 @@ public class afterRequestCreated extends AppCompatActivity {
 
         confirm = findViewById(R.id.confirm);
         cancel = findViewById(R.id.cancel);
-
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
-        getWindow().setLayout(width, (height/9)*4);
-        getWindow().setGravity(Gravity.BOTTOM);
 
         findingBoxAnimationDown = ObjectAnimator.ofFloat(findingBox, "translationY", 1000f);
         findingBoxAnimationDown.setDuration(animationDuration);
@@ -135,33 +125,65 @@ public class afterRequestCreated extends AppCompatActivity {
 
         confirmAnimationDown.start();
 
-
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
             user = incomingData.getString("username");
         }
 
-
         db = FirebaseFirestore.getInstance();
 
-        db.collection("AvailableRides")
-                .whereEqualTo("rider", user)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-//                                startLocation.setText(document.getData().get("startLocation").toString());
-//                                endLocation.setText(document.getData().get("endLocation").toString());
+//        db.collection("AvailableRides")
+//                .whereEqualTo("rider", user)
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+////                                startLocation.setText(document.getData().get("startLocation").toString());
+////                                endLocation.setText(document.getData().get("endLocation").toString());
+//
+//                            }
+//                        } else {
+//                            Log.d(TAG, "Error getting documents: ", task.getException());
+//                        }
+//                    }
+//                });
+        setWindowSize();
+        rideStatusListener();
+        declineDriverButton();
+        cancelButton();
+        confirmButton();
+        activeRiderConverter();
+    }
 
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
+    private void activeRiderConverter() {
+        // listening for when activeRideRequest is changed to true
+        db.collection("ActiveRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.d(TAG, "Listen failed.", e);
+                    return;
+                }
+
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    if (documentSnapshot.getData().get("status").toString().equals("true")) {
+                        Intent intent = new Intent(getApplicationContext(), GenerateQRCode.class);
+                        intent.putExtra("rider", user);
+                        intent.putExtra("driver", driverName.getText().toString());
+                        intent.putExtra("amount", amount);
+
+                        startActivity(intent);
+
+
                     }
-                });
+                }
+            }
+        });
+    }
 
+    private void rideStatusListener() {
         db.collection("AvailableRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
@@ -228,7 +250,9 @@ public class afterRequestCreated extends AppCompatActivity {
                 }
             }
         });
+    }
 
+    private void declineDriverButton() {
         View.OnClickListener declineDriverOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -265,8 +289,11 @@ public class afterRequestCreated extends AppCompatActivity {
 
             }
         };
+    }
 
-        View.OnClickListener cancelOnClickListener = new View.OnClickListener() {
+    private void cancelButton() {
+//        View.OnClickListener cancelOnClickListener = new View.OnClickListener() {
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -322,9 +349,6 @@ public class afterRequestCreated extends AppCompatActivity {
                                                     driverRatingAnimationUp.start();
                                                     cancelAnimationUp.start();
 
-
-
-
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
@@ -344,13 +368,11 @@ public class afterRequestCreated extends AppCompatActivity {
 
                 }
 
-
-
             }
-        };
+        });
+    }
 
-        cancel.setOnClickListener(cancelOnClickListener);
-
+    private void confirmButton() {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -421,8 +443,6 @@ public class afterRequestCreated extends AppCompatActivity {
                                                         }
                                                     });
 
-
-
                                         }
                                     } else {
                                         Log.d(TAG, "Error getting documents: ", task.getException());
@@ -447,36 +467,17 @@ public class afterRequestCreated extends AppCompatActivity {
 
                 }
 
-
             }
         });
-
-
-        // listening for when activeRideRequest is changed to true
-        db.collection("ActiveRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.d(TAG, "Listen failed.", e);
-                    return;
-                }
-
-                if (documentSnapshot != null && documentSnapshot.exists()) {
-                    if (documentSnapshot.getData().get("status").toString().equals("true")) {
-                        Intent intent = new Intent(getApplicationContext(), GenerateQRCode.class);
-                        intent.putExtra("rider", user);
-                        intent.putExtra("driver", driverName.getText().toString());
-                        intent.putExtra("amount", amount);
-
-                        startActivity(intent);
-
-
-                    }
-                }
-            }
-        });
-
     }
 
+    private void setWindowSize() {
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+        getWindow().setLayout(width, (height/9)*4);
+        getWindow().setGravity(Gravity.BOTTOM);
+    }
 
 }

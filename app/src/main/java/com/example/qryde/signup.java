@@ -56,6 +56,10 @@ public class signup extends AppCompatActivity {
         name = findViewById(R.id.name_edittext);
         phoneNumber = findViewById(R.id.phone_edittext);
 
+        signUpButton();
+    }
+
+    private void signUpButton() {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

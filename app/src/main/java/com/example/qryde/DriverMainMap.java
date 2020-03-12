@@ -17,9 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -55,7 +53,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private AvailableRideAdapter rideAdapter;
     private ArrayList<AvailableRide> dataList;
     private FirebaseFirestore db;
-    private String user;
+    private String driver;
 
     private Boolean LocationPermission = false;
     private GoogleMap ActualMap;
@@ -77,7 +75,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
-            user = incomingData.getString("username");
+            driver = incomingData.getString("username");
         }
 
         dataList = new ArrayList<>();
@@ -86,37 +84,24 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         availableRideListView.setAdapter(rideAdapter);
 
         final CollectionReference collectionReference = db.collection("AvailableRides");
-
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e){
-                dataList.clear();;
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    AvailableRide temp = new AvailableRide(doc.getData().get("rider").toString(),
-                            doc.getData().get("startLocation").toString(),
-                            doc.getData().get("endLocation").toString(),
-                            parseFloat(doc.getData().get("amount").toString()),
-                            1.3f);
-                    dataList.add(temp);
-                    getRideMarkers(temp);
-                    rideAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-
+        getRides(collectionReference);
 
         final SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
+        slidingPanel(slidingUpPanelLayout, availableRideListView);
+    }
+
+    private void slidingPanel(SlidingUpPanelLayout slidingUpPanelLayout, ListView availableRideListView) {
         availableRideListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), WaitingUserResponse.class);
                 intent.putExtra("rider", dataList.get(position).getRiderUsername());
-                intent.putExtra("username", user);
+                intent.putExtra("username", driver);
                 intent.putExtra("amount", dataList.get(position).getAmountOffered());
 
                 // updating firebase
                 db.collection("AvailableRides").document(dataList.get(position).getRiderUsername())
-                        .update("driver", user)
+                        .update("driver", driver)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
@@ -149,7 +134,25 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             }
 
         });
+    }
 
+    private void getRides(CollectionReference collectionReference) {
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e){
+                dataList.clear();;
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    AvailableRide temp = new AvailableRide(doc.getData().get("rider").toString(),
+                            doc.getData().get("startLocation").toString(),
+                            doc.getData().get("endLocation").toString(),
+                            parseFloat(doc.getData().get("amount").toString()),
+                            1.3f);
+                    dataList.add(temp);
+                    getRideMarkers(temp);
+                    rideAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     private void getRideMarkers(AvailableRide ride) {
@@ -164,7 +167,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         // moving to next object, next marker
         markernumber++;
     }
-    
+
     //creates map fragment
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
