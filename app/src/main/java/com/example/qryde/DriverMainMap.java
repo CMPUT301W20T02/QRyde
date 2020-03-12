@@ -54,8 +54,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
     private AvailableRideAdapter rideAdapter;
     private ArrayList<AvailableRide> dataList;
-    private EditText startLocationEditText;
-    private EditText endLocationEditText;
     private FirebaseFirestore db;
     private String user;
 
@@ -64,7 +62,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Location locationCurr;
     private final LatLng EarthDefaultLocation = new LatLng(0, 0); //just center of earth
-    private String driver;
     private Integer markernumber = 0;
 
     @Override
@@ -76,7 +73,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
         final ListView availableRideListView = findViewById(R.id.list_view);
 
-
         AvailableRide[] AvailableRideList = {};
 
         Bundle incomingData = getIntent().getExtras();
@@ -86,9 +82,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
         dataList = new ArrayList<>();
         dataList.addAll(Arrays.asList(AvailableRideList));
-
         rideAdapter = new AvailableRideAdapter(this, dataList);
-
         availableRideListView.setAdapter(rideAdapter);
 
         final CollectionReference collectionReference = db.collection("AvailableRides");
@@ -104,21 +98,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                             parseFloat(doc.getData().get("amount").toString()),
                             1.3f);
                     dataList.add(temp);
-
-                    // creating marker from temp object lat/long
-                    LatLng tempLatLng;
-                    tempLatLng = getLocationFromAddress(DriverMainMap.this, temp.getStartLocation());
-
-                    // adding marker to show on map
-                    Marker marker = ActualMap.addMarker(new MarkerOptions().position(tempLatLng).title(
-                            temp.getRiderUsername() + markernumber));
-
-                    // setting integer id for each marker and temp object
-                    marker.setTag(markernumber);
-
-                    // moving to next object, next marker
-                    markernumber++;
-
+                    getRideMarkers(temp);
                     rideAdapter.notifyDataSetChanged();
                 }
             }
@@ -170,8 +150,21 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
         });
 
-
     }
+
+    private void getRideMarkers(AvailableRide ride) {
+        // creating marker from temp object lat/long
+        LatLng tempLatLng;
+        tempLatLng = getLocationFromAddress(DriverMainMap.this, ride.getStartLocation());
+        // adding marker to show on map
+        Marker marker = ActualMap.addMarker(new MarkerOptions().position(tempLatLng).title(
+                ride.getRiderUsername() + markernumber));
+        // setting integer id for each marker and temp object
+        marker.setTag(markernumber);
+        // moving to next object, next marker
+        markernumber++;
+    }
+    
     //creates map fragment
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -218,23 +211,24 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         if (LocationPermission) {
             updateLocationUI();
             DeviceLocation();
-
-            // ADDED CODE IMPORTANT
-            //marker click position listener
-            ActualMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    // TODO Auto-generated method stub
-                    if(marker.equals(marker)){
-                        Log.d("TEST", "test" + marker.getId());
-                        marker.showInfoWindow();
-                        return true;
-                    }
-
-                    return false;
-                }
-            });
+            markerClick();
         }
+    }
+
+    //marker click position listener
+    private void markerClick() {
+        ActualMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                // TODO Auto-generated method stub
+                if(marker.equals(marker)){
+                    Log.d("TEST", "test" + marker.getId());
+                    marker.showInfoWindow();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void DeviceLocation() {

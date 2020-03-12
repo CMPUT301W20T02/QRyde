@@ -35,8 +35,8 @@ public class signup extends AppCompatActivity {
     private Button signupButton;
     private TextView error;
     private Switch userType;
-    EditText name;
-    EditText phoneNumber;
+    private EditText name;
+    private EditText phoneNumber;
 
 
     @Override
