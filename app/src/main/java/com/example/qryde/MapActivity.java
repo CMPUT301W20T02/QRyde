@@ -76,6 +76,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String user;
     private String pickupName;
     private String destinationName;
+    private ImageView logo;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -115,16 +116,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             user = incomingData.getString("username");
         }
 
-        ImageView logo = findViewById(R.id.qryde_logo);
-        logo.setOnClickListener(v -> {
-            if(!pickupName.equals("") && !destinationName.equals("")) {
-                Intent intent = new Intent(getApplicationContext(), ConfirmAmount.class);
-                intent.putExtra("username", user);
-                intent.putExtra("pickup", pickupName);
-                intent.putExtra("destination", destinationName);
-                startActivity(intent);
+        logo = findViewById(R.id.qryde_logo);
+        logo.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(pickupName != "" && destinationName != "") {
+                    Intent intent = new Intent(getApplicationContext(), ConfirmAmount.class);
+                    intent.putExtra("username", user);
+                    intent.putExtra("pickup", pickupName);
+                    intent.putExtra("destination", destinationName);
+                    startActivity(intent);
+                }
             }
         });
+
     }
 
     //converting a location to an address
@@ -148,7 +153,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        assert mapFragment != null;
         mapView = mapFragment.getView();
         mapFragment.getMapAsync(MapActivity.this);
         if (geoApiContext == null) {
@@ -226,24 +230,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         locationCurr = (Location) task.getResult();
                         Log.d("test", "TESTING PICKUPNAME22" + getCompleteAddressString(locationCurr));
                         autocompleteSupportFragment.setText(String.format("%s", getCompleteAddressString((Location) task.getResult())));
-                        mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
+                        mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
                         pickupName = getCompleteAddressString(locationCurr);
 
                     } else {
-                        mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude));
+                        mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude), 15f);
                         Toast.makeText(MapActivity.this, "Could not find your location.", Toast.LENGTH_SHORT).show();
                         ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
                     }
                 });
             }
         }catch (SecurityException e) {
-            Log.e("Exception: %s", Objects.requireNonNull(e.getMessage()));
+            Log.e("Exception: %s", e.getMessage());
         }
     }
 
-    private void mapMove(LatLng latLng) {
+    private void mapMove(LatLng latLng, float zoom) {
         //method for map camera movement
-        ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, (float) 15.0), 600, null);
+        ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom), 600, null);
     }
 
     //shows the blue dot on the map as the current GPs location of the user
@@ -287,7 +291,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Log.i("AutoComplete", "Place: " + place.getName() + ", " + place.getId() + place.getLatLng());
 
                 startPos = place;
-                mapMove(place.getLatLng());
+                mapMove(place.getLatLng(),15f);
                 if (endPos != null) {
                     calculateDirections();
                 }
@@ -308,18 +312,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 calculateDirections();
             }
         });
-        Objects.requireNonNull(autocompleteSupportFragmentdest.getView()).findViewById(R.id.places_autocomplete_clear_button).setOnClickListener(v -> {
-            polyline.remove();
-            endPos = null;
-            if (startPos == null) {
-                mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
-                autocompleteSupportFragmentdest.setText("");
-            }
-            else {
-                mapMove(startPos.getLatLng());
-                autocompleteSupportFragmentdest.setText("");
-            }
+        autocompleteSupportFragmentdest.getView().findViewById(R.id.places_autocomplete_clear_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                polyline.remove();
+                endPos = null;
+                if (startPos == null) {
+                    mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
+                    autocompleteSupportFragmentdest.setText("");
+                }
+                else {
+                    mapMove(startPos.getLatLng(),15f);
+                    autocompleteSupportFragmentdest.setText("");
+                }
 
+            }
         });
 
         //routing from the addresses provided in the fragments on click
@@ -347,7 +354,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             polyline.remove();
         }
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
-                Objects.requireNonNull(endPos.getLatLng()).latitude,
+                endPos.getLatLng().latitude,
                 endPos.getLatLng().longitude
         );
         DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
@@ -355,7 +362,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (startPos == null) {
             directions.origin(new com.google.maps.model.LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
         } else {
-            directions.origin(new com.google.maps.model.LatLng(Objects.requireNonNull(startPos.getLatLng()).latitude,startPos.getLatLng().longitude));
+            directions.origin(new com.google.maps.model.LatLng(startPos.getLatLng().latitude,startPos.getLatLng().longitude));
         }
 
         Log.d("Directions", "calculateDirections: destination: " + destination.toString());
