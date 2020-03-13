@@ -3,6 +3,7 @@ package com.example.qryde;
 import android.app.Activity;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -18,6 +19,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
+
 
 
 /**
@@ -47,7 +53,7 @@ public class MainActivityTest{
     @Test
     public void signupActivity() throws InterruptedException {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-//        solo.clickOnButton("Login");
+
         solo.clickOnText("Signup");
         solo.assertCurrentActivity("Wrong Activity", signup.class);
         solo.enterText((EditText) solo.getView(R.id.name_edittext), "Test User's Name");
@@ -94,5 +100,22 @@ public class MainActivityTest{
         solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
         solo.clickOnButton("Login");
         solo.assertCurrentActivity("Wrong Activity", MapActivity.class);
+    }
+
+    @Test
+    public void signupFail() throws InterruptedException {
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.username_edittext), "nonexistent");
+        solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
+        solo.clickOnButton("Login");
+
+        solo.sleep(2000);
+
+        TextView incorrect = (TextView) solo.getView(R.id.incorrect);
+
+        assertEquals("Incorrect Username or Password", incorrect.getText().toString());
+
+
+
     }
 }
