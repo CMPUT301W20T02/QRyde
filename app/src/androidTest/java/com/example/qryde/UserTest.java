@@ -190,11 +190,12 @@ public class UserTest {
                         Log.d(TAG, "onFailure: Failed to delete document");
                     }
                 });
-        solo.sleep(500);
+        solo.sleep(2000);
+
 
         solo.clickOnButton("confirm");
 
-        solo.sleep(2000);
+        solo.sleep(1000);
 
         // check that firebase updated successfully
         db.collection("ActiveRides")
