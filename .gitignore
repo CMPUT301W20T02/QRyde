@@ -75,3 +75,4 @@ lint/tmp/
 # lint/reports/
 
 *.mp4
+*.iml
