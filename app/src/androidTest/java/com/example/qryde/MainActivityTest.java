@@ -7,16 +7,13 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.robotium.solo.Solo;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 
 /**
@@ -58,8 +55,23 @@ public class MainActivityTest{
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
+    }
 
+    @Test
+    public void driverSignUpTest() throws InterruptedException{
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.username_edittext), "driver");
+        solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
+        solo.clickOnButton("LOGIN");
+        solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
+    }
 
-
+    @Test
+    public void riderSignUpTest() throws InterruptedException{
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.username_edittext), "bigtodd");
+        solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
+        solo.clickOnButton("LOGIN");
+        solo.assertCurrentActivity("Wrong Activity", userMainMap.class);
     }
 }
