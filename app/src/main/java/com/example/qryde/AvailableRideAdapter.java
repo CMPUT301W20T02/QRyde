@@ -14,13 +14,20 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * sets constructor for the available ride adapter and sets strings for the textviews in rideRequests
+ */
 public class AvailableRideAdapter extends ArrayAdapter<AvailableRide> {
 
     private Context mContext;
     private List<AvailableRide> dataList = new ArrayList<>();
 
-    //Constructor for the adapter
+    /**
+     * Constructor for the adapter
+     * @param context
+     * @param list
+     */
+
     public AvailableRideAdapter(@NonNull Context context, ArrayList<AvailableRide> list) {
         super(context, 0 , list);
         mContext = context;
@@ -30,7 +37,9 @@ public class AvailableRideAdapter extends ArrayAdapter<AvailableRide> {
     @NonNull
     @Override
 
-
+    /**
+     * gets textviews, builds new strings to display and sets the string to textviews to display
+     */
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View listItem = convertView;
 

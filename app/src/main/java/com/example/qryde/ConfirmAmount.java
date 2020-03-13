@@ -21,6 +21,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+/**
+ * function that contains the confirm and cancel buttons for the rider,
+ * if confirm is pressed it sends all info to firebase for the ride,
+ * cancel button finished activity
+ */
 public class ConfirmAmount extends AppCompatActivity {
 
     private DateFormat dateformat;
@@ -62,6 +67,11 @@ public class ConfirmAmount extends AppCompatActivity {
 
     private void confirmButton() {
         confirmButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * on click of the confirm button put data of the active ride into firebase,
+             * starts the afterRequestCreated activity
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 Date date = new Date();
@@ -90,6 +100,10 @@ public class ConfirmAmount extends AppCompatActivity {
 
     private void cancelButton() {
         cancelButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * when cancel button is clicked, finishes activity
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 finish();
@@ -106,6 +120,9 @@ public class ConfirmAmount extends AppCompatActivity {
         getWindow().setGravity(Gravity.BOTTOM);
     }
 
+    /**
+     * gets the rider username, pickup and destination
+     */
     public void getRideInfo() {
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {

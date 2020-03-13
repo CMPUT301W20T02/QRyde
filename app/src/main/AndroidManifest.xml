@@ -21,7 +21,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".GenerateQRCode"></activity>
-        <activity android:name=".userMainMap" />
         <activity android:name=".signup" />
         <activity android:name=".afterRequestCreated"
             android:theme="@style/AppTheme.CustomPopUpTheme"/>

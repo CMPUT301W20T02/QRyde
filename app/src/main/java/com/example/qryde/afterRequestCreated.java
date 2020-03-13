@@ -30,6 +30,10 @@ import java.io.ObjectStreamException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * class for functions after request has been created, includes cancel button, ride status listener,
+ * confirm button, decline driver button, and active ride converter, linked to firebase
+ */
 public class afterRequestCreated extends AppCompatActivity {
     private String TAG = "temp";
     private FirebaseFirestore db;
@@ -160,6 +164,11 @@ public class afterRequestCreated extends AppCompatActivity {
     private void activeRideConverter() {
         // listening for when activeRideRequest is changed to true
         db.collection("ActiveRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            /**
+             * when the ride is completed, set switch activity to generate a qrcode
+             * @param documentSnapshot
+             * @param e
+             */
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -183,8 +192,14 @@ public class afterRequestCreated extends AppCompatActivity {
         });
     }
 
+
     private void rideStatusListener() {
         db.collection("AvailableRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            /**
+             * Listener for the ride status
+             * @param documentSnapshot
+             * @param e
+             */
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -212,6 +227,10 @@ public class afterRequestCreated extends AppCompatActivity {
                                                 db.collection("Users").whereEqualTo("username", driver)
                                                         .get()
                                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                            /**
+                                                             * listener to when ride is complete
+                                                             * @param task
+                                                             */
                                                             @Override
                                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                                 if (task.isSuccessful()) {
@@ -254,6 +273,10 @@ public class afterRequestCreated extends AppCompatActivity {
 
     private void declineDriverButton() {
         View.OnClickListener declineDriverOnClickListener = new View.OnClickListener() {
+            /**
+             * when decline driver is pressed, update rider and driver in firebase accordingly
+             * @param v
+             */
             @Override
             public void onClick(View v) {
 
@@ -294,6 +317,11 @@ public class afterRequestCreated extends AppCompatActivity {
     private void cancelButton() {
 //        View.OnClickListener cancelOnClickListener = new View.OnClickListener() {
         cancel.setOnClickListener(new View.OnClickListener() {
+            /**
+             * when cancel button is pressed, updated firebase to cancel current driver,
+             * find a new driver as well afterward
+             * @param v
+             */
             @Override
             public void onClick(View v) {
 
@@ -374,6 +402,11 @@ public class afterRequestCreated extends AppCompatActivity {
 
     private void confirmButton() {
         confirm.setOnClickListener(new View.OnClickListener() {
+            /**
+             * on click for confirm button
+             * updates firebase accordingly to link rider and driver with the appropiate info for ride
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 // get all of the information from AvailableRides to migrate to ActiveRides
