@@ -1,18 +1,24 @@
 package com.example.qryde;
 
 
+import android.app.Activity;
 import android.app.Instrumentation;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 
-import com.robotium.solo.Solo;
-import androidx.test.rule.ActivityTestRule;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.rule.ActivityTestRule;
+import com.robotium.solo.Solo;
 
-import junit.extensions.ActiveTestSuite;
-
-
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 
 public class MainActivityTest {
     private Solo solo;
@@ -26,8 +32,31 @@ public class MainActivityTest {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
     }
 
+    @Test
+    public void start() throws Exception {
+        Activity activity = rule.getActivity();
+    }
+
+    @Test
+    public void checkActivity() throws InterruptedException {
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+//        solo.clickOnButton("Login");
+        solo.clickOnText("Signup");
+        solo.assertCurrentActivity("Wrong Activity", signup.class);
+        solo.enterText((EditText) solo.getView(R.id.name_edittext), "Test User's Name");
+        solo.enterText((EditText) solo.getView(R.id.phone_edittext), "12345678");
+        solo.enterText((EditText) solo.getView(R.id.), "testUsername");
 
 
 
 
-}
+    }
+
+
+
+
+
+
+
+
+    }
