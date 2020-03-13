@@ -83,7 +83,7 @@ public class MainActivityTest{
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.enterText((EditText) solo.getView(R.id.username_edittext), "driver");
         solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
-        solo.clickOnButton("LOGIN");
+        solo.clickOnButton("Login");
         solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
     }
 
@@ -92,7 +92,7 @@ public class MainActivityTest{
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.enterText((EditText) solo.getView(R.id.username_edittext), "bigtodd");
         solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
-        solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", userMainMap.class);
+        solo.clickOnButton("Login");
+        solo.assertCurrentActivity("Wrong Activity", MapActivity.class);
     }
 }
