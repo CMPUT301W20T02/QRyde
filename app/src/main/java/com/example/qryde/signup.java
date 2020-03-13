@@ -24,19 +24,19 @@ import java.util.Map;
 
 public class signup extends AppCompatActivity {
 
-    String TAG = "Signup";
+    private String TAG = "Signup";
 
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
-    EditText username;
-    EditText email;
-    EditText password;
-    EditText reenterPassword;
-    Button signupButton;
-    TextView error;
-    Switch userType;
-    EditText name;
-    EditText phoneNumber;
+    private EditText username;
+    private EditText email;
+    private EditText password;
+    private EditText reenterPassword;
+    private Button signupButton;
+    private TextView error;
+    private Switch userType;
+    private EditText name;
+    private EditText phoneNumber;
 
 
     @Override
@@ -56,6 +56,10 @@ public class signup extends AppCompatActivity {
         name = findViewById(R.id.name_edittext);
         phoneNumber = findViewById(R.id.phone_edittext);
 
+        signUpButton();
+    }
+
+    private void signUpButton() {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

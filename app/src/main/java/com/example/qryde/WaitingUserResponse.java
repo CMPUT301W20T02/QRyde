@@ -23,18 +23,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class WaitingUserResponse extends AppCompatActivity {
 
-    String TAG = "WaitingUserResponse";
+    private String TAG = "WaitingUserResponse";
 
+    private FirebaseFirestore db;
 
-    FirebaseFirestore db;
+    private TextView tvStartLocation;
+    private TextView tvEndLocation;
 
-    TextView tvStartLocation;
-    TextView tvEndLocation;
-
-    String user;
-    String riderPicked;
+    private String user;
+    private String riderPicked;
     float amountOffered;
-    Button cancelButton;
+    private Button cancelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +68,7 @@ public class WaitingUserResponse extends AppCompatActivity {
                         }
                     }
                 });
-        db.collection("AvailableRides").document(riderPicked).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        db.collection("ActiveRides").document(riderPicked).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -78,7 +77,7 @@ public class WaitingUserResponse extends AppCompatActivity {
                 }
 
                 if (documentSnapshot != null && documentSnapshot.exists()) {
-                    if (documentSnapshot.getData().get("status").toString().equals("true")) {
+                    if (documentSnapshot.getData().get("status").toString().equals("false")) {
                         Log.d(TAG, "xd.", e);
                         Intent intent = new Intent(getApplicationContext(), RideInProgress.class);
                         intent.putExtra("rider", riderPicked);
