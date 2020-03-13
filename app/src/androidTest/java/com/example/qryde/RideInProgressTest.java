@@ -35,7 +35,7 @@ import java.util.Map;
  used
  */
 @RunWith(AndroidJUnit4.class)
-public class WaitingUserResponseTest{
+public class RideInProgressTest{
     private Solo solo;
     private FirebaseFirestore db;
     @Rule
@@ -53,8 +53,9 @@ public class WaitingUserResponseTest{
     }
 
     @Test
-    public void checkWaitingUserResponseTest() throws Exception {
+    public void checkRideInProgressTest() throws Exception {
         deleteAvailableRide();
+        deleteActiveRide();
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.enterText((EditText) solo.getView(R.id.username_edittext), "driver");
         solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
@@ -62,9 +63,10 @@ public class WaitingUserResponseTest{
         solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
         createAvailableRide();
         solo.clickLongInList(0);
-        solo.assertCurrentActivity("Wrong Activity", WaitingUserResponse.class);
+        createActiveRide();
+        solo.assertCurrentActivity("Wrong Activity", RideInProgress.class);
         deleteAvailableRide();
-
+        deleteActiveRide();
     }
 
     public void createAvailableRide() {
@@ -79,10 +81,37 @@ public class WaitingUserResponseTest{
         db.collection("AvailableRides").document("TESTING").set(data);
         solo.sleep(2000);
     }
+    public void createActiveRide() {
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("amount", 999);
+        data.put("datetime", "2020/03/12 19:39");
+        data.put("driver", "TESTDRIVER");
+        data.put("endLocation", "4794 94 Ave NW, Edmonton, AB T6B 2T3, Canada");
+        data.put("rider", "TESTING");
+        data.put("startLocation", "4794 94 Ave NW, Edmonton, AB T6B 2T3, Canada");
+        data.put("status", false);
+        db.collection("ActiveRides").document("TESTING").set(data);
+        solo.sleep(2000);
+    }
 
     public void deleteAvailableRide() {
         // delete the document in AvailableRides
         db.collection("AvailableRides").document("TESTING")
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                    }
+                });
+    }
+
+    public void deleteActiveRide() {
+        db.collection("ActiveRides").document("TESTING")
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

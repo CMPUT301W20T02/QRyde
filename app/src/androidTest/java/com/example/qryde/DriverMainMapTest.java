@@ -37,23 +37,12 @@ public class DriverMainMapTest{
     }
 
     @Test
-    public void checkSlidingPane() throws Exception{
+    public void driverMainMapTest() throws Exception{
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.enterText((EditText) solo.getView(R.id.username_edittext), "driver");
         solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
         solo.clickOnButton("Login");
         solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
-        solo.clickLongInList(1);
-        solo.assertCurrentActivity("Wrong Activity", WaitingUserResponse.class);
-    }
-
-    /**
-     * Close activity after each test
-     * @throws Exception
-     */
-    @After
-    public void tearDown() throws Exception{
-        solo.finishOpenedActivities();
     }
 
 }
