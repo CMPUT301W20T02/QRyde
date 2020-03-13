@@ -10,10 +10,17 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * For the Qr code, used to download the qr code from external site
+ */
 public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 
     private final WeakReference<ImageView> imageViewWeakReference;
 
+    /**
+     * sets weak reference for imageview
+     * @param imageView
+     */
     public ImageDownloaderTask(ImageView imageView) {
         imageViewWeakReference = new WeakReference<>(imageView);
     }
