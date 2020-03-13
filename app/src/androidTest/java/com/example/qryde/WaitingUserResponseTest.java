@@ -10,6 +10,8 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -39,6 +41,7 @@ public class WaitingUserResponseTest{
     @Rule
     public ActivityTestRule<MainActivity> rule =
             new ActivityTestRule<>(MainActivity.class, true, true);
+
     @Before
     public void setUp() throws Exception{
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
@@ -50,58 +53,119 @@ public class WaitingUserResponseTest{
     }
 
     @Test
-    public void createAvailableRideTest() {
-        db.collection("AvailableRides")
-                .whereEqualTo("TESTING", "TESTING")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            if (task.getResult().size() > 0) {
-                                return;
-                            } else {
-
-                                Map<String, Object> data = new HashMap<>();
-                                data.put("amount", 999);
-                                data.put("datetime", "2020/03/12 19:39");
-                                data.put("driver", "");
-                                data.put("endLocation", "4794 94 Ave NW, Edmonton, AB T6B 2T3, Canada");
-                                data.put("startLocation", "4794 94 Ave NW, Edmonton, AB T6B 2T3, Canada");
-                                data.put("rider", "TESTING");
-                                data.put("status", true);
-                                db.collection("AvailableRides").document("TESTING").set(data);
-                            }
-                        }
-                    }
-                });
-    }
-
-    @Test
-    public void checkSlidingPane() throws Exception {
+    public void checkWaitingUserResponseTest() throws Exception {
+        deleteAvailableRide();
+        deleteActiveRide();
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.enterText((EditText) solo.getView(R.id.username_edittext), "driver");
         solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
         solo.clickOnButton("Login");
         solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
-        solo.clickLongInList(1);
+        createAvailableRide();
+        solo.clickLongInList(0);
         solo.assertCurrentActivity("Wrong Activity", WaitingUserResponse.class);
+        deleteAvailableRide();
 
     }
 
     @Test
-    public void checkWaitingUserResponseBox() throws Exception {
+    public void checkRideInProgressTest() throws Exception {
+        deleteAvailableRide();
+        deleteActiveRide();
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.username_edittext), "driver");
+        solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
+        solo.clickOnButton("Login");
+        solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
+        createAvailableRide();
+        solo.clickLongInList(0);
+        createActiveRide();
+        solo.assertCurrentActivity("Wrong Activity", RideInProgress.class);
+        deleteAvailableRide();
+        deleteActiveRide();
     }
 
+    public void createAvailableRide() {
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("amount", 999);
+        data.put("datetime", "2020/03/12 19:39");
+        data.put("driver", "");
+        data.put("endLocation", "4794 94 Ave NW, Edmonton, AB T6B 2T3, Canada");
+        data.put("rider", "TESTING");
+        data.put("startLocation", "4794 94 Ave NW, Edmonton, AB T6B 2T3, Canada");
+        data.put("status", false);
+        db.collection("AvailableRides").document("TESTING").set(data);
+        solo.sleep(2000);
+    }
+    public void createActiveRide() {
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("amount", 999);
+        data.put("datetime", "2020/03/12 19:39");
+        data.put("driver", "TESTDRIVER");
+        data.put("endLocation", "4794 94 Ave NW, Edmonton, AB T6B 2T3, Canada");
+        data.put("rider", "TESTING");
+        data.put("startLocation", "4794 94 Ave NW, Edmonton, AB T6B 2T3, Canada");
+        data.put("status", false);
+        db.collection("ActiveRides").document("TESTING").set(data);
+        solo.sleep(2000);
+    }
 
+//    public void createActiveRide() {
+//        db.collection("Active")
+//                .whereEqualTo("Test", "Test")
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            if (task.getResult().size() > 0) {
+//                                return;
+//                            } else {
+//                                Map<String, Object> data = new HashMap<>();
+//                                data.put("amount", 999);
+//                                data.put("datetime", "2020/03/12 19:39");
+//                                data.put("driver", "driver");
+//                                data.put("endLocation", "4794 94 Ave NW, Edmonton, AB T6B 2T3, Canada");
+//                                data.put("startLocation", "4794 94 Ave NW, Edmonton, AB T6B 2T3, Canada");
+//                                data.put("rider", "Test");
+//                                data.put("status", false);
+//                                db.collection("AvailableRides").document("Test").set(data);
+//                            }
+//                        }
+//                    }
+//                });
+//        solo.sleep(2000);
+//    }
 
-    /**
-     * Close activity after each test
-     * @throws Exception
-     */
-    @After
-    public void tearDown() throws Exception{
-        solo.finishOpenedActivities();
+    public void deleteAvailableRide() {
+        // delete the document in AvailableRides
+        db.collection("AvailableRides").document("TESTING")
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                    }
+                });
+    }
+
+    public void deleteActiveRide() {
+        db.collection("ActiveRides").document("TESTING")
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                    }
+                });
     }
 
 }

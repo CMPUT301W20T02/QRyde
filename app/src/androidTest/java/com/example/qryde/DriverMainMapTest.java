@@ -43,17 +43,6 @@ public class DriverMainMapTest{
         solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
         solo.clickOnButton("Login");
         solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
-        solo.clickLongInList(1);
-        solo.assertCurrentActivity("Wrong Activity", WaitingUserResponse.class);
-    }
-
-    /**
-     * Close activity after each test
-     * @throws Exception
-     */
-    @After
-    public void tearDown() throws Exception{
-        solo.finishOpenedActivities();
     }
 
 }
