@@ -45,7 +45,6 @@
         <activity android:name=".AvailableRideAdapter" />
         <activity android:name=".RideComplete" />
         <activity android:name=".DriverMainMap" />
-        <activity android:name=".OnFragmentInteractionListener" />
         <activity android:name=".RideInProgress" />
         <activity android:name=".ScanQRCode" />
         <activity android:name=".WaitingUserResponse" />
