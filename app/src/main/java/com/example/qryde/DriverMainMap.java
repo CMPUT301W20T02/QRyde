@@ -48,6 +48,12 @@ import java.util.List;
 
 import static java.lang.Float.parseFloat;
 
+/**
+ * Driver side of the app after login, gets info of ride requests, shows them on the map,
+ * Ride request displays necessary info,
+ * sliding up panel is implemented to take a look at the rest of the available requests,
+ * ride requests are pulled from firebase and updated once driver selects one via a longpress
+ */
 public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallback{
 
     private String TAG = "DriverMainMap";
@@ -93,6 +99,13 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         final CollectionReference collectionReference = db.collection("AvailableRides");
 
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            /**
+             * sets the rider name, start location,
+             * end location and cost amount to instance of available ride.
+             * Adds marker to the map according to coordinates and notifies rideAdapter data has changed
+             * @param queryDocumentSnapshots
+             * @param e
+             */
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e){
                 dataList.clear();;
@@ -126,6 +139,17 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
         final SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
         availableRideListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            /**
+             * When an object from the slide up panel is longPressed:
+             * Updates the firebase with the selection for the ride request,
+             * checks whether request is still active
+             * if request is active, activity is switched to waiting for user response
+             * @param parent
+             * @param view
+             * @param position
+             * @param id
+             * @return
+             */
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), WaitingUserResponse.class);
@@ -192,7 +216,12 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         }
     }
 
-    //requests the location permissions
+    /**
+     * requests the location permissions from the user
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         LocationPermission = false;
@@ -210,6 +239,10 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         }
     }
 
+    /**
+     * once the map is ready update the location with device location and the marker click function
+     * @param googleMap
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         ActualMap = googleMap;
@@ -224,6 +257,11 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         // ADDED CODE IMPORTANT
         //marker click position listener
         ActualMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            /**
+             * on marker click call function to show rider info
+             * @param marker
+             * @return
+             */
             @Override
             public boolean onMarkerClick(Marker marker) {
                 // TODO Auto-generated method stub
@@ -244,6 +282,12 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             if (LocationPermission) {
                 final Task locationResult = fusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(new OnCompleteListener() {
+                    /**
+                     * Once the location for device is accessed,
+                     * if location is accessed successfully set the current location and move the map to it
+                     * otherwise move map to default location
+                     * @param task
+                     */
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
@@ -287,6 +331,12 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         }
     }
 
+    /**
+     * gets the coordinates of location from address and returns it
+     * @param context
+     * @param strAddress
+     * @return
+     */
     public LatLng getLocationFromAddress(Context context, String strAddress)
     {
         Geocoder coder= new Geocoder(context);

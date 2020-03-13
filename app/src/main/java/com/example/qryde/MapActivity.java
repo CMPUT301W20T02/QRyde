@@ -54,6 +54,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+/**
+ * Class Map Activity creates the map fragment and has all of the functionality for the map shown to
+ * user, it's linked to firebase to get driver info and transfer price.
+ *
+ *
+ */
+
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     //initialization of variables
@@ -119,6 +126,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         logo = findViewById(R.id.qryde_logo);
         logo.setOnClickListener( new View.OnClickListener() {
+            /**
+             * When the logo is clicked, it goes to the confirm amount activity to confirm amount
+             * rider is willing to spend. It provides username, pickup location,
+             * and name of destination to the confirmAmount activity
+             *
+             * @param v
+             */
             @Override
             public void onClick(View v) {
 //                if(pickupName != "" && destinationName != "") {
@@ -179,7 +193,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    //requests the location permissions
+    /**requests the location permissions
+     *
+     * checks if the user granted permission to their location.
+     * If they did, then call the MapInit() function to initizalize map
+     * Otherwise it doesn't initialize it and returns user
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         LocationPermission = false;
@@ -195,7 +217,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    //getting the google map ready once location is permitted
+
+    /**
+     * getting the google map ready once location is permitted
+     * starts:
+     *  updateLocation UI
+     *  DeviceLocation
+     *  SearchInitializer
+     *  mapClicker
+     * @param googleMap
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.setPadding(0,310,0,0);
@@ -245,7 +276,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             Log.e("Exception: %s", e.getMessage());
         }
     }
-
+    //moves the map camera
     private void mapMove(LatLng latLng, float zoom) {
         //method for map camera movement
         ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom), 600, null);
@@ -261,6 +292,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 ActualMap.setMyLocationEnabled(true);
                 View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
                 locationButton.setOnClickListener(new View.OnClickListener() {
+                    /**
+                     * On Click of the location button it resets starting position,
+                     * gets the current location and then calls method to calculate directions
+                     * @param v
+                     */
                     @Override
                     public void onClick(View v) {
                         if (polyline !=null) polyline.remove();
@@ -286,6 +322,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     //searching for a location to route to using the autocomplete API methods provided by Google
     private void searchInit() {
         autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            /**
+             * When place is selected it sets starting position to the selected place,
+             * if the ending position is not empty then it calculates the directions to the place
+             * @param place
+             */
             @Override
             public void onPlaceSelected(@NonNull Place place) {
                 // TODO: Get info about the selected place.
@@ -297,6 +338,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     calculateDirections();
                 }
             }
+
+            /**
+             * on error, it prints the error status onto the log,
+             * then a message is displayed that it couldn't find the place
+             * @param status
+             */
             @Override
             public void onError(@NonNull Status status) {
                 // TODO: Handle the error.
@@ -314,6 +361,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
         autocompleteSupportFragmentdest.getView().findViewById(R.id.places_autocomplete_clear_button).setOnClickListener(new View.OnClickListener() {
+            /**
+             * when the clear button is pressed,
+             * it clears the ending position,
+             * if starting position is not set: moves the map to the current position of the user
+             * if the starting position is filled: it moves the map to the set starting position
+             *
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 polyline.remove();
@@ -332,6 +387,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         //routing from the addresses provided in the fragments on click
         autocompleteSupportFragmentdest.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            /**
+             * when a destination is selected:
+             * set the end position to the place selected, get the coordinates,
+             * set long and lat to the the temp end location,
+             * get the name of the destination
+             * @param place
+             */
             @Override
             public void onPlaceSelected(@NonNull Place place) {
                 endPos = place;
@@ -341,7 +403,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 calculateDirections();
             }
 
-            //error on failure to route
+            /**
+             * error on failure to route:
+             * on error, it prints the error status onto the log,
+             * then a message is displayed that it couldn't find the place
+             * @param status
+             */
+
             @Override
             public void onError(@NonNull Status status) {
                 Log.i("AutoComplete", "An error occurred: " + status);
@@ -372,6 +440,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Log.d("Directions", "calculateDirections: destination: " + destination.toString());
         directions.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
+            /**
+             * Gets the distance, duration to location and call the cost calculator,
+             * sets all of them to their corresponding text to display in view
+             * all from the result of the route
+             * @param result
+             */
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onResult(DirectionsResult result) {
@@ -398,7 +472,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 costView.setText(String.format("Cost: $%s", cost));
             }
 
-            //throwing an error on failure to route
+
+            /**
+             * throws an error on failure to route
+             * @param e
+             */
             @Override
             public void onFailure(Throwable e) {
                 Log.e("Directions", "calculateDirections: Failed to get directions: " + e.getMessage());
@@ -430,7 +508,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
-    //this is for animating camera to zoom out or in to the route size
+    /**
+     * animates camera to zoom out or in to the route size
+     * @param lstLatLngRoute
+     */
     public void polylineZoom(List<LatLng> lstLatLngRoute) {
 
         if (ActualMap == null || lstLatLngRoute == null || lstLatLngRoute.isEmpty()) return;
@@ -449,7 +530,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         );
     }
 
-    //calculating the cost for a ride using time and distance
+    /**
+     * calculating the cost for a ride using time and distance
+     * @param minutes
+     * @param distance
+     * @return
+     */
     public double costCalculator(double minutes, double distance)
     {
         double baseCost = 2.00;
@@ -460,8 +546,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         return (baseCost + minimumFare + (minutes*perMinute) + (distance*perKm));
     }
-
-    //rounding up decimal numbers to a precision point
+    /**
+     * rounding up decimal numbers to a precision point
+     * @param number
+     * @param precision
+     * @return
+     */
     public double roundUp(double number, int precision)
     {
         BigDecimal bd = new BigDecimal(number).setScale(precision, RoundingMode.HALF_UP);

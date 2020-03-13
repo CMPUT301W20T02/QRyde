@@ -21,6 +21,10 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * This class describes the app activity while the rider is waiting
+ * for the ride to be accepted
+ */
 public class WaitingUserResponse extends AppCompatActivity {
 
     private String TAG = "WaitingUserResponse";

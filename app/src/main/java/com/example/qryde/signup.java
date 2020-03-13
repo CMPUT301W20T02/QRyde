@@ -22,6 +22,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * This class describes the app activity when a new user is signing up into the app
+ */
+
 public class signup extends AppCompatActivity {
 
     private String TAG = "Signup";
@@ -62,6 +66,12 @@ public class signup extends AppCompatActivity {
     private void signUpButton() {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
+            /**
+             * This method allows the user to sign up and create an account that allows
+             * them use the app
+             * @param View
+             * @return Nothing if the error conditions are met
+             */
             public void onClick(View v) {
 
                 if (username.getText().toString().equals("") ||
@@ -99,6 +109,11 @@ public class signup extends AppCompatActivity {
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
+
+                            /**
+                             * This method adds the users account information to the Users
+                             * collection in the Firebase Database
+                             */
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     if (task.getResult().size() > 0) {
