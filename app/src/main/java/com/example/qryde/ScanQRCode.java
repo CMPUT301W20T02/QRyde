@@ -20,6 +20,11 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
+/**
+ * This class describes the app activeity when a driver
+ * scans a riders QRcode to transfer QRBucks
+ * This class is not yet completed!!
+ */
 
 public class ScanQRCode extends AppCompatActivity{
     SurfaceView surfaceView;
@@ -41,6 +46,10 @@ public class ScanQRCode extends AppCompatActivity{
                 .setRequestedPreviewSize(640,480).build();
 
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback(){
+            /**
+             * This creates the QR code
+             * @param holder a SurfaceHolder object
+             */
             @Override
             public void surfaceCreated(SurfaceHolder holder){
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
@@ -55,6 +64,13 @@ public class ScanQRCode extends AppCompatActivity{
 
 
             }
+            /**
+             * This changes the format of the surface holder already generated to new specified
+             * @param holder
+             * @param format
+             * @param width
+             * @param height
+             */
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
 
@@ -68,6 +84,7 @@ public class ScanQRCode extends AppCompatActivity{
 
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>(){
             @Override
+
             public void release(){
 
             }
