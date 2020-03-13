@@ -121,13 +121,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         logo.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(pickupName != "" && destinationName != "") {
-                    Intent intent = new Intent(getApplicationContext(), ConfirmAmount.class);
-                    intent.putExtra("username", user);
-                    intent.putExtra("pickup", pickupName);
-                    intent.putExtra("destination", destinationName);
-                    startActivity(intent);
-                }
+//                if(pickupName != "" && destinationName != "") {
+                Intent intent = new Intent(getApplicationContext(), ConfirmAmount.class);
+                intent.putExtra("username", user);
+                intent.putExtra("pickup", pickupName);
+                intent.putExtra("destination", destinationName);
+                startActivity(intent);
+//                }
             }
         });
 
