@@ -1,12 +1,16 @@
 package com.example.qryde;
 
 import android.app.Activity;
+import android.util.Log;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.robotium.solo.Solo;
 
 import org.junit.Before;
@@ -27,6 +31,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 public class MainActivityTest{
     private Solo solo;
     private FirebaseFirestore db;
+    private String TAG = "robotium";
 
     @Rule
     public ActivityTestRule<MainActivity> rule =
@@ -57,9 +62,22 @@ public class MainActivityTest{
         solo.clickOnButton("Signup");
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.sleep(2000);
 
-
-
-
+        // delete the newly created user
+        db.collection("Users").document("testUsername")
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "onSuccess: Successfully deleted document");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "onFailure: Failed to delete document");
+                    }
+                });
     }
 }
