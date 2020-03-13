@@ -8,7 +8,9 @@ import com.robotium.solo.Solo;
 
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+
 /**
  * Test class for MainActivity. All the UI tests are written here. Robotium test framework is
  used
@@ -19,12 +21,11 @@ public class MainActivityTest{
     @Rule
     public ActivityTestRule<MainActivity> rule =
             new ActivityTestRule<>(MainActivity.class, true, true);
-    /**
-     * Runs before all tests and creates solo instance.
-     * @throws Exception
-     */
     @Before
     public void setUp() throws Exception{
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
+    }
+    @Test
+    public void checkCiyListItem(){
     }
 }
