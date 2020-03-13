@@ -28,9 +28,14 @@ public class DriverMainMapTest{
     public void setUp() throws Exception{
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
     }
+
+    @Test public void start() throws Exception {
+        Activity activity = rule.getActivity();
+    }
+
     @Test
     public void checkSlidingPane() throws Exception{
-        Activity activity = rule.getActivity();
+
         solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
         solo.clickLongInList(1);
         solo.assertCurrentActivity("Wrong Activity", WaitingUserResponse.class);
