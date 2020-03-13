@@ -61,7 +61,7 @@ public class UserTest {
         Activity activity = rule.getActivity();
     }
 
-//    @Test
+    @Test
     public void requestRideThenCancel() throws InterruptedException{
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.enterText((EditText) solo.getView(R.id.username_edittext), "bigtodd");
