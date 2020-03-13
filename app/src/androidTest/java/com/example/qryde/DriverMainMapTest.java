@@ -1,6 +1,7 @@
 package com.example.qryde;
 
 import android.app.Activity;
+import android.widget.EditText;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -14,6 +15,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.sql.Driver;
+
 /**
  * Test class for MainActivity. All the UI tests are written here. Robotium test framework is
  used
@@ -22,27 +25,24 @@ import org.junit.runner.RunWith;
 public class DriverMainMapTest{
     private Solo solo;
     @Rule
-    public ActivityTestRule<DriverMainMap> rule =
-            new ActivityTestRule<>(DriverMainMap.class, true, true);
+    public ActivityTestRule<MainActivity> rule =
+            new ActivityTestRule<>(MainActivity.class, true, true);
     @Before
     public void setUp() throws Exception{
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
     }
-    @Test
-    public void checkSlidingPane() throws Exception{
+
+    @Test public void start() throws Exception {
         Activity activity = rule.getActivity();
-        solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
-        solo.clickLongInList(1);
-        solo.assertCurrentActivity("Wrong Activity", WaitingUserResponse.class);
     }
 
-    /**
-     * Close activity after each test
-     * @throws Exception
-     */
-    @After
-    public void tearDown() throws Exception{
-        solo.finishOpenedActivities();
+    @Test
+    public void driverMainMapTest() throws Exception{
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.username_edittext), "driver");
+        solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
+        solo.clickOnButton("Login");
+        solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
     }
 
 }

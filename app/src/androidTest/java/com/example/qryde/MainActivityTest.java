@@ -62,7 +62,7 @@ public class MainActivityTest{
         solo.enterText((EditText) solo.getView(R.id.email_edittext), "test@gmail.com");
         solo.enterText((EditText) solo.getView(R.id.password_edittext), "password");
         solo.enterText((EditText) solo.getView(R.id.reenterPassword_edittext), "password");
-        solo.clickOnButton("Signup");
+        solo.clickOnText("Signup");
 
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.sleep(2000);

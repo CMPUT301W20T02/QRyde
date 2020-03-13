@@ -121,13 +121,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         logo.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(pickupName != "" && destinationName != "") {
-                    Intent intent = new Intent(getApplicationContext(), ConfirmAmount.class);
-                    intent.putExtra("username", user);
-                    intent.putExtra("pickup", pickupName);
-                    intent.putExtra("destination", destinationName);
-                    startActivity(intent);
-                }
+//                if(pickupName != "" && destinationName != "") {
+                Intent intent = new Intent(getApplicationContext(), ConfirmAmount.class);
+                intent.putExtra("username", user);
+                intent.putExtra("pickup", pickupName);
+                intent.putExtra("destination", destinationName);
+                startActivity(intent);
+//                }
             }
         });
 
@@ -335,10 +335,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onPlaceSelected(@NonNull Place place) {
                 endPos = place;
-                endPos.getLatLng();
                 endPostotempEndLocation.setLatitude(endPos.getLatLng().latitude);
                 endPostotempEndLocation.setLongitude(endPos.getLatLng().longitude);
-                destinationName = getCompleteAddressString(latlngtotempEndLocation);
+                destinationName = getCompleteAddressString(endPostotempEndLocation);
                 calculateDirections();
             }
 
