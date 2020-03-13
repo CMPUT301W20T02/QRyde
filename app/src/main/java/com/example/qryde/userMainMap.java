@@ -9,6 +9,11 @@ import android.widget.ImageView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This class describes the app activity when the after the user logs in. It currently displays a
+ * map image and a clickable logo that takes the user to the select location page
+ */
+
 public class userMainMap extends AppCompatActivity {
     private FirebaseFirestore db;
     private String user;
@@ -34,6 +39,12 @@ public class userMainMap extends AppCompatActivity {
 
         logo.setOnClickListener( new View.OnClickListener() {
             @Override
+            /**
+             * This method allows the user select a button and takes them to the
+             * SelectLocation activity
+             * @param v View object to be clicked
+             * @return SelectLocation.class
+             */
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), SelectLocation.class);
                 intent.putExtra("username", user);

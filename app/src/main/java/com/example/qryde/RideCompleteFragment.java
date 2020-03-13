@@ -11,6 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+/**
+ * This class generates a dialogue box when the ride is completed
+ * Shows the amount offered by the rider to the driver
+ */
 public class RideCompleteFragment extends DialogFragment {
 
     @Override
@@ -20,6 +24,12 @@ public class RideCompleteFragment extends DialogFragment {
 
     @NonNull
     @Override
+    /**
+     * This method creates the dialogue and shows information on ride
+     * completion status and the amount of QRBucks offered by the rider to the driver
+     * @param InstanceState
+     * @return Dialogue.builder
+     */
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.activity_ride_complete, null);
         Bundle bundle = getArguments();
