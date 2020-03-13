@@ -67,6 +67,19 @@ public class WaitingUserResponseTest{
 
     }
 
+    @Test
+    public void acceptRequestThenCancel() throws Exception {
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.username_edittext), "driver");
+        solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
+        solo.clickOnButton("Login");
+        solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
+        solo.clickLongInList(0);
+        solo.assertCurrentActivity("Wrong Activity", WaitingUserResponse.class);
+        solo.clickOnButton("cancel");
+        solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
+    }
+
     public void createAvailableRide() {
         HashMap<String, Object> data = new HashMap<>();
         data.put("amount", 999);
