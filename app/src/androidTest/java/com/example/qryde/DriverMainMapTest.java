@@ -37,7 +37,7 @@ public class DriverMainMapTest{
     }
 
     @Test
-    public void checkSlidingPane() throws Exception{
+    public void driverMainMapTest() throws Exception{
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.enterText((EditText) solo.getView(R.id.username_edittext), "driver");
         solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
