@@ -54,6 +54,7 @@ public class afterRequestCreated extends AppCompatActivity {
     private ImageView driverFoundBox;
     private TextView driverName;
     private TextView driverRating;
+    private TextView email;
 
     private Button confirm;
     private Button cancel;
@@ -94,6 +95,7 @@ public class afterRequestCreated extends AppCompatActivity {
         findingBox = findViewById(R.id.findingDriverBox);
         findingText = findViewById(R.id.findingText);
         phoneNumber = findViewById(R.id.phone_number);
+        email = findViewById(R.id.email);
 
         driverFoundBox = findViewById(R.id.driverFoundBox);
         driverName = findViewById(R.id.driverName);
@@ -150,6 +152,13 @@ public class afterRequestCreated extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 makePhoneCall();
+            }
+        });
+
+        email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendEmail();
             }
         });
 //        db.collection("AvailableRides")
@@ -258,6 +267,7 @@ public class afterRequestCreated extends AppCompatActivity {
                                                                         findingText.setText("Driver found!");
                                                                         cancel.setText(" DECLINE ");
                                                                         phoneNumber.setText(document.getData().get("phoneNumber").toString());
+                                                                        email.setText(document.getData().get("email").toString());
 
                                                                         isCancelDriver = true;
 
@@ -530,6 +540,14 @@ public class afterRequestCreated extends AppCompatActivity {
         int height = dm.heightPixels;
         getWindow().setLayout(width, (height/9)*4);
         getWindow().setGravity(Gravity.BOTTOM);
+    }
+
+    private void sendEmail(){
+        String[] recipients = {email.getText().toString()};
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_EMAIL, recipients);
+        intent.setType("message/rfc822");
+        startActivity(Intent.createChooser(intent, "Choose an email client"));
     }
 
     private void makePhoneCall(){
