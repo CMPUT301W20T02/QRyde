@@ -10,18 +10,23 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This Class deals with user actions when a ride is completed
+ * Rider offers Driver QR Bucks payment
+ * Driver scans QR Bucks from Rider's phone
+ */
+
 public class RideComplete extends AppCompatActivity {
 
-    String TAG = "RideInProgress";
+    private String TAG = "RideInProgress";
 
-
-    FirebaseFirestore db;
-    String user;
-    String riderPicked;
-    Button ScanButton;
-    float amountOffered;
-    String amountOfferedString;
-    TextView amountOfferedTv;
+    private FirebaseFirestore db;
+    private String user;
+    private String riderPicked;
+    private Button ScanButton;
+    private float amountOffered;
+    private String amountOfferedString;
+    private TextView amountOfferedTv;
 
 
     @Override
@@ -44,6 +49,11 @@ public class RideComplete extends AppCompatActivity {
 
         ScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
+            /**
+             * This method starts a new app activity after the scan button is clicked
+             * @param View
+             * @return ScanQrCode.class             *
+             */
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ScanQRCode.class);
                 intent.putExtra("username", user);

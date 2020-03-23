@@ -22,21 +22,25 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * This class describes the app activity when a new user is signing up into the app
+ */
+
 public class signup extends AppCompatActivity {
 
-    String TAG = "Signup";
+    private String TAG = "Signup";
 
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
-    EditText username;
-    EditText email;
-    EditText password;
-    EditText reenterPassword;
-    Button signupButton;
-    TextView error;
-    Switch userType;
-    EditText name;
-    EditText phoneNumber;
+    private EditText username;
+    private EditText email;
+    private EditText password;
+    private EditText reenterPassword;
+    private Button signupButton;
+    private TextView error;
+    private Switch userType;
+    private EditText name;
+    private EditText phoneNumber;
 
 
     @Override
@@ -56,8 +60,18 @@ public class signup extends AppCompatActivity {
         name = findViewById(R.id.name_edittext);
         phoneNumber = findViewById(R.id.phone_edittext);
 
+        signUpButton();
+    }
+
+    private void signUpButton() {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
+            /**
+             * This method allows the user to sign up and create an account that allows
+             * them use the app
+             * @param View
+             * @return Nothing if the error conditions are met
+             */
             public void onClick(View v) {
 
                 if (username.getText().toString().equals("") ||
@@ -95,6 +109,11 @@ public class signup extends AppCompatActivity {
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
+
+                            /**
+                             * This method adds the users account information to the Users
+                             * collection in the Firebase Database
+                             */
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     if (task.getResult().size() > 0) {

@@ -17,14 +17,16 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * This class deals with the app activity while the ride is in progress.
+ */
 public class RideInProgress extends AppCompatActivity {
 
-    String TAG = "RideInProgress";
+    private String TAG = "RideInProgress";
 
-
-    FirebaseFirestore db;
-    String user;
-    String riderPicked;
+    private FirebaseFirestore db;
+    private String user;
+    private String riderPicked;
     float amountOffered;
 
     @Override
@@ -42,6 +44,11 @@ public class RideInProgress extends AppCompatActivity {
 
         db.collection("ActiveRides").document(riderPicked).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
+            /**
+             * adds the current ride to the firebase collection "Active Rides"
+             * @param DocumentSnapshot
+             * @param FirebaseException Exception to be thrown if error occurs
+             */
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
                     Log.d(TAG, "Listen failed.", e);

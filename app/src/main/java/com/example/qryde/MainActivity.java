@@ -18,20 +18,26 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * First activity shown to the user,
+ * login screen that checks with firebase whether user is a driver or a rider,
+ * switches to appropriate activity
+ *
+ * includes sign up button method that switches to registration activity
+ */
 public class MainActivity extends AppCompatActivity {
 
-    String TAG = "MainActivity";
+    private String TAG = "MainActivity";
 
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
-    EditText username;
-    EditText password;
-    TextView signup;
-    Button login;
-    ImageView usernameBox;
-    ImageView passwordBox;
-    TextView incorrect;
-
+    private EditText username;
+    private EditText password;
+    private TextView signup;
+    private Button login;
+    private ImageView usernameBox;
+    private ImageView passwordBox;
+    private TextView incorrect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         db = FirebaseFirestore.getInstance();
-
 
         username = findViewById(R.id.username_edittext);
         password = findViewById(R.id.password_edittext);
@@ -49,13 +54,29 @@ public class MainActivity extends AppCompatActivity {
         passwordBox = findViewById(R.id.passwordBox);
         incorrect = findViewById(R.id.incorrect);
 
+        loginButton();
+        signUpButton();
+    }
+
+    private void loginButton() {
         login.setOnClickListener( new View.OnClickListener() {
+            /**
+             * on click of login button it checks whether username entered matches any in firebase
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 db.collection("Users")
                         .whereEqualTo("username", username.getText().toString()).whereEqualTo("password", password.getText().toString())
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            /**
+                             * if task is successful it checks whether user is a driver or rider,
+                             * sets intent to corresponding intent based on the user
+                             * switches to that intent
+                             * returns incorrect username or password if neither matches in firebase
+                             * @param task
+                             */
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
@@ -87,24 +108,25 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 } else {
                                     Log.d(TAG, "onComplete: failed to execute query");
-
                                 }
                             }
                         });
             }
         });
+    }
 
+    private void signUpButton() {
         signup.setOnClickListener( new View.OnClickListener() {
+            /**
+             * when register button is clicked, activity for registration is started
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), signup.class);
                 startActivity(intent);
             }
         });
-
     }
-
-
-
 
 }

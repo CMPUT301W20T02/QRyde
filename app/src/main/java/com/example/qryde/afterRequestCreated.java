@@ -3,7 +3,9 @@ package com.example.qryde;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -28,30 +30,34 @@ import java.io.ObjectStreamException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * class for functions after request has been created, includes cancel button, ride status listener,
+ * confirm button, decline driver button, and active ride converter, linked to firebase
+ */
 public class afterRequestCreated extends AppCompatActivity {
-    String TAG = "temp";
-    FirebaseFirestore db;
+    private String TAG = "temp";
+    private FirebaseFirestore db;
 
-    TextView startLocation;
-    TextView endLocation;
-    String user;
+    private TextView startLocation;
+    private TextView endLocation;
+    private String user;
 
-    ImageView findingBox;
-    TextView findingText;
+    private ImageView findingBox;
+    private TextView findingText;
 
-    ImageView driverFoundBox;
-    TextView driverName;
-    TextView driverRating;
+    private ImageView driverFoundBox;
+    private TextView driverName;
+    private TextView driverRating;
 
-    Button confirm;
-    Button cancel;
-    float amount;
+    private Button confirm;
+    private Button cancel;
+    private float amount;
 
-    boolean isCancelDriver = false;
+    private boolean isCancelDriver = false;
 
-    String driver;
+    private String driver;
 
-    int animationDuration = 100;
+    private int animationDuration = 100;
 
     ObjectAnimator findingBoxAnimationDown;
     ObjectAnimator findingTextAnimationDown;
@@ -66,8 +72,6 @@ public class afterRequestCreated extends AppCompatActivity {
     ObjectAnimator driverRatingAnimationUp;
     ObjectAnimator confirmAnimationUp;
     ObjectAnimator cancelAnimationUp;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,34 +129,77 @@ public class afterRequestCreated extends AppCompatActivity {
 
         confirmAnimationDown.start();
 
-
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
             user = incomingData.getString("username");
         }
 
-
         db = FirebaseFirestore.getInstance();
 
-        db.collection("AvailableRides")
-                .whereEqualTo("rider", user)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                startLocation.setText(document.getData().get("startLocation").toString());
-                                endLocation.setText(document.getData().get("endLocation").toString());
+//        db.collection("AvailableRides")
+//                .whereEqualTo("rider", user)
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+////                                startLocation.setText(document.getData().get("startLocation").toString());
+////                                endLocation.setText(document.getData().get("endLocation").toString());
+//
+//                            }
+//                        } else {
+//                            Log.d(TAG, "Error getting documents: ", task.getException());
+//                        }
+//                    }
+//                });
+        setWindowSize();
+        rideStatusListener();
+        declineDriverButton();
+        cancelButton();
+        confirmButton();
+        activeRideConverter();
+    }
 
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
+    private void activeRideConverter() {
+        // listening for when activeRideRequest is changed to true
+        db.collection("ActiveRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            /**
+             * when the ride is completed, set switch activity to generate a qrcode
+             * @param documentSnapshot
+             * @param e
+             */
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.d(TAG, "Listen failed.", e);
+                    return;
+                }
+
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    if (documentSnapshot.getData().get("status").toString().equals("true")) {
+                        Intent intent = new Intent(getApplicationContext(), GenerateQRCode.class);
+                        intent.putExtra("rider", user);
+                        intent.putExtra("driver", driverName.getText().toString());
+                        intent.putExtra("amount", amount);
+
+                        startActivity(intent);
+
+
                     }
-                });
+                }
+            }
+        });
+    }
 
+
+    private void rideStatusListener() {
         db.collection("AvailableRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            /**
+             * Listener for the ride status
+             * @param documentSnapshot
+             * @param e
+             */
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -180,6 +227,10 @@ public class afterRequestCreated extends AppCompatActivity {
                                                 db.collection("Users").whereEqualTo("username", driver)
                                                         .get()
                                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                            /**
+                                                             * listener to when ride is complete
+                                                             * @param task
+                                                             */
                                                             @Override
                                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                                 if (task.isSuccessful()) {
@@ -187,7 +238,7 @@ public class afterRequestCreated extends AppCompatActivity {
                                                                         driverName.setText(document.getData().get("name").toString());
                                                                         driverRating.setText(document.getData().get("thumbsUp").toString() + " | " + document.getData().get("thumbsDown").toString());
                                                                         findingText.setText("Driver found!");
-                                                                        cancel.setText(" DECLINE DRIVER ");
+                                                                        cancel.setText(" DECLINE ");
 
                                                                         isCancelDriver = true;
 
@@ -218,8 +269,14 @@ public class afterRequestCreated extends AppCompatActivity {
                 }
             }
         });
+    }
 
+    private void declineDriverButton() {
         View.OnClickListener declineDriverOnClickListener = new View.OnClickListener() {
+            /**
+             * when decline driver is pressed, update rider and driver in firebase accordingly
+             * @param v
+             */
             @Override
             public void onClick(View v) {
 
@@ -255,8 +312,16 @@ public class afterRequestCreated extends AppCompatActivity {
 
             }
         };
+    }
 
-        View.OnClickListener cancelOnClickListener = new View.OnClickListener() {
+    private void cancelButton() {
+//        View.OnClickListener cancelOnClickListener = new View.OnClickListener() {
+        cancel.setOnClickListener(new View.OnClickListener() {
+            /**
+             * when cancel button is pressed, updated firebase to cancel current driver,
+             * find a new driver as well afterward
+             * @param v
+             */
             @Override
             public void onClick(View v) {
 
@@ -312,9 +377,6 @@ public class afterRequestCreated extends AppCompatActivity {
                                                     driverRatingAnimationUp.start();
                                                     cancelAnimationUp.start();
 
-
-
-
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
@@ -334,14 +396,17 @@ public class afterRequestCreated extends AppCompatActivity {
 
                 }
 
-
-
             }
-        };
+        });
+    }
 
-        cancel.setOnClickListener(cancelOnClickListener);
-
+    private void confirmButton() {
         confirm.setOnClickListener(new View.OnClickListener() {
+            /**
+             * on click for confirm button
+             * updates firebase accordingly to link rider and driver with the appropiate info for ride
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 // get all of the information from AvailableRides to migrate to ActiveRides
@@ -411,8 +476,6 @@ public class afterRequestCreated extends AppCompatActivity {
                                                         }
                                                     });
 
-
-
                                         }
                                     } else {
                                         Log.d(TAG, "Error getting documents: ", task.getException());
@@ -437,36 +500,17 @@ public class afterRequestCreated extends AppCompatActivity {
 
                 }
 
-
             }
         });
-
-
-        // listening for when activeRideRequest is changed to true
-        db.collection("ActiveRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.d(TAG, "Listen failed.", e);
-                    return;
-                }
-
-                if (documentSnapshot != null && documentSnapshot.exists()) {
-                    if (documentSnapshot.getData().get("status").toString().equals("true")) {
-                        Intent intent = new Intent(getApplicationContext(), GenerateQRCode.class);
-                        intent.putExtra("rider", user);
-                        intent.putExtra("driver", driverName.getText().toString());
-                        intent.putExtra("amount", amount);
-
-                        startActivity(intent);
-
-
-                    }
-                }
-            }
-        });
-
     }
 
+    private void setWindowSize() {
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+        getWindow().setLayout(width, (height/9)*4);
+        getWindow().setGravity(Gravity.BOTTOM);
+    }
 
 }

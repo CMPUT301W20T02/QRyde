@@ -6,13 +6,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
+/**
+ * Generates qr code by utilizing driver, rider and cost,
+ * creates the qrcode string to send to api and calls imageDownloader function to get qrcode img
+ */
 public class GenerateQRCode extends AppCompatActivity {
 
-    String TAG = "GenerateQRCode";
+    private String TAG = "GenerateQRCode";
 
-    ImageView imageView;
-    String driver;
-    String rider;
+    private ImageView imageView;
+    private String driver;
+    private String rider;
     float amount;
 
     @Override

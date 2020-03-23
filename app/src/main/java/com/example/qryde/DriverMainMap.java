@@ -3,15 +3,33 @@ package com.example.qryde;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -26,25 +44,40 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static java.lang.Float.parseFloat;
 
-public class DriverMainMap extends AppCompatActivity {
+/**
+ * Driver side of the app after login, gets info of ride requests, shows them on the map,
+ * Ride request displays necessary info,
+ * sliding up panel is implemented to take a look at the rest of the available requests,
+ * ride requests are pulled from firebase and updated once driver selects one via a longpress
+ */
+public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallback{
 
-    String TAG = "DriverMainMap";
+    private String TAG = "DriverMainMap";
 
-    AvailableRideAdapter rideAdapter;
-    ArrayList<AvailableRide> dataList;
-    EditText startLocationEditText;
-    EditText endLocationEditText;
-    FirebaseFirestore db;
-    String user;
+    private AvailableRideAdapter rideAdapter;
+    private ArrayList<AvailableRide> dataList;
+    private EditText startLocationEditText;
+    private EditText endLocationEditText;
+    private FirebaseFirestore db;
+    private String user;
+
+    private Boolean LocationPermission = false;
+    private GoogleMap ActualMap;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private Location locationCurr;
+    private final LatLng EarthDefaultLocation = new LatLng(0, 0); //just center of earth
+    private String driver;
+    private Integer markernumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_main_map);
-
+        getLocationPermission();
         db = FirebaseFirestore.getInstance();
 
         final ListView availableRideListView = findViewById(R.id.list_view);
@@ -59,7 +92,6 @@ public class DriverMainMap extends AppCompatActivity {
 
         dataList = new ArrayList<>();
         dataList.addAll(Arrays.asList(AvailableRideList));
-
         rideAdapter = new AvailableRideAdapter(this, dataList);
 
         availableRideListView.setAdapter(rideAdapter);
@@ -67,6 +99,13 @@ public class DriverMainMap extends AppCompatActivity {
         final CollectionReference collectionReference = db.collection("AvailableRides");
 
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            /**
+             * sets the rider name, start location,
+             * end location and cost amount to instance of available ride.
+             * Adds marker to the map according to coordinates and notifies rideAdapter data has changed
+             * @param queryDocumentSnapshots
+             * @param e
+             */
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e){
                 dataList.clear();;
@@ -77,6 +116,21 @@ public class DriverMainMap extends AppCompatActivity {
                             parseFloat(doc.getData().get("amount").toString()),
                             1.3f);
                     dataList.add(temp);
+
+                    // creating marker from temp object lat/long
+                    LatLng tempLatLng;
+                    tempLatLng = getLocationFromAddress(DriverMainMap.this, temp.getStartLocation());
+
+                    // adding marker to show on map
+                    Marker marker = ActualMap.addMarker(new MarkerOptions().position(tempLatLng).title(
+                            temp.getRiderUsername() + markernumber));
+
+                    // setting integer id for each marker and temp object
+                    marker.setTag(markernumber);
+
+                    // moving to next object, next marker
+                    markernumber++;
+
                     rideAdapter.notifyDataSetChanged();
                 }
             }
@@ -85,6 +139,17 @@ public class DriverMainMap extends AppCompatActivity {
 
         final SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
         availableRideListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            /**
+             * When an object from the slide up panel is longPressed:
+             * Updates the firebase with the selection for the ride request,
+             * checks whether request is still active
+             * if request is active, activity is switched to waiting for user response
+             * @param parent
+             * @param view
+             * @param position
+             * @param id
+             * @return
+             */
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), WaitingUserResponse.class);
@@ -122,15 +187,178 @@ public class DriverMainMap extends AppCompatActivity {
                             }
                         });
 
-
-
                 startActivity(intent);
                 return true;
             }
 
         });
 
+    }
+    //creates map fragment
+    private void MapInit() {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(DriverMainMap.this);
+    }
 
+    //checks for location permissions on phone
+    private void getLocationPermission() {
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                LocationPermission = true;
+                MapInit();
+            } else {
+                ActivityCompat.requestPermissions(this, permissions, 1515);
+            }
+        } else {
+            ActivityCompat.requestPermissions(this, permissions, 1515);
+        }
+    }
+
+    /**
+     * requests the location permissions from the user
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        LocationPermission = false;
+        switch (requestCode) {
+            case 1515: {
+                for (int i = 0; i < grantResults.length; ++i) {
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                        LocationPermission = false;
+                        return;
+                    }
+                }
+                LocationPermission = true;
+                MapInit();
+            }
+        }
+    }
+
+    /**
+     * once the map is ready update the location with device location and the marker click function
+     * @param googleMap
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        ActualMap = googleMap;
+        if (LocationPermission) {
+            updateLocationUI();
+            DeviceLocation();
+            markerClick();
+        }
+    }
+
+    private void markerClick() {
+        // ADDED CODE IMPORTANT
+        //marker click position listener
+        ActualMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            /**
+             * on marker click call function to show rider info
+             * @param marker
+             * @return
+             */
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                // TODO Auto-generated method stub
+                if(marker.equals(marker)){
+                    Log.d("TEST", "test" + marker.getId());
+                    marker.showInfoWindow();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+    }
+
+    private void DeviceLocation() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        try {
+            if (LocationPermission) {
+                final Task locationResult = fusedLocationProviderClient.getLastLocation();
+                locationResult.addOnCompleteListener(new OnCompleteListener() {
+                    /**
+                     * Once the location for device is accessed,
+                     * if location is accessed successfully set the current location and move the map to it
+                     * otherwise move map to default location
+                     * @param task
+                     */
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            locationCurr = (Location) task.getResult();
+                            mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 11f);
+
+                        } else {
+                            mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude), 11f);
+                            ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
+                        }
+                    }
+                });
+            }
+        } catch (SecurityException e) {
+            Log.e("Exception: %s", e.getMessage());
+        }
+    }
+
+    //method for map camera movement
+    private void mapMove(LatLng latLng, float zoom) {
+        ActualMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    }
+
+    //shows the blue dot.
+    private void updateLocationUI() {
+        if (ActualMap == null) {
+            return;
+        }
+        try {
+            if (LocationPermission) {
+                ActualMap.setMyLocationEnabled(true);
+                ActualMap.getUiSettings().setMyLocationButtonEnabled(true);
+            } else {
+                ActualMap.setMyLocationEnabled(false);
+                ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
+                locationCurr = null;
+                getLocationPermission();
+            }
+        } catch (SecurityException e) {
+            Log.e("Exception: %s", e.getMessage());
+        }
+    }
+
+    /**
+     * gets the coordinates of location from address and returns it
+     * @param context
+     * @param strAddress
+     * @return
+     */
+    public LatLng getLocationFromAddress(Context context, String strAddress)
+    {
+        Geocoder coder= new Geocoder(context);
+        List<Address> address;
+        LatLng p1 = null;
+        try
+        {
+            address = coder.getFromLocationName(strAddress, 5);
+            if(address==null)
+            {
+                return null;
+            }
+            Address location = address.get(0);
+            location.getLatitude();
+            location.getLongitude();
+            p1 = new LatLng(location.getLatitude(), location.getLongitude());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return p1;
     }
 
 

@@ -21,9 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".GenerateQRCode"></activity>
-        <activity android:name=".userMainMap" />
         <activity android:name=".signup" />
-        <activity android:name=".afterRequestCreated" />
+        <activity android:name=".afterRequestCreated"
+            android:theme="@style/AppTheme.CustomPopUpTheme"/>
 
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -45,12 +45,12 @@
         <activity android:name=".AvailableRideAdapter" />
         <activity android:name=".RideComplete" />
         <activity android:name=".DriverMainMap" />
-        <activity android:name=".OnFragmentInteractionListener" />
-        <activity android:name=".RideCompleteFragment" />
         <activity android:name=".RideInProgress" />
         <activity android:name=".ScanQRCode" />
         <activity android:name=".WaitingUserResponse" />
-        <activity android:name=".ConfirmAmount" />
+        <activity android:name=".ConfirmAmount"
+            android:theme="@style/AppTheme.CustomPopUpTheme"/>
+
     </application>
 
 

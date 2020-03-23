@@ -10,19 +10,22 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**This class describes the app activity when the user is
+ * selecting a location
+ */
+
 public class SelectLocation extends AppCompatActivity {
 
-    String TAG = "SelectLocation";
+    private String TAG = "SelectLocation";
 
+    private FirebaseFirestore db;
 
-    FirebaseFirestore db;
+    private EditText pickupLocation;
+    private EditText destination;
+    private Button confirmButton;
+    private Button cancelButton;
 
-    EditText pickupLocation;
-    EditText destination;
-    Button confirmButton;
-    Button cancelButton;
-
-    String user;
+    private String user;
 
 
     @Override
@@ -47,6 +50,12 @@ public class SelectLocation extends AppCompatActivity {
 
 
         confirmButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * This method allows the user to confirm their selected start
+             * and end locations
+             * @param v The button that will be selected
+             * @return ConfirmAmount.class
+             */
             @Override
             public void onClick(View v) {
                 final String pickupName = pickupLocation.getText().toString();
@@ -67,6 +76,10 @@ public class SelectLocation extends AppCompatActivity {
         });
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * This method allows the user to clear out an inputed start and stop location
+             * @param v This is the button that will be selected
+             */
             @Override
             public void onClick(View v) {
                 pickupLocation.setText("");

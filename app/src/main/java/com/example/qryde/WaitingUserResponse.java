@@ -21,20 +21,23 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * This class describes the app activity while the rider is waiting
+ * for the ride to be accepted
+ */
 public class WaitingUserResponse extends AppCompatActivity {
 
-    String TAG = "WaitingUserResponse";
+    private String TAG = "WaitingUserResponse";
 
+    private FirebaseFirestore db;
 
-    FirebaseFirestore db;
+    private TextView tvStartLocation;
+    private TextView tvEndLocation;
 
-    TextView tvStartLocation;
-    TextView tvEndLocation;
-
-    String user;
-    String riderPicked;
+    private String user;
+    private String riderPicked;
     float amountOffered;
-    Button cancelButton;
+    private Button cancelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
