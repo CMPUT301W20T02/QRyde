@@ -1,7 +1,10 @@
 package com.example.qryde;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -10,10 +13,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -53,11 +59,15 @@ public class afterRequestCreated extends AppCompatActivity {
     private Button cancel;
     private float amount;
 
+    private TextView phoneNumber;
+
     private boolean isCancelDriver = false;
 
     private String driver;
 
     private int animationDuration = 100;
+    private static final int REQUEST_CALL = 1;
+
 
     ObjectAnimator findingBoxAnimationDown;
     ObjectAnimator findingTextAnimationDown;
@@ -83,6 +93,7 @@ public class afterRequestCreated extends AppCompatActivity {
 
         findingBox = findViewById(R.id.findingDriverBox);
         findingText = findViewById(R.id.findingText);
+        phoneNumber = findViewById(R.id.phone_number);
 
         driverFoundBox = findViewById(R.id.driverFoundBox);
         driverName = findViewById(R.id.driverName);
@@ -135,7 +146,12 @@ public class afterRequestCreated extends AppCompatActivity {
         }
 
         db = FirebaseFirestore.getInstance();
-
+        phoneNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makePhoneCall();
+            }
+        });
 //        db.collection("AvailableRides")
 //                .whereEqualTo("rider", user)
 //                .get()
@@ -224,6 +240,8 @@ public class afterRequestCreated extends AppCompatActivity {
                                             for (QueryDocumentSnapshot document : task.getResult()) {
                                                 driver = document.getData().get("driver").toString();
 
+                                                Log.d(TAG, driver);
+
                                                 db.collection("Users").whereEqualTo("username", driver)
                                                         .get()
                                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -239,6 +257,7 @@ public class afterRequestCreated extends AppCompatActivity {
                                                                         driverRating.setText(document.getData().get("thumbsUp").toString() + " | " + document.getData().get("thumbsDown").toString());
                                                                         findingText.setText("Driver found!");
                                                                         cancel.setText(" DECLINE ");
+                                                                        phoneNumber.setText(document.getData().get("phoneNumber").toString());
 
                                                                         isCancelDriver = true;
 
@@ -513,4 +532,32 @@ public class afterRequestCreated extends AppCompatActivity {
         getWindow().setGravity(Gravity.BOTTOM);
     }
 
+    private void makePhoneCall(){
+        String number = phoneNumber.getText().toString();
+        if (number.trim().length() > 0) {
+
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+            } else {
+                String dial = "tel:" + number;
+                startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+            }
+
+        } else {
+            Toast.makeText(this, "Enter Phone Number", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CALL) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                makePhoneCall();
+            } else {
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }
