@@ -2,11 +2,9 @@ package com.example.qryde;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
 import android.content.Context;
@@ -17,14 +15,11 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -39,7 +34,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -79,12 +73,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private String driver;
     private Integer markernumber = 0;
 
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private Toolbar toolbar;
-    private Menu menu;
-    private TextView textView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,15 +80,8 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         getLocationPermission();
         db = FirebaseFirestore.getInstance();
 
-        navigationView=findViewById(R.id.nav_view);
-
         final ListView availableRideListView = findViewById(R.id.list_view);
 
-        navigationView.bringToFront();
-
-        menu = navigationView.getMenu();
-        navigationView.bringToFront();
-        navigationView.setCheckedItem(R.id.nav_home);
 
         AvailableRide[] AvailableRideList = {};
 
@@ -127,7 +108,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
              */
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e){
-                dataList.clear();
+                dataList.clear();;
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     AvailableRide temp = new AvailableRide(doc.getData().get("rider").toString(),
                             doc.getData().get("startLocation").toString(),
