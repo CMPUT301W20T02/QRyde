@@ -122,11 +122,11 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                     tempLatLng = getLocationFromAddress(DriverMainMap.this, temp.getStartLocation());
 
                     // adding marker to show on map
-                    Marker marker = ActualMap.addMarker(new MarkerOptions().position(tempLatLng).title(
-                            temp.getRiderUsername() + markernumber));
+                    //Marker marker = ActualMap.addMarker(new MarkerOptions().position(tempLatLng).title(
+                            //temp.getRiderUsername() + markernumber)); UNCOMMENT THS IF YOU'RE TESTING -ANTHONY
 
                     // setting integer id for each marker and temp object
-                    marker.setTag(markernumber);
+                    //marker.setTag(markernumber); UNCOMMENT THS IF YOU'RE TESTING -ANTHONY
 
                     // moving to next object, next marker
                     markernumber++;
@@ -292,7 +292,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
                             locationCurr = (Location) task.getResult();
-                            mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 11f);
+                            //mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 11f); UNCOMMENT THS IF YOU'RE TESTING -ANTHONY
 
                         } else {
                             mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude), 11f);

@@ -1,7 +1,10 @@
 package com.example.qryde;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -10,10 +13,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -27,8 +33,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.ObjectStreamException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.lang.Float.parseFloat;
+import static java.lang.Integer.parseInt;
 
 /**
  * class for functions after request has been created, includes cancel button, ride status listener,
@@ -48,16 +58,21 @@ public class afterRequestCreated extends AppCompatActivity {
     private ImageView driverFoundBox;
     private TextView driverName;
     private TextView driverRating;
+    private TextView email;
 
     private Button confirm;
     private Button cancel;
     private float amount;
+
+    private TextView phoneNumber;
 
     private boolean isCancelDriver = false;
 
     private String driver;
 
     private int animationDuration = 100;
+    private static final int REQUEST_CALL = 1;
+
 
     ObjectAnimator findingBoxAnimationDown;
     ObjectAnimator findingTextAnimationDown;
@@ -83,6 +98,8 @@ public class afterRequestCreated extends AppCompatActivity {
 
         findingBox = findViewById(R.id.findingDriverBox);
         findingText = findViewById(R.id.findingText);
+        phoneNumber = findViewById(R.id.phone_number);
+        email = findViewById(R.id.email);
 
         driverFoundBox = findViewById(R.id.driverFoundBox);
         driverName = findViewById(R.id.driverName);
@@ -135,7 +152,19 @@ public class afterRequestCreated extends AppCompatActivity {
         }
 
         db = FirebaseFirestore.getInstance();
+        phoneNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makePhoneCall();
+            }
+        });
 
+        email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendEmail();
+            }
+        });
 //        db.collection("AvailableRides")
 //                .whereEqualTo("rider", user)
 //                .get()
@@ -224,6 +253,8 @@ public class afterRequestCreated extends AppCompatActivity {
                                             for (QueryDocumentSnapshot document : task.getResult()) {
                                                 driver = document.getData().get("driver").toString();
 
+                                                Log.d(TAG, driver);
+
                                                 db.collection("Users").whereEqualTo("username", driver)
                                                         .get()
                                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -235,10 +266,16 @@ public class afterRequestCreated extends AppCompatActivity {
                                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                                 if (task.isSuccessful()) {
                                                                     for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                        float likes = parseFloat(document.getData().get("thumbsUp").toString());
+                                                                        float dislikes = parseFloat(document.getData().get("thumbsDown").toString());
+                                                                        DecimalFormat df = new DecimalFormat("#.#");
+
                                                                         driverName.setText(document.getData().get("name").toString());
-                                                                        driverRating.setText(document.getData().get("thumbsUp").toString() + " | " + document.getData().get("thumbsDown").toString());
+                                                                        driverRating.setText(df.format(likes / (dislikes+likes) * 100)  + "%");
                                                                         findingText.setText("Driver found!");
                                                                         cancel.setText(" DECLINE ");
+                                                                        phoneNumber.setText(document.getData().get("phoneNumber").toString());
+                                                                        email.setText(document.getData().get("email").toString());
 
                                                                         isCancelDriver = true;
 
@@ -427,7 +464,7 @@ public class afterRequestCreated extends AppCompatActivity {
                                             String old_rider = document.getData().get("rider").toString();
 
                                             Map<String, Object> data = new HashMap<>();
-                                            data.put("amount", Float.parseFloat(old_amount));
+                                            data.put("amount", parseFloat(old_amount));
                                             data.put("datetime", old_datetime);
                                             data.put("driver", old_driverName);
                                             data.put("endLocation", old_endLocation);
@@ -436,7 +473,7 @@ public class afterRequestCreated extends AppCompatActivity {
                                             data.put("status", false);
                                             db.collection("ActiveRides").document(user).set(data);
 
-                                            amount = Float.parseFloat(old_amount);
+                                            amount = parseFloat(old_amount);
 
                                             // now change the text to ride in progress
                                             findingBoxAnimationDown.start();
@@ -513,4 +550,40 @@ public class afterRequestCreated extends AppCompatActivity {
         getWindow().setGravity(Gravity.BOTTOM);
     }
 
+    private void sendEmail(){
+        String[] recipients = {email.getText().toString()};
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_EMAIL, recipients);
+        intent.setType("message/rfc822");
+        startActivity(Intent.createChooser(intent, "Choose an email client"));
+    }
+
+    private void makePhoneCall(){
+        String number = phoneNumber.getText().toString();
+        if (number.trim().length() > 0) {
+
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+            } else {
+                String dial = "tel:" + number;
+                startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+            }
+
+        } else {
+            Toast.makeText(this, "Enter Phone Number", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CALL) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                makePhoneCall();
+            } else {
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }
