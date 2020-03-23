@@ -33,8 +33,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.ObjectStreamException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.lang.Float.parseFloat;
+import static java.lang.Integer.parseInt;
 
 /**
  * class for functions after request has been created, includes cancel button, ride status listener,
@@ -262,8 +266,12 @@ public class afterRequestCreated extends AppCompatActivity {
                                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                                 if (task.isSuccessful()) {
                                                                     for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                        float likes = parseFloat(document.getData().get("thumbsUp").toString());
+                                                                        float dislikes = parseFloat(document.getData().get("thumbsDown").toString());
+                                                                        DecimalFormat df = new DecimalFormat("#.#");
+
                                                                         driverName.setText(document.getData().get("name").toString());
-                                                                        driverRating.setText(document.getData().get("thumbsUp").toString() + " | " + document.getData().get("thumbsDown").toString());
+                                                                        driverRating.setText(df.format(likes / (dislikes+likes) * 100)  + "%");
                                                                         findingText.setText("Driver found!");
                                                                         cancel.setText(" DECLINE ");
                                                                         phoneNumber.setText(document.getData().get("phoneNumber").toString());
@@ -456,7 +464,7 @@ public class afterRequestCreated extends AppCompatActivity {
                                             String old_rider = document.getData().get("rider").toString();
 
                                             Map<String, Object> data = new HashMap<>();
-                                            data.put("amount", Float.parseFloat(old_amount));
+                                            data.put("amount", parseFloat(old_amount));
                                             data.put("datetime", old_datetime);
                                             data.put("driver", old_driverName);
                                             data.put("endLocation", old_endLocation);
@@ -465,7 +473,7 @@ public class afterRequestCreated extends AppCompatActivity {
                                             data.put("status", false);
                                             db.collection("ActiveRides").document(user).set(data);
 
-                                            amount = Float.parseFloat(old_amount);
+                                            amount = parseFloat(old_amount);
 
                                             // now change the text to ride in progress
                                             findingBoxAnimationDown.start();
