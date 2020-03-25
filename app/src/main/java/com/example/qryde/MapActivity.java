@@ -84,6 +84,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private TextView distanceView;
     private TextView durationView;
     private TextView costView;
+    private TextView usernameView;
 
     Location latlngtotempEndLocation = new Location("");
     Location endPostotempEndLocation = new Location("");
@@ -101,6 +102,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+        usernameView = findViewById(R.id.username_hamb);
+
+
 
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
