@@ -243,7 +243,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.setPadding(0,310,0,0);
+        googleMap.setPadding(0,420,0,0);
         ActualMap = googleMap;
         if (LocationPermission) {
             updateLocationUI();

@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph"
         />
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
         android:id="@+id/sliding_panel"
@@ -111,5 +112,6 @@
         android:layout_width="wrap_content"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:menu="@menu/hamb_menu"/>
+        app:menu="@menu/hamb_menu"
+        app:headerLayout="@layout/hamb_header"/>
 </androidx.drawerlayout.widget.DrawerLayout>
