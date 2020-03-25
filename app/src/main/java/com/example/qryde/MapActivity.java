@@ -66,7 +66,7 @@ import java.util.Objects;
  *
  */
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, BottomNavigationView.OnNavigationItemSelectedListener {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     //initialization of variables
     private Boolean LocationPermission = false;
@@ -103,7 +103,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         usernameView = findViewById(R.id.username_hamb);
-
+        navigationView.setNavigationItemSelectedListener(this);
 
 
         if (!Places.isInitialized()) {
@@ -576,14 +576,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch(menuItem.getItemId()){
             case R.id.nav_profile:{
+                Intent intent = new Intent(getApplicationContext(), UserProfile.class);
+                intent.putExtra("username", user);
+                startActivity(intent);
+                Log.d("xd", "xd");
                 break;
             }
 
             case R.id.nav_qr_wallet:{
-                break;
-            }
-
-            case R.id.nav_trip_history:{
                 break;
             }
         }

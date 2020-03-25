@@ -464,7 +464,7 @@ public class afterRequestCreated extends AppCompatActivity {
                                             String old_rider = document.getData().get("rider").toString();
 
                                             Map<String, Object> data = new HashMap<>();
-                                            data.put("amount", parseFloat(old_amount));
+                                            data.put("amount", Float.parseFloat(old_amount));
                                             data.put("datetime", old_datetime);
                                             data.put("driver", old_driverName);
                                             data.put("endLocation", old_endLocation);
@@ -473,7 +473,7 @@ public class afterRequestCreated extends AppCompatActivity {
                                             data.put("status", false);
                                             db.collection("ActiveRides").document(user).set(data);
 
-                                            amount = parseFloat(old_amount);
+                                            amount = Float.parseFloat(old_amount);
 
                                             // now change the text to ride in progress
                                             findingBoxAnimationDown.start();
@@ -559,6 +559,7 @@ public class afterRequestCreated extends AppCompatActivity {
     }
 
     private void makePhoneCall(){
+        //remember to source coding in flow!
         String number = phoneNumber.getText().toString();
         if (number.trim().length() > 0) {
 
