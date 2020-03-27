@@ -90,6 +90,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     Location endPostotempEndLocation = new Location("");
 
     private String user;
+    private boolean perms;
     private String pickupName;
     private String destinationName;
     private ImageView logo;
@@ -130,12 +131,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragmentdest.setCountries("CA"); //sets for now the location for autocomplete
 
         //Getting permission to access location from the user
-        getLocationPermission();
+        //getLocationPermission();
 
         // Getting username from logon activity
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
             user = incomingData.getString("username");
+            perms = incomingData.getBoolean("permissions");
+            Log.d("LOL", String.valueOf(perms));
+        }
+
+        if (perms) {
+            MapInit();
         }
 
         logo = findViewById(R.id.qryde_logo);
@@ -161,23 +168,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
-    //converting a location to an address
-    private String getCompleteAddressString(Location location) {
-        String returnedAddress = "";
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-
-        //catching for null locations
-        try {
-            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            if (addresses != null) {
-                returnedAddress = addresses.get(0).getAddressLine(0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return returnedAddress;
-    }
-
     //creates map fragment
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -191,47 +181,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    //getting permissions to access location of the device from the user
-    //if permission is granted current user location is accessed
-    private void getLocationPermission() {
-        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-        if(ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            if(ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                LocationPermission = true;
-                MapInit();
-            }else {
-                ActivityCompat.requestPermissions(this, permissions, 1515);
-            }
-        }else {
-            ActivityCompat.requestPermissions(this, permissions, 1515);
-        }
-    }
-
-    /**requests the location permissions
-     *
-     * checks if the user granted permission to their location.
-     * If they did, then call the MapInit() function to initizalize map
-     * Otherwise it doesn't initialize it and returns user
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        LocationPermission = false;
-        if (requestCode == 1515) {
-            for (int grantResult : grantResults) {
-                if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                    LocationPermission = false;
-                    return;
-                }
-            }
-            LocationPermission = true;
-            MapInit();
-        }
-    }
-
-
     /**
      * getting the google map ready once location is permitted
      * starts:
@@ -243,9 +192,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.setPadding(0,420,0,0);
+        googleMap.setPadding(0,430,0,0);
         ActualMap = googleMap;
-        if (LocationPermission) {
+        if (perms) {
             updateLocationUI();
             DeviceLocation();
             searchInit();
@@ -269,7 +218,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void DeviceLocation() {
         FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try {
-            if (LocationPermission) {
+            if (perms) {
                 Task locationResult = fusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -302,7 +251,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             return;
         }
         try {
-            if (LocationPermission) {
+            if (perms) {
                 ActualMap.setMyLocationEnabled(true);
                 View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
                 locationButton.setOnClickListener(new View.OnClickListener() {
@@ -326,7 +275,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 ActualMap.setMyLocationEnabled(false);
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
                 locationCurr = null;
-                getLocationPermission();
+                //getLocationPermission();
             }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", Objects.requireNonNull(e.getMessage()));
@@ -542,6 +491,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 600,
                 null
         );
+    }
+
+    //converting a location to an address
+    private String getCompleteAddressString(Location location) {
+        String returnedAddress = "";
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        //catching for null locations
+        try {
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            if (addresses != null) {
+                returnedAddress = addresses.get(0).getAddressLine(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return returnedAddress;
     }
 
     /**
