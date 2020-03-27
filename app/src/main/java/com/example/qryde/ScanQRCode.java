@@ -1,22 +1,35 @@
 package com.example.qryde;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 
 import java.io.IOException;
 
@@ -31,6 +44,12 @@ public class ScanQRCode extends AppCompatActivity{
     CameraSource cameraSource;
     TextView textView;
     BarcodeDetector barcodeDetector;
+    String user;
+    Boolean read = false;
+
+    private FirebaseFirestore db;
+
+    String TAG = "ScanQR";
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +57,8 @@ public class ScanQRCode extends AppCompatActivity{
         setContentView(R.layout.qr_scanner);
         surfaceView =  findViewById(R.id.cameraView);
         textView =  findViewById(R.id.txtContext);
+
+        db = FirebaseFirestore.getInstance();
 
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE).build();
@@ -92,24 +113,25 @@ public class ScanQRCode extends AppCompatActivity{
             public void receiveDetections(Detector.Detections<Barcode> detections){
                 final SparseArray<Barcode> qrCodes = detections.getDetectedItems();
 
-                if(qrCodes.size() != 0)
+                if( (qrCodes.size() != 0) && (!read))
                 {
                     textView.post(new Runnable() {
                         @Override
                         public void run(){
-                            Vibrator vibrator = (Vibrator)getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-                            vibrator.vibrate(1000);
-                            textView.setText(qrCodes.valueAt(0).displayValue);
+                            String msg = qrCodes.valueAt(0).displayValue;
+                            Log.d(TAG, "run:" + msg);
+                            read = true;
+
+                            Intent intent = new Intent(getApplicationContext(), DriverQRComplete.class);
+                            intent.putExtra("iou", msg);
+                            startActivity(intent);
+
+                            finish();
                         }
                     });
                 }
             }
         });
-
-
-
-
-
 
 
     }
