@@ -66,7 +66,11 @@
         android:id="@+id/qr_amount_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:textColor="#000000"
         android:textSize="16dp"
         android:visibility="visible"
@@ -86,6 +90,32 @@
         android:text="Scan QR Bucks"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/thumbsUpButton"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="108dp"
+        android:layout_marginLeft="108dp"
+        android:layout_marginTop="32dp"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toStartOf="@+id/ride_complete_box"
+        app:layout_constraintTop_toBottomOf="@+id/ride_complete_text"
+        app:srcCompat="@drawable/thumbsUP" />
+
+    <ImageButton
+        android:id="@+id/thumbsDownButton"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginRight="100dp"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="@+id/ride_complete_box"
+        app:layout_constraintHorizontal_bias="0.773"
+        app:layout_constraintStart_toEndOf="@+id/thumbsUpButton"
+        app:layout_constraintTop_toBottomOf="@+id/ride_complete_text"
+        app:srcCompat="@drawable/thumbsDOWN" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
