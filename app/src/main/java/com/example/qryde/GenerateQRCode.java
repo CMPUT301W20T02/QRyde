@@ -2,8 +2,10 @@ package com.example.qryde;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 /**
@@ -38,8 +40,14 @@ public class GenerateQRCode extends AppCompatActivity {
         new ImageDownloaderTask(imageView).execute("https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=" + qrMsg);
 
 
-
-
-
+        //still figuring out how to transition from this activity to the RateDriver one, added this listener to test RateDriver for now
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), RateDriver.class);
+                intent.putExtra("driver", driver);
+                startActivity(intent);
+            }
+        });
     }
 }

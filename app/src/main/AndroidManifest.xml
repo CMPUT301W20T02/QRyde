@@ -45,6 +45,7 @@
         </activity>
         <activity android:name=".SelectLocation" />
         <activity android:name=".AvailableRide" />
+        <activity android:name=".RateDriver" />
         <activity android:name=".AvailableRideAdapter" />
         <activity android:name=".RideComplete" />
         <activity android:name=".DriverMainMap" />

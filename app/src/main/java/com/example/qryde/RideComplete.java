@@ -88,7 +88,6 @@ public class RideComplete extends AppCompatActivity {
              * @param View
              */
             public void onClick(View v) {
-                //positive will stay true
             }
         });
 
@@ -100,7 +99,6 @@ public class RideComplete extends AppCompatActivity {
              * @param View
              */
             public void onClick(View v) {
-                positive = false;
             }
         });
     }
