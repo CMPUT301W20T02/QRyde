@@ -62,6 +62,7 @@ public class RideInProgress extends AppCompatActivity {
                         intent.putExtra("user", user);
                         intent.putExtra("amount", amountOffered);
                         startActivity(intent);
+                        finish();
                     }
                 }
             }

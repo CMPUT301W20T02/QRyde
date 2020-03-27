@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -31,6 +33,7 @@ public class DriverQRComplete extends AppCompatActivity {
     TextView msg;
     private FirebaseFirestore db;
     int numTransactions;
+    Button completeButton;
 
 
     @Override
@@ -41,6 +44,7 @@ public class DriverQRComplete extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         msg = findViewById(R.id.qr_amount_text);
+        completeButton = findViewById(R.id.close_button);
 
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
@@ -115,6 +119,14 @@ public class DriverQRComplete extends AppCompatActivity {
                         }
                     }
                 });
+
+        completeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
 
 
 

@@ -68,6 +68,7 @@ public class RideComplete extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), ScanQRCode.class);
                 intent.putExtra("username", user);
                 startActivity(intent);
+                finish();
             }
         });
     }
