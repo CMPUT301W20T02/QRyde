@@ -101,7 +101,7 @@
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="@+id/ride_complete_box"
         app:layout_constraintTop_toBottomOf="@+id/ride_complete_text"
-        app:srcCompat="@drawable/thumbsUP" />
+        app:srcCompat="@drawable/thumbs_up" />
 
     <ImageButton
         android:id="@+id/thumbsDownButton"
@@ -115,7 +115,7 @@
         app:layout_constraintHorizontal_bias="0.773"
         app:layout_constraintStart_toEndOf="@+id/thumbsUpButton"
         app:layout_constraintTop_toBottomOf="@+id/ride_complete_text"
-        app:srcCompat="@drawable/thumbsDOWN" />
+        app:srcCompat="@drawable/thumbs_down" />
 
     <TextView
         android:id="@+id/textView"
