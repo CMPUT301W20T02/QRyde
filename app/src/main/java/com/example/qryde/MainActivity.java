@@ -1,6 +1,7 @@
 package com.example.qryde;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView usernameBox;
     private ImageView passwordBox;
     private TextView incorrect;
+    private Permissions permissions;
+    private boolean mainPerms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +56,10 @@ public class MainActivity extends AppCompatActivity {
         usernameBox = findViewById(R.id.usernameBox);
         passwordBox = findViewById(R.id.passwordBox);
         incorrect = findViewById(R.id.incorrect);
+        permissions = new Permissions(this);
+        permissions.checkPermissions();
 
+        mainPerms = permissions.HasPermissions();
         loginButton();
         signUpButton();
     }
@@ -99,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
                                         intent.putExtra("username", username.getText().toString());
                                         intent.putExtra("username", username.getText().toString());
-
+                                        intent.putExtra("permissions", mainPerms);
                                         startActivity(intent);
                                     } else {
                                         usernameBox.setImageResource(R.drawable.rounded_rectangle_red);
@@ -129,4 +135,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d("LOLS", String.valueOf(mainPerms));
+        if (requestCode == 1 | requestCode == 2 | requestCode == 3 | requestCode == 4) {
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    mainPerms = false;
+                    return;
+                }
+            }
+            mainPerms = true;
+        }
+    }
 }
