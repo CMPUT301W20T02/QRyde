@@ -88,6 +88,7 @@ public class WaitingUserResponse extends AppCompatActivity {
                         intent.putExtra("user", user);
                         intent.putExtra("amount", amountOffered);
                         startActivity(intent);
+                        finish();
                     }
                 }
             }
