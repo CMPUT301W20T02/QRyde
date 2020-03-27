@@ -181,47 +181,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    //getting permissions to access location of the device from the user
-    //if permission is granted current user location is accessed
-//    private void getLocationPermission() {
-//        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-//        if(ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-//            if(ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-//                LocationPermission = true;
-//                MapInit();
-//            }else {
-//                ActivityCompat.requestPermissions(this, permissions, 1515);
-//            }
-//        }else {
-//            ActivityCompat.requestPermissions(this, permissions, 1515);
-//        }
-//    }
-
-//    /**requests the location permissions
-//     *
-//     * checks if the user granted permission to their location.
-//     * If they did, then call the MapInit() function to initizalize map
-//     * Otherwise it doesn't initialize it and returns user
-//     * @param requestCode
-//     * @param permissions
-//     * @param grantResults
-//     */
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        LocationPermission = false;
-//        if (requestCode == 1515) {
-//            for (int grantResult : grantResults) {
-//                if (grantResult != PackageManager.PERMISSION_GRANTED) {
-//                    LocationPermission = false;
-//                    return;
-//                }
-//            }
-//            LocationPermission = true;
-//            MapInit();
-//        }
-//    }
-
-
     /**
      * getting the google map ready once location is permitted
      * starts:

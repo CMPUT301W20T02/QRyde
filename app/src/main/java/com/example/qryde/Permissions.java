@@ -3,14 +3,18 @@ package com.example.qryde;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+/**
+ * Class Permissions requests the required permissions for the app to fully work
+ *
+ *
+ */
+
 public class Permissions {
-    public boolean allPermissions;
+    private boolean allPermissions;
     private Activity activity;
 
     public Permissions(Activity activity) {
@@ -40,25 +44,11 @@ public class Permissions {
             }else {
                 ActivityCompat.requestPermissions(this.activity, permissions, 4);
             }
-        }
-        else {
+        }else {
             ActivityCompat.requestPermissions(this.activity, permissions, 4);
         }
 
     }
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        Log.d("LOLS", String.valueOf(allPermissions));
-//        if (requestCode == 1 | requestCode == 2 | requestCode == 3 | requestCode == 4) {
-//            for (int grantResult : grantResults) {
-//                if (grantResult != PackageManager.PERMISSION_GRANTED) {
-//                    allPermissions = false;
-//                    return;
-//                }
-//            }
-//            allPermissions = true;
-//        }
-//    }
 
     public boolean HasPermissions() {
         return allPermissions;
