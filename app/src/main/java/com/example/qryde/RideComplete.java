@@ -27,6 +27,13 @@ public class RideComplete extends AppCompatActivity {
     private float amountOffered;
     private String amountOfferedString;
     private TextView amountOfferedTv;
+    private TextView rideComplete;
+
+    static String IOUmsg;
+    private static RideComplete instance;
+
+    int numTransactions;
+
 
 
     @Override
@@ -34,8 +41,11 @@ public class RideComplete extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ride_complete);
         Bundle incomingData = getIntent().getExtras();
-        ScanButton = findViewById(R.id.scan_qr_button);
+        ScanButton = findViewById(R.id.close_button);
         amountOfferedTv = findViewById(R.id.qr_amount_text);
+        rideComplete = findViewById(R.id.ride_complete_text);
+
+        instance = this; // for calling functions
 
 
         if (incomingData != null) {
