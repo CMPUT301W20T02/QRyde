@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="QrydeB">#0f4f4f</color>
+    <color name="QrydeA">#007fff</color>
 </resources>
