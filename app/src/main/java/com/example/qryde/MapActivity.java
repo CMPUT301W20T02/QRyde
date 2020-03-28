@@ -13,6 +13,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -165,6 +167,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //                }
             }
         });
+
+        ImageButton navigationDrawer = (ImageButton) findViewById(R.id.hamburger_menu_button);
+        navigationDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
 
     }
 
@@ -538,6 +549,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return bd.doubleValue();
     }
 
+    /**
+     * When a menu item is selected from navigation drawer, go to the activity
+     * @param menuItem
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch(menuItem.getItemId()){
@@ -557,5 +573,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         drawerLayout.closeDrawer(GravityCompat.START);
         return false;
     }
+
+
 }
 

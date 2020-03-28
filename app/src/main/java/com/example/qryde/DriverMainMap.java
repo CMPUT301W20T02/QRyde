@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
 import android.content.Context;
@@ -15,9 +17,11 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -34,6 +38,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -54,7 +59,7 @@ import static java.lang.Float.parseFloat;
  * sliding up panel is implemented to take a look at the rest of the available requests,
  * ride requests are pulled from firebase and updated once driver selects one via a longpress
  */
-public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallback{
+public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener{
 
     private String TAG = "DriverMainMap";
 
@@ -72,6 +77,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private final LatLng EarthDefaultLocation = new LatLng(0, 0); //just center of earth
     private String driver;
     private Integer markernumber = 0;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +86,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         getLocationPermission();
         db = FirebaseFirestore.getInstance();
 
+        drawerLayout = findViewById(R.id.drawer_layout);
         final ListView availableRideListView = findViewById(R.id.list_view);
 
 
@@ -89,6 +96,14 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         if (incomingData != null) {
             user = incomingData.getString("username");
         }
+
+        ImageButton navigationDrawer = (ImageButton) findViewById(R.id.hamburger_menu_button);
+        navigationDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
 
         dataList = new ArrayList<>();
         dataList.addAll(Arrays.asList(AvailableRideList));
@@ -359,6 +374,26 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             e.printStackTrace();
         }
         return p1;
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        switch(menuItem.getItemId()){
+            case R.id.nav_profile:{
+                Intent intent = new Intent(getApplicationContext(), UserProfile.class);
+                intent.putExtra("username", user);
+                startActivity(intent);
+                Log.d("xd", "xd");
+                break;
+            }
+
+            case R.id.nav_qr_wallet:{
+                break;
+            }
+        }
+        menuItem.setChecked(true);
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return false;
     }
 
 

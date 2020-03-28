@@ -38,16 +38,19 @@
                 android:layout_height="wrap_content"
                 tools:context=".DriverMainMap"/>
 
-            <ImageView
-                android:id="@+id/hamburger_menu"
-                android:layout_width="29dp"
-                android:layout_height="32dp"
+            <ImageButton
+                android:id="@+id/hamburger_menu_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/hamburger_icon" />
+                android:src="@drawable/hamburger_icon"
+                android:contentDescription="@string/hamburger_menu_button"
+                android:scaleType="centerCrop"
+                android:background="@null"/>
 
     <!--        <ImageView-->
     <!--            android:id="@+id/startLocationBox"-->

@@ -8,15 +8,13 @@
     android:fitsSystemWindows="true"
     android:id="@+id/drawer_layout">
 
-
     <fragment
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:id="@+id/nav_host_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
-         />
-
+        />
 
     <RelativeLayout
     android:layout_width="match_parent"
@@ -29,19 +27,23 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MapsActivity" />
+        tools:context=".MapsActivity"
+            />
 
 
-        <ImageView
-            android:id="@+id/hamburger_menu"
-            android:layout_width="29dp"
-            android:layout_height="32dp"
+        <ImageButton
+            android:id="@+id/hamburger_menu_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/hamburger_icon" />
+            android:src="@drawable/hamburger_icon"
+            android:contentDescription="@string/hamburger_menu_button"
+            android:scaleType="centerCrop"
+            android:background="@null"/>
 
     <TextView
         android:id="@+id/time"
@@ -149,5 +151,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:menu="@menu/hamb_menu"
-        app:headerLayout="@layout/hamb_header"/>
+        app:headerLayout="@layout/hamb_header"
+        />
     </androidx.drawerlayout.widget.DrawerLayout>
