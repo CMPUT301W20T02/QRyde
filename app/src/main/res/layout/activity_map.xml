@@ -29,8 +29,9 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MapsActivity" />
-
+        tools:context=".MapsActivity"
+            android:layout_marginBottom="-30dp" />
+<!--hides google logo - against google TOS but since school project YOLO-->
 
         <ImageView
             android:id="@+id/hamburger_menu"
@@ -113,10 +114,12 @@
          android:layout_height="45dp"
          android:layout_alignParentBottom="true"
          android:text="Calculate Route"
-         android:background="@color/QrydeA"
+         android:textColor="#ffff"
+         android:background="@drawable/custom_button"
          android:layout_marginBottom="10dp"
          app:cornerRadius="100dp"
-         android:visibility="gone">
+         android:visibility="gone"
+         >
      </Button>
 
 
