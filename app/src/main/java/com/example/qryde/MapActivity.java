@@ -210,7 +210,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
-        googleMap.setPadding(0, 450, -10, 0);
+        googleMap.setPadding(0, 450, 0, 0);
         ActualMap = googleMap;
         if (perms) {
             updateLocationUI();
