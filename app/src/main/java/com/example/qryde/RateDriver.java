@@ -48,7 +48,6 @@ public class RateDriver extends AppCompatActivity {
         if (incomingData != null) {
             driver = incomingData.getString("driver");
         }
-
         thumbsUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

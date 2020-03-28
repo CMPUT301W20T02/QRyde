@@ -17,7 +17,8 @@ public class GenerateQRCode extends AppCompatActivity {
     private String TAG = "GenerateQRCode";
 
     private ImageView imageView;
-    private String driver;
+    private String driverName;
+    private String driverUserName;
     private String rider;
     float amount;
 
@@ -29,11 +30,12 @@ public class GenerateQRCode extends AppCompatActivity {
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
             rider = incomingData.getString("rider");
-            driver = incomingData.getString("driver");
+            driverName = incomingData.getString("driver");
             amount = incomingData.getFloat("amount");
+            driverUserName = incomingData.getString("driver_user_name");
         }
 
-        String qrMsg = rider + " owes " + driver + " $" + amount;
+        String qrMsg = rider + " owes " + driverName + " $" + amount;
 
         imageView = findViewById(R.id.imageView);
 
@@ -45,7 +47,7 @@ public class GenerateQRCode extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), RateDriver.class);
-                intent.putExtra("driver", driver);
+                intent.putExtra("driver", driverUserName);
                 startActivity(intent);
             }
         });
