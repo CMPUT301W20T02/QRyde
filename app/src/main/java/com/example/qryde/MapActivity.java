@@ -11,6 +11,9 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -87,7 +90,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private TextView costView;
     private TextView usernameView;
     private Button markerBut;
-
 
     Location latlngtotempEndLocation = new Location("");
     Location endPostotempEndLocation = new Location("");
@@ -206,7 +208,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
-        googleMap.setPadding(0, 450, 0, 0);
+        googleMap.setPadding(0, 450, -10, 0);
         ActualMap = googleMap;
         if (perms) {
             updateLocationUI();
@@ -282,17 +284,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                      */
                     @Override
                     public void onClick(View v) {
-                        if (polyline != null) polyline.remove();
+                        ActualMap.clear();
                         DeviceLocation();
-                        if (endPos != null) {
+                        if (endPos != null || latlngtotempEndLocation !=null) {
                             startPos = null;
                             calculateDirections();
                         }
                     }
                 });
-
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(true);
-                ActualMap.getUiSettings().setZoomControlsEnabled(true);
             } else {
                 ActualMap.setMyLocationEnabled(false);
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -359,7 +359,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 logo.setVisibility(View.GONE);
                 logorequest.setVisibility(View.GONE);
-                polyline.remove();
+                markerBut.setVisibility(View.GONE);
                 ActualMap.clear();
                 endPos = null;
                 if (startPos == null) {
@@ -417,11 +417,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         } else {
             endPosLatLng = new LatLng(endPos.getLatLng().latitude, endPos.getLatLng().longitude);
         }
+        ActualMap.clear();
 
-        if (polyline != null) { //removes a poly line if exists
-            polyline.remove();
-            ActualMap.clear();
-        }
         mapMarker.MapMarkerAdd(ActualMap,endPosLatLng, MapActivity.this, R.drawable.ic_place_black_24dp);
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(endPosLatLng.latitude, endPosLatLng.longitude);
 
