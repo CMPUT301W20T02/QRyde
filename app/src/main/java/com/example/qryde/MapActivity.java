@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,12 +79,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private NavigationView navigationView;
     private AddressString addressString;
     private MarkerPin markerPin;
-    private MapMarker mapMarker;
+    private MapMarker mapMarker, mapMarkerStart;
+    private RideCalculator rideCalculator;
 
     private TextView distanceView;
     private TextView durationView;
     private TextView costView;
     private TextView usernameView;
+    private Button markerBut;
 
 
     Location latlngtotempEndLocation = new Location("");
@@ -94,6 +97,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String pickupName;
     private String destinationName;
     private ImageView logo;
+    private TextView logorequest;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -128,6 +132,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         addressString = new AddressString(this);
         mapMarker = new MapMarker();
+        mapMarkerStart = new MapMarker();
         markerPin = new MarkerPin();
 
         distanceView = findViewById(R.id.distance);
@@ -145,8 +150,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (perms) {
             MapInit();
         }
+        markerBut = findViewById(R.id.MarkerDrop);
+        markerBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateDirections();
+            }
+        });
 
         logo = findViewById(R.id.qryde_logo);
+        logorequest = findViewById(R.id.request_text);
         logo.setOnClickListener(new View.OnClickListener() {
             /**
              * When the logo is clicked, it goes to the confirm amount activity to confirm amount
@@ -206,12 +219,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     // adds destination marker and sets location end latitude longitude, sets destination text
     private void mapClicker() {
         ActualMap.setOnMapClickListener(point -> {
-            latlngtotempEndLocation.setLatitude(point.latitude);
-            latlngtotempEndLocation.setLongitude(point.longitude);
-            ActualMap.clear();
-            ActualMap.addMarker(new MarkerOptions().position(point).icon(markerPin.bitmapDescriptorFromVector(this,R.drawable.ic_place_black_24dp)));
-            destinationName = addressString.getCompleteAddressString(latlngtotempEndLocation);
-            autocompleteSupportFragmentdest.setText(String.format("%s", destinationName));
+            if (endPos == null) {
+                ActualMap.clear();
+                markerBut.setVisibility(View.VISIBLE);
+                latlngtotempEndLocation = new Location("");
+                latlngtotempEndLocation.setLatitude(point.latitude);
+                latlngtotempEndLocation.setLongitude(point.longitude);
+                ActualMap.addMarker(new MarkerOptions().position(point).icon(markerPin.bitmapDescriptorFromVector(this, R.drawable.ic_place_black_24dp)));
+                destinationName = addressString.getCompleteAddressString(latlngtotempEndLocation);
+                autocompleteSupportFragmentdest.setText(String.format("%s", destinationName));
+            }
         });
     }
 
@@ -301,7 +318,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 startPos = place;
                 mapMove(place.getLatLng(), 15f);
-                if (endPos != null) {
+                if (endPos != null || latlngtotempEndLocation !=null) {
                     calculateDirections();
                 }
             }
@@ -321,9 +338,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         //clearing the user input in the autocomplete search fragment when clicked on
         Objects.requireNonNull(autocompleteSupportFragment.getView()).findViewById(R.id.places_autocomplete_clear_button).setOnClickListener(v -> {
+            logo.setVisibility(View.GONE);
+            logorequest.setVisibility(View.GONE);
             startPos = null;
             autocompleteSupportFragment.setText("");
-            if (endPos != null) {
+            if (endPos != null || latlngtotempEndLocation != null) {
                 calculateDirections();
             }
         });
@@ -338,6 +357,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
              */
             @Override
             public void onClick(View v) {
+                logo.setVisibility(View.GONE);
+                logorequest.setVisibility(View.GONE);
                 polyline.remove();
                 ActualMap.clear();
                 endPos = null;
@@ -363,6 +384,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
              */
             @Override
             public void onPlaceSelected(@NonNull Place place) {
+                ActualMap.clear();
+                latlngtotempEndLocation = null;
                 endPos = place;
                 endPostotempEndLocation.setLatitude(endPos.getLatLng().latitude);
                 endPostotempEndLocation.setLongitude(endPos.getLatLng().longitude);
@@ -388,23 +411,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     //method to add the best possible route from one point entered to another
     private void calculateDirections() {
 
+        LatLng endPosLatLng;
+        if (latlngtotempEndLocation != null) {
+            endPosLatLng = new LatLng(latlngtotempEndLocation.getLatitude(),latlngtotempEndLocation.getLongitude());
+        } else {
+            endPosLatLng = new LatLng(endPos.getLatLng().latitude, endPos.getLatLng().longitude);
+        }
+
         if (polyline != null) { //removes a poly line if exists
             polyline.remove();
             ActualMap.clear();
         }
-
-        mapMarker.MapMarkerAdd(ActualMap,endPos.getLatLng(), MapActivity.this);
-        com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
-                endPos.getLatLng().latitude,
-                endPos.getLatLng().longitude
-
-        );
+        mapMarker.MapMarkerAdd(ActualMap,endPosLatLng, MapActivity.this, R.drawable.ic_place_black_24dp);
+        com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(endPosLatLng.latitude, endPosLatLng.longitude);
 
         DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
-
         if (startPos == null) {
             directions.origin(new com.google.maps.model.LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
         } else {
+            mapMarkerStart.MapMarkerAdd(ActualMap,startPos.getLatLng(), MapActivity.this, R.drawable.ic_place_blackstart_24dp);
             directions.origin(new com.google.maps.model.LatLng(startPos.getLatLng().latitude, startPos.getLatLng().longitude));
         }
 
@@ -425,21 +450,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Log.d("Directions", "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
 
                 //adding the route calculated to the map
+                rideCalculator = new RideCalculator(result);
                 addPolylinesToMap(result);
 
-                double seconds = (double) result.routes[0].legs[0].duration.inSeconds;
-                double minutes = roundUp(seconds / 60, 1);
-
-                double kilometres = result.routes[0].legs[0].distance.inMeters;
-                kilometres = roundUp(kilometres / 1000, 2);
-
-                double cost = costCalculator(minutes, kilometres);
-                cost = roundUp(cost, 2);
-
                 //displaying the variables calculated onto the activity
-                distanceView.setText(String.format("Distance: %s km", kilometres));
-                durationView.setText(String.format("Time: %s minutes", minutes));
-                costView.setText(String.format("Cost: $%s", cost));
+                distanceView.setText(String.format("Distance: %s km", rideCalculator.getKilometres()));
+                durationView.setText(String.format("Time: %s minutes", rideCalculator.getMinutes()));
+                costView.setText(String.format("Cost: $%s", rideCalculator.getCost()));
             }
 
 
@@ -474,7 +491,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .addAll(newDecodedPath)
                     .color(getColor(R.color.QrydeB)));
 
+            markerBut.setVisibility(View.GONE);
             polylineZoom(polyline.getPoints());
+            logo.setVisibility(View.VISIBLE);
+            logorequest.setVisibility(View.VISIBLE);
         });
     }
 
@@ -501,34 +521,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         );
     }
 
-    /**
-     * calculating the cost for a ride using time and distance
-     *
-     * @param minutes
-     * @param distance
-     * @return
-     */
-    public double costCalculator(double minutes, double distance) {
-        double baseCost = 2.00;
-        double minimumFare = 4.00;
 
-        double perKm = 0.85;
-        double perMinute = 0.25;
-
-        return (baseCost + minimumFare + (minutes * perMinute) + (distance * perKm));
-    }
-
-    /**
-     * rounding up decimal numbers to a precision point
-     *
-     * @param number
-     * @param precision
-     * @return
-     */
-    public double roundUp(double number, int precision) {
-        BigDecimal bd = new BigDecimal(number).setScale(precision, RoundingMode.HALF_UP);
-        return bd.doubleValue();
-    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
