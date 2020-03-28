@@ -79,6 +79,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private AddressString addressString;
+    private MarkerPin markerPin;
 
     private TextView distanceView;
     private TextView durationView;
@@ -154,13 +155,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
              */
             @Override
             public void onClick(View v) {
-//                if(pickupName != "" && destinationName != "") {
                 Intent intent = new Intent(getApplicationContext(), ConfirmAmount.class);
                 intent.putExtra("username", user);
                 intent.putExtra("pickup", pickupName);
                 intent.putExtra("destination", destinationName);
                 startActivity(intent);
-//                }
             }
         });
 
@@ -213,11 +212,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     // adds destination marker and sets location end latitude longitude, sets destination text
     private void mapClicker() {
+        markerPin = new MarkerPin();
         ActualMap.setOnMapClickListener(point -> {
             latlngtotempEndLocation.setLatitude(point.latitude);
             latlngtotempEndLocation.setLongitude(point.longitude);
             ActualMap.clear();
-            ActualMap.addMarker(new MarkerOptions().position(point));
+            ActualMap.addMarker(new MarkerOptions().position(point).icon(markerPin.bitmapDescriptorFromVector(this,R.drawable.ic_place_black_24dp)));
             destinationName = addressString.getCompleteAddressString(latlngtotempEndLocation);
             autocompleteSupportFragmentdest.setText(String.format("%s", destinationName));
         });
@@ -275,9 +275,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     public void onClick(View v) {
                         if (polyline != null) polyline.remove();
                         DeviceLocation();
-                        //startPos = new Place(locationCurr);
-                        //autocompleteSupportFragment.setText(String.format("%s", getCompleteAddressString(locationCurr)));
-                        calculateDirections();
+                        if (endPos != null) {
+                            startPos = null;
+                            calculateDirections();
+                        }
                     }
                 });
 
