@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.util.Log;
 
 import java.util.List;
 import java.util.Locale;
@@ -14,6 +15,7 @@ public class AddressString {
 
     public AddressString(Activity activity) {
         this.activity = activity;
+
     }
 
     public String getCompleteAddressString(Location location) {
@@ -30,6 +32,7 @@ public class AddressString {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Log.d("sdasdsa", returnedAddress);
         return returnedAddress;
         }
     }

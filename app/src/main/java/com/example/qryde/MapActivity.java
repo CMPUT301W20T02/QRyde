@@ -78,6 +78,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private NavigationView navigationView;
     private AddressString addressString;
     private MarkerPin markerPin;
+    private MapMarker mapMarker;
 
     private TextView distanceView;
     private TextView durationView;
@@ -126,6 +127,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragmentdest.setCountries("CA"); //sets for now the location for autocomplete
 
         addressString = new AddressString(this);
+        mapMarker = new MapMarker();
+        markerPin = new MarkerPin();
+
         distanceView = findViewById(R.id.distance);
         durationView = findViewById(R.id.time);
         costView = findViewById(R.id.cost);
@@ -201,7 +205,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     // adds destination marker and sets location end latitude longitude, sets destination text
     private void mapClicker() {
-        markerPin = new MarkerPin();
         ActualMap.setOnMapClickListener(point -> {
             latlngtotempEndLocation.setLatitude(point.latitude);
             latlngtotempEndLocation.setLongitude(point.longitude);
@@ -223,7 +226,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         locationCurr = (Location) task.getResult();
                         Log.d("test", "TESTING PICKUPNAME22" + addressString.getCompleteAddressString(locationCurr));
                         autocompleteSupportFragment.setText(String.format("%s", addressString.getCompleteAddressString(locationCurr)));
-                        //pickupName = getCompleteAddressString(locationCurr);
+                        pickupName = addressString.getCompleteAddressString(locationCurr);
                         if (endPos == null) {
                             mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
                         }
@@ -336,6 +339,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 polyline.remove();
+                ActualMap.clear();
                 endPos = null;
                 if (startPos == null) {
                     mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
@@ -383,16 +387,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     //method to add the best possible route from one point entered to another
     private void calculateDirections() {
-        Log.d("Directions", "calculateDirections: calculating directions.");
 
         if (polyline != null) { //removes a poly line if exists
             polyline.remove();
+            ActualMap.clear();
         }
+
+        mapMarker.MapMarkerAdd(ActualMap,endPos.getLatLng(), MapActivity.this);
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
                 endPos.getLatLng().latitude,
                 endPos.getLatLng().longitude
 
         );
+
         DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
 
         if (startPos == null) {
