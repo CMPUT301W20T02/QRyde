@@ -76,11 +76,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private View mapView;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private AddressString addressString;
 
     private TextView distanceView;
     private TextView durationView;
     private TextView costView;
     private TextView usernameView;
+
 
     Location latlngtotempEndLocation = new Location("");
     Location endPostotempEndLocation = new Location("");
@@ -122,6 +124,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragmentdest.setHint("Where to?");
         autocompleteSupportFragmentdest.setCountries("CA"); //sets for now the location for autocomplete
 
+        addressString = new AddressString(this);
         distanceView = findViewById(R.id.distance);
         durationView = findViewById(R.id.time);
         costView = findViewById(R.id.cost);
@@ -204,8 +207,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             latlngtotempEndLocation.setLongitude(point.longitude);
             ActualMap.clear();
             ActualMap.addMarker(new MarkerOptions().position(point));
-            autocompleteSupportFragmentdest.setText(String.format("%s", getCompleteAddressString((latlngtotempEndLocation))));
-            destinationName = getCompleteAddressString(latlngtotempEndLocation);
+            destinationName = addressString.getCompleteAddressString(latlngtotempEndLocation);
+            autocompleteSupportFragmentdest.setText(String.format("%s", destinationName));
         });
     }
 
@@ -218,8 +221,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 locationResult.addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         locationCurr = (Location) task.getResult();
-                        Log.d("test", "TESTING PICKUPNAME22" + getCompleteAddressString(locationCurr));
-                        autocompleteSupportFragment.setText(String.format("%s", getCompleteAddressString((Location) task.getResult())));
+                        Log.d("test", "TESTING PICKUPNAME22" + addressString.getCompleteAddressString(locationCurr));
+                        autocompleteSupportFragment.setText(String.format("%s", addressString.getCompleteAddressString(locationCurr)));
                         //pickupName = getCompleteAddressString(locationCurr);
                         if (endPos == null) {
                             mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
@@ -358,7 +361,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 endPos = place;
                 endPostotempEndLocation.setLatitude(endPos.getLatLng().latitude);
                 endPostotempEndLocation.setLongitude(endPos.getLatLng().longitude);
-                destinationName = getCompleteAddressString(endPostotempEndLocation);
+                destinationName = addressString.getCompleteAddressString(endPostotempEndLocation);
                 calculateDirections();
             }
 
@@ -488,23 +491,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 600,
                 null
         );
-    }
-
-    //converting a location to an address
-    private String getCompleteAddressString(Location location) {
-        String returnedAddress = "";
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-
-        //catching for null locations
-        try {
-            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            if (addresses != null) {
-                returnedAddress = addresses.get(0).getAddressLine(0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return returnedAddress;
     }
 
     /**
