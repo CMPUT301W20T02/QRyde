@@ -3,6 +3,8 @@ package com.example.qryde;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,18 +29,29 @@ public class RideInProgress extends AppCompatActivity {
     private FirebaseFirestore db;
     private String user;
     private String riderPicked;
+    private String riderName;
+    private String number;
+    private String email;
     float amountOffered;
+    private TextView riderTextView;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ride_in_progress);
+
+        riderTextView = findViewById(R.id.rider);
+
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
             user = incomingData.getString("username");
             riderPicked = incomingData.getString("rider");
             amountOffered = incomingData.getFloat("amount");
         }
+
+        riderTextView.setText(riderPicked);
 
         db = FirebaseFirestore.getInstance();
 
@@ -67,6 +80,33 @@ public class RideInProgress extends AppCompatActivity {
                 }
             }
         });
+        riderTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.collection("Users").whereEqualTo("username", riderPicked)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if(task.isSuccessful()){
+                                    for(QueryDocumentSnapshot document : task.getResult()){
+                                        riderName = document.getData().get("name").toString();
+                                        number = document.getData().get("phoneNumber").toString();
+                                        email = document.getData().get("email").toString();
+
+                                    }
+                                }
+                            }
+                        });
+
+                Intent intent = new Intent(getApplicationContext(), UserInfo.class);
+                intent.putExtra("fullname", riderName);
+                intent.putExtra("number", number);
+                intent.putExtra("email", email);
+                startActivity(intent);
+            }
+        });
     }
+
 
 }

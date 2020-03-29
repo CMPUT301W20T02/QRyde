@@ -165,6 +165,15 @@ public class afterRequestCreated extends AppCompatActivity {
                 sendEmail();
             }
         });
+
+        driverName.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                getUserInfo();
+            }
+        });
+
+
 //        db.collection("AvailableRides")
 //                .whereEqualTo("rider", user)
 //                .get()
@@ -558,6 +567,18 @@ public class afterRequestCreated extends AppCompatActivity {
         intent.putExtra(Intent.EXTRA_EMAIL, recipients);
         intent.setType("message/rfc822");
         startActivity(Intent.createChooser(intent, "Choose an email client"));
+    }
+
+    private void getUserInfo(){
+        String drivername = driverName.getText().toString();
+        String number = phoneNumber.getText().toString();
+        String recipient = email.getText().toString();
+        Intent intent = new Intent(getApplicationContext(), UserInfo.class);
+        intent.putExtra("fullname", drivername);
+        intent.putExtra("number", number);
+        intent.putExtra("email", recipient);
+        startActivity(intent);
+
     }
 
     private void makePhoneCall(){
