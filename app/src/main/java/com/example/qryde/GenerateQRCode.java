@@ -1,5 +1,6 @@
 package com.example.qryde;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -7,6 +8,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 /**
  * Generates qr code by utilizing driver, rider and cost,
@@ -21,11 +27,15 @@ public class GenerateQRCode extends AppCompatActivity {
     private String driverUserName;
     private String rider;
     float amount;
+    private FirebaseFirestore db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate_qrcode);
+
+        db = FirebaseFirestore.getInstance();
 
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
@@ -49,6 +59,26 @@ public class GenerateQRCode extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), RateDriver.class);
                 intent.putExtra("driver", driverUserName);
                 startActivity(intent);
+            }
+        });
+
+        // add event listener for when the ActiveRide is completed and deleted from Firestore
+        db.collection("ActiveRides").document(rider).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            /**
+             * when the ride is completed, set switch activity to generate a qrcode
+             * @param documentSnapshot
+             * @param e
+             */
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.d(TAG, "Listen failed.", e);
+                    return;
+                }
+
+                if (documentSnapshot != null && !documentSnapshot.exists()) {
+                    finish();
+                }
             }
         });
     }
