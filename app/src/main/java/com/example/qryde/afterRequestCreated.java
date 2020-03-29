@@ -208,8 +208,10 @@ public class afterRequestCreated extends AppCompatActivity {
                 if (documentSnapshot != null && documentSnapshot.exists()) {
                     if (documentSnapshot.getData().get("status").toString().equals("true")) {
                         Intent intent = new Intent(getApplicationContext(), GenerateQRCode.class);
+                        String driverUserName = documentSnapshot.getData().get("driver").toString();
                         intent.putExtra("rider", user);
                         intent.putExtra("driver", driverName.getText().toString());
+                        intent.putExtra("driver_user_name", driverUserName);
                         intent.putExtra("amount", amount);
 
                         startActivity(intent);

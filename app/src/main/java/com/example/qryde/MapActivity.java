@@ -1,27 +1,23 @@
 package com.example.qryde;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -34,6 +30,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -51,12 +48,9 @@ import com.google.maps.PendingResult;
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -69,7 +63,6 @@ import java.util.Objects;
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     //initialization of variables
-    private Boolean LocationPermission = false;
     private GoogleMap ActualMap;
     private Location locationCurr;
     private final LatLng EarthDefaultLocation = new LatLng(0, 0); //just center of earth
@@ -80,11 +73,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private View mapView;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private AddressString addressString;
+    private MarkerPin markerPin;
+    private MapMarker mapMarker, mapMarkerStart;
+    private RideCalculator rideCalculator;
 
     private TextView distanceView;
     private TextView durationView;
     private TextView costView;
     private TextView usernameView;
+    private Button markerBut;
 
     Location latlngtotempEndLocation = new Location("");
     Location endPostotempEndLocation = new Location("");
@@ -93,7 +91,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private boolean perms;
     private String pickupName;
     private String destinationName;
-    private ImageView logo;
+    private ImageView logo, rideLiner;
+    private TextView logorequest;
+    private LinearLayout rideCalLay;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -117,21 +117,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragmentdest = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragmentdes);
 
-        distanceView = findViewById(R.id.distance);
-        durationView = findViewById(R.id.time);
-        costView = findViewById(R.id.cost);
-
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
         autocompleteSupportFragmentdest.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
 
         //initializing countries to search from and adding hints to the search bar
         autocompleteSupportFragment.setCountries("CA"); // sets for now the location for autocomplete
-        autocompleteSupportFragment.setHint("Current Location");
-        autocompleteSupportFragmentdest.setHint("Enter a Destination");
+        autocompleteSupportFragment.setHint("Pickup Location");
+        autocompleteSupportFragmentdest.setHint("Where to?");
         autocompleteSupportFragmentdest.setCountries("CA"); //sets for now the location for autocomplete
 
-        //Getting permission to access location from the user
-        //getLocationPermission();
+        addressString = new AddressString(this);
+        mapMarker = new MapMarker();
+        mapMarkerStart = new MapMarker();
+        markerPin = new MarkerPin();
+
+        rideLiner = findViewById(R.id.rideline);
+        rideCalLay = findViewById(R.id.rideCal);
+        distanceView = findViewById(R.id.distance);
+        durationView = findViewById(R.id.time);
+        costView = findViewById(R.id.cost);
 
         // Getting username from logon activity
         Bundle incomingData = getIntent().getExtras();
@@ -140,13 +144,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             perms = incomingData.getBoolean("permissions");
             Log.d("LOL", String.valueOf(perms));
         }
-
+        //checks if location perms are there
         if (perms) {
             MapInit();
         }
+        markerBut = findViewById(R.id.MarkerDrop);
+        markerBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateDirections();
+            }
+        });
 
         logo = findViewById(R.id.qryde_logo);
-        logo.setOnClickListener( new View.OnClickListener() {
+        logorequest = findViewById(R.id.request_text);
+        logo.setOnClickListener(new View.OnClickListener() {
             /**
              * When the logo is clicked, it goes to the confirm amount activity to confirm amount
              * rider is willing to spend. It provides username, pickup location,
@@ -156,13 +168,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
              */
             @Override
             public void onClick(View v) {
-//                if(pickupName != "" && destinationName != "") {
                 Intent intent = new Intent(getApplicationContext(), ConfirmAmount.class);
                 intent.putExtra("username", user);
                 intent.putExtra("pickup", pickupName);
                 intent.putExtra("destination", destinationName);
                 startActivity(intent);
-//                }
             }
         });
 
@@ -184,15 +194,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     /**
      * getting the google map ready once location is permitted
      * starts:
-     *  updateLocation UI
-     *  DeviceLocation
-     *  SearchInitializer
-     *  mapClicker
+     * updateLocation UI
+     * DeviceLocation
+     * SearchInitializer
+     * mapClicker
+     *
      * @param googleMap
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.setPadding(0,430,0,0);
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
+        googleMap.setPadding(0, 450, 0, 0);
         ActualMap = googleMap;
         if (perms) {
             updateLocationUI();
@@ -205,12 +217,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     // adds destination marker and sets location end latitude longitude, sets destination text
     private void mapClicker() {
         ActualMap.setOnMapClickListener(point -> {
-            latlngtotempEndLocation.setLatitude(point.latitude);
-            latlngtotempEndLocation.setLongitude(point.longitude);
-            ActualMap.clear();
-            ActualMap.addMarker(new MarkerOptions().position(point));
-            autocompleteSupportFragmentdest.setText(String.format("%s", getCompleteAddressString((latlngtotempEndLocation))));
-            destinationName = getCompleteAddressString(latlngtotempEndLocation);
+            if (endPos == null) {
+                ActualMap.clear();
+                markerBut.setVisibility(View.VISIBLE);
+                latlngtotempEndLocation = new Location("");
+                latlngtotempEndLocation.setLatitude(point.latitude);
+                latlngtotempEndLocation.setLongitude(point.longitude);
+                ActualMap.addMarker(new MarkerOptions().position(point).icon(markerPin.bitmapDescriptorFromVector(this, R.drawable.ic_place_black_24dp)));
+                destinationName = addressString.getCompleteAddressString(latlngtotempEndLocation);
+                autocompleteSupportFragmentdest.setText(String.format("%s", destinationName));
+            }
         });
     }
 
@@ -223,10 +239,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 locationResult.addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         locationCurr = (Location) task.getResult();
-                        Log.d("test", "TESTING PICKUPNAME22" + getCompleteAddressString(locationCurr));
-                        autocompleteSupportFragment.setText(String.format("%s", getCompleteAddressString((Location) task.getResult())));
-                        mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
-                        pickupName = getCompleteAddressString(locationCurr);
+                        Log.d("test", "TESTING PICKUPNAME22" + addressString.getCompleteAddressString(locationCurr));
+                        autocompleteSupportFragment.setText(String.format("%s", addressString.getCompleteAddressString(locationCurr)));
+                        pickupName = addressString.getCompleteAddressString(locationCurr);
+                        if (endPos == null) {
+                            mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
+                        }
 
                     } else {
                         mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude), 15f);
@@ -235,13 +253,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }
                 });
             }
-        }catch (SecurityException e) {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }
+
     //moves the map camera
     private void mapMove(LatLng latLng, float zoom) {
-        //method for map camera movement
         ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom), 600, null);
     }
 
@@ -262,22 +280,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                      */
                     @Override
                     public void onClick(View v) {
-                        if (polyline !=null) polyline.remove();
-                        startPos = null;
-                        autocompleteSupportFragment.setText(String.format("%s", getCompleteAddressString(locationCurr)));
-                        calculateDirections();
+                        ActualMap.clear();
+                        DeviceLocation();
+                        if (endPos != null || latlngtotempEndLocation !=null) {
+                            startPos = null;
+                            calculateDirections();
+                        }
                     }
                 });
-
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(true);
-                ActualMap.getUiSettings().setZoomControlsEnabled(true);
             } else {
                 ActualMap.setMyLocationEnabled(false);
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
                 locationCurr = null;
-                //getLocationPermission();
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", Objects.requireNonNull(e.getMessage()));
         }
     }
@@ -296,8 +313,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Log.i("AutoComplete", "Place: " + place.getName() + ", " + place.getId() + place.getLatLng());
 
                 startPos = place;
-                mapMove(place.getLatLng(),15f);
-                if (endPos != null) {
+                mapMove(place.getLatLng(), 15f);
+                if (endPos != null || latlngtotempEndLocation !=null) {
                     calculateDirections();
                 }
             }
@@ -317,9 +334,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         //clearing the user input in the autocomplete search fragment when clicked on
         Objects.requireNonNull(autocompleteSupportFragment.getView()).findViewById(R.id.places_autocomplete_clear_button).setOnClickListener(v -> {
+            logo.setVisibility(View.GONE);
+            logorequest.setVisibility(View.GONE);
+            rideLiner.setVisibility(View.GONE);
+            rideCalLay.setVisibility(View.GONE);
             startPos = null;
             autocompleteSupportFragment.setText("");
-            if (endPos != null) {
+            if (endPos != null || latlngtotempEndLocation != null) {
                 calculateDirections();
             }
         });
@@ -334,14 +355,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
              */
             @Override
             public void onClick(View v) {
-                polyline.remove();
+                logo.setVisibility(View.GONE);
+                logorequest.setVisibility(View.GONE);
+                markerBut.setVisibility(View.GONE);
+                rideLiner.setVisibility(View.GONE);
+                rideCalLay.setVisibility(View.GONE);
+                ActualMap.clear();
                 endPos = null;
                 if (startPos == null) {
                     mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
                     autocompleteSupportFragmentdest.setText("");
-                }
-                else {
-                    mapMove(startPos.getLatLng(),15f);
+                } else {
+                    mapMove(startPos.getLatLng(), 15f);
                     autocompleteSupportFragmentdest.setText("");
                 }
 
@@ -359,10 +384,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
              */
             @Override
             public void onPlaceSelected(@NonNull Place place) {
+                ActualMap.clear();
+                latlngtotempEndLocation = null;
                 endPos = place;
                 endPostotempEndLocation.setLatitude(endPos.getLatLng().latitude);
                 endPostotempEndLocation.setLongitude(endPos.getLatLng().longitude);
-                destinationName = getCompleteAddressString(endPostotempEndLocation);
+                destinationName = addressString.getCompleteAddressString(endPostotempEndLocation);
                 calculateDirections();
             }
 
@@ -383,22 +410,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     //method to add the best possible route from one point entered to another
     private void calculateDirections() {
-        Log.d("Directions", "calculateDirections: calculating directions.");
 
-        if (polyline !=null) { //removes a poly line if exists
-            polyline.remove();
+        LatLng endPosLatLng;
+        if (latlngtotempEndLocation != null) {
+            endPosLatLng = new LatLng(latlngtotempEndLocation.getLatitude(),latlngtotempEndLocation.getLongitude());
+        } else {
+            endPosLatLng = new LatLng(endPos.getLatLng().latitude, endPos.getLatLng().longitude);
         }
-        com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
-                endPos.getLatLng().latitude,
-                endPos.getLatLng().longitude
+        ActualMap.clear();
 
-        );
+        mapMarker.MapMarkerAdd(ActualMap,endPosLatLng, MapActivity.this, R.drawable.ic_place_black_24dp);
+        com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(endPosLatLng.latitude, endPosLatLng.longitude);
+
         DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
-
         if (startPos == null) {
             directions.origin(new com.google.maps.model.LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
         } else {
-            directions.origin(new com.google.maps.model.LatLng(startPos.getLatLng().latitude,startPos.getLatLng().longitude));
+            mapMarkerStart.MapMarkerAdd(ActualMap,startPos.getLatLng(), MapActivity.this, R.drawable.ic_person_pin_circle_black_24dp);
+            directions.origin(new com.google.maps.model.LatLng(startPos.getLatLng().latitude, startPos.getLatLng().longitude));
         }
 
         Log.d("Directions", "calculateDirections: destination: " + destination.toString());
@@ -418,21 +447,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Log.d("Directions", "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
 
                 //adding the route calculated to the map
+                rideCalculator = new RideCalculator(result);
                 addPolylinesToMap(result);
 
-                double seconds = (double) result.routes[0].legs[0].duration.inSeconds;
-                double minutes = roundUp(seconds/60, 1);
-
-                double kilometres = result.routes[0].legs[0].distance.inMeters;
-                kilometres = roundUp(kilometres/1000, 2);
-
-                double cost = costCalculator(minutes, kilometres);
-                cost = roundUp(cost, 2);
-
                 //displaying the variables calculated onto the activity
-                distanceView.setText(String.format("Distance: %s km", kilometres));
-                durationView.setText(String.format("Time: %s minutes", minutes));
-                costView.setText(String.format("Cost: $%s", cost));
+                distanceView.setText(String.format("Distance: %s km", Math.round(rideCalculator.getKilometres())));
+                durationView.setText(String.format("Time: %s mins", Math.round(rideCalculator.getMinutes())));
+                costView.setText(String.format("Cost: $%s", rideCalculator.getCost()));
             }
 
 
@@ -449,7 +470,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     //adding the route polylines to the map
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void addPolylinesToMap(final DirectionsResult result){
+    private void addPolylinesToMap(final DirectionsResult result) {
         // for main thread
         new Handler(Looper.getMainLooper()).post(() -> {
 
@@ -458,7 +479,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             List<LatLng> newDecodedPath = new ArrayList<>();
 
             //for loop goes through several lat/log to make the route. Array holds several lat/longs
-            for(com.google.maps.model.LatLng latLng: decodedPath){
+            for (com.google.maps.model.LatLng latLng : decodedPath) {
                 newDecodedPath.add(new LatLng(latLng.lat, latLng.lng));
             }
             Log.d("addPolylinesToMap", "run: leg: " + decodedPath.get(0).toString());
@@ -467,12 +488,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .addAll(newDecodedPath)
                     .color(getColor(R.color.QrydeB)));
 
+            markerBut.setVisibility(View.GONE);
             polylineZoom(polyline.getPoints());
+            logo.setVisibility(View.VISIBLE);
+            logorequest.setVisibility(View.VISIBLE);
+            rideLiner.setVisibility(View.VISIBLE);
+            rideCalLay.setVisibility(View.VISIBLE);
         });
     }
 
     /**
      * animates camera to zoom out or in to the route size
+     *
      * @param lstLatLngRoute
      */
     public void polylineZoom(List<LatLng> lstLatLngRoute) {
@@ -493,55 +520,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         );
     }
 
-    //converting a location to an address
-    private String getCompleteAddressString(Location location) {
-        String returnedAddress = "";
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 
-        //catching for null locations
-        try {
-            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            if (addresses != null) {
-                returnedAddress = addresses.get(0).getAddressLine(0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return returnedAddress;
-    }
-
-    /**
-     * calculating the cost for a ride using time and distance
-     * @param minutes
-     * @param distance
-     * @return
-     */
-    public double costCalculator(double minutes, double distance)
-    {
-        double baseCost = 2.00;
-        double minimumFare = 4.00;
-
-        double perKm = 0.85;
-        double perMinute = 0.25;
-
-        return (baseCost + minimumFare + (minutes*perMinute) + (distance*perKm));
-    }
-    /**
-     * rounding up decimal numbers to a precision point
-     * @param number
-     * @param precision
-     * @return
-     */
-    public double roundUp(double number, int precision)
-    {
-        BigDecimal bd = new BigDecimal(number).setScale(precision, RoundingMode.HALF_UP);
-        return bd.doubleValue();
-    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        switch(menuItem.getItemId()){
-            case R.id.nav_profile:{
+        switch (menuItem.getItemId()) {
+            case R.id.nav_profile: {
                 Intent intent = new Intent(getApplicationContext(), UserProfile.class);
                 intent.putExtra("username", user);
                 startActivity(intent);
@@ -549,7 +533,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 break;
             }
 
-            case R.id.nav_qr_wallet:{
+            case R.id.nav_qr_wallet: {
                 break;
             }
         }
@@ -558,4 +542,3 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return false;
     }
 }
-
