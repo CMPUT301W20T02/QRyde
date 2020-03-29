@@ -84,6 +84,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private TextView costView;
     private TextView usernameView;
     private Button markerBut;
+    private double rideCost;
 
     Location latlngtotempEndLocation = new Location("");
     Location endPostotempEndLocation = new Location("");
@@ -173,6 +174,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 intent.putExtra("username", user);
                 intent.putExtra("pickup", pickupName);
                 intent.putExtra("destination", destinationName);
+                intent.putExtra("ride_cost", rideCost);
                 startActivity(intent);
             }
         });
@@ -464,6 +466,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 distanceView.setText(String.format("Distance: %s km", Math.round(rideCalculator.getKilometres())));
                 durationView.setText(String.format("Time: %s mins", Math.round(rideCalculator.getMinutes())));
                 costView.setText(String.format("Cost: $%s", rideCalculator.getCost()));
+                rideCost = rideCalculator.getCost();
             }
 
 
