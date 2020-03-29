@@ -213,6 +213,7 @@ public class afterRequestCreated extends AppCompatActivity {
                         intent.putExtra("amount", amount);
 
                         startActivity(intent);
+                        finish();
 
 
                     }
