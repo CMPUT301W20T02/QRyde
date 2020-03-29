@@ -36,7 +36,8 @@
                 android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:context=".DriverMainMap"/>
+                tools:context=".DriverMainMap"
+                android:layout_marginBottom="-30dp"/>
 
             <ImageView
                 android:id="@+id/hamburger_menu"
