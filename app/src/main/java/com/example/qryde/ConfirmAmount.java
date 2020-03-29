@@ -40,6 +40,7 @@ public class ConfirmAmount extends AppCompatActivity {
     private EditText amount;
     private Button confirmButton;
     private Button cancelButton;
+    private double rideCost;
 
     private float amount_value = 0;
 
@@ -62,7 +63,7 @@ public class ConfirmAmount extends AppCompatActivity {
         getRideInfo();
 
         dateformat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-        summarytext.setText("The suggested Price is 20 QRbucks");
+        summarytext.setText("The suggested Price is " + rideCost);
         amount.setText("");
 
         confirmButton();
@@ -146,9 +147,11 @@ public class ConfirmAmount extends AppCompatActivity {
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
             user = incomingData.getString("username");
+
         }
         Intent intent = getIntent();
         pickupName = intent.getStringExtra("pickup");
         destinationName = intent.getStringExtra("destination");
+        rideCost = intent.getDoubleExtra("ride_cost", 20);
     }
 }
