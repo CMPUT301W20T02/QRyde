@@ -90,10 +90,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             MapInit();
         }
 
-
-
-
-
         db = FirebaseFirestore.getInstance();
 
         final ListView availableRideListView = findViewById(R.id.list_view);

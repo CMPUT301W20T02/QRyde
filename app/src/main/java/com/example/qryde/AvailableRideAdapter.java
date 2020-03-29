@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,16 +55,22 @@ public class AvailableRideAdapter extends ArrayAdapter<AvailableRide> {
         TextView tvRiderName = (TextView) listItem.findViewById(R.id.name_text_view);
         TextView tvDistanceAway = (TextView) listItem.findViewById(R.id.distance_text_view);
         TextView tvAmountOffered = (TextView) listItem.findViewById(R.id.amount_text_view);
+        TextView startLocation = (TextView) listItem.findViewById(R.id.startLocation);
+        TextView endLocation = (TextView) listItem.findViewById(R.id.endLocation);
 
         //Build new strings to display
         String nameText = currentRide.getRiderUsername();
         String distanceText = currentRide.getDistanceAway() + " km";
         String AmountText = "$" + currentRide.getAmountOffered();
+        String startText = currentRide.getStartLocation();
+        String endText = currentRide.getEndLocation();
 
         //Set the built strings to the textviews to display
         tvRiderName.setText(nameText);
         tvDistanceAway.setText(distanceText);
         tvAmountOffered.setText(AmountText);
+        startLocation.setText(startText);
+        endLocation.setText(endText);
         return listItem;
     }
 }
