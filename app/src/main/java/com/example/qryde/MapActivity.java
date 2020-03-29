@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -91,8 +92,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private boolean perms;
     private String pickupName;
     private String destinationName;
-    private ImageView logo;
+    private ImageView logo, rideLiner;
     private TextView logorequest;
+    private LinearLayout rideCalLay;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -130,6 +132,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapMarkerStart = new MapMarker();
         markerPin = new MarkerPin();
 
+        rideLiner = findViewById(R.id.rideline);
+        rideCalLay = findViewById(R.id.rideCal);
         distanceView = findViewById(R.id.distance);
         durationView = findViewById(R.id.time);
         costView = findViewById(R.id.cost);
@@ -342,6 +346,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Objects.requireNonNull(autocompleteSupportFragment.getView()).findViewById(R.id.places_autocomplete_clear_button).setOnClickListener(v -> {
             logo.setVisibility(View.GONE);
             logorequest.setVisibility(View.GONE);
+            rideLiner.setVisibility(View.GONE);
+            rideCalLay.setVisibility(View.GONE);
             startPos = null;
             autocompleteSupportFragment.setText("");
             if (endPos != null || latlngtotempEndLocation != null) {
@@ -362,6 +368,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 logo.setVisibility(View.GONE);
                 logorequest.setVisibility(View.GONE);
                 markerBut.setVisibility(View.GONE);
+                rideLiner.setVisibility(View.GONE);
+                rideCalLay.setVisibility(View.GONE);
                 ActualMap.clear();
                 endPos = null;
                 if (startPos == null) {
@@ -453,8 +461,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 addPolylinesToMap(result);
 
                 //displaying the variables calculated onto the activity
-                distanceView.setText(String.format("Distance: %s km", rideCalculator.getKilometres()));
-                durationView.setText(String.format("Time: %s minutes", rideCalculator.getMinutes()));
+                distanceView.setText(String.format("Distance: %s km", Math.round(rideCalculator.getKilometres())));
+                durationView.setText(String.format("Time: %s mins", Math.round(rideCalculator.getMinutes())));
                 costView.setText(String.format("Cost: $%s", rideCalculator.getCost()));
             }
 
@@ -494,6 +502,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             polylineZoom(polyline.getPoints());
             logo.setVisibility(View.VISIBLE);
             logorequest.setVisibility(View.VISIBLE);
+            rideLiner.setVisibility(View.VISIBLE);
+            rideCalLay.setVisibility(View.VISIBLE);
         });
     }
 

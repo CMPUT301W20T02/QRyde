@@ -83,7 +83,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_main_map);
-        getLocationPermission();
         db = FirebaseFirestore.getInstance();
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -216,21 +215,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         mapFragment.getMapAsync(DriverMainMap.this);
     }
 
-    //checks for location permissions on phone
-    private void getLocationPermission() {
-        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                LocationPermission = true;
-                MapInit();
-            } else {
-                ActivityCompat.requestPermissions(this, permissions, 1515);
-            }
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, 1515);
-        }
-    }
-
     /**
      * requests the location permissions from the user
      * @param requestCode
@@ -339,7 +323,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                 ActualMap.setMyLocationEnabled(false);
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
                 locationCurr = null;
-                getLocationPermission();
             }
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
