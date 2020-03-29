@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -32,6 +33,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -70,7 +72,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private FirebaseFirestore db;
     private String user;
 
-    private Boolean LocationPermission = false;
     private GoogleMap ActualMap;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Location locationCurr;
@@ -78,6 +79,8 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private String driver;
     private Integer markernumber = 0;
     private DrawerLayout drawerLayout;
+
+    private boolean perms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +97,13 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
             user = incomingData.getString("username");
+            perms = incomingData.getBoolean("permissions");
         }
+        if (perms) {
+            MapInit();
+        }
+
+
 
         ImageButton navigationDrawer = (ImageButton) findViewById(R.id.hamburger_menu_button);
         navigationDrawer.setOnClickListener(new View.OnClickListener() {
@@ -104,14 +113,16 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             }
         });
 
+        db = FirebaseFirestore.getInstance();
+
+        final ListView availableRideListView = findViewById(R.id.list_view);
+        AvailableRide[] AvailableRideList = {};
         dataList = new ArrayList<>();
         dataList.addAll(Arrays.asList(AvailableRideList));
         rideAdapter = new AvailableRideAdapter(this, dataList);
-
         availableRideListView.setAdapter(rideAdapter);
 
         final CollectionReference collectionReference = db.collection("AvailableRides");
-
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             /**
              * sets the rider name, start location,
@@ -133,7 +144,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
                     // creating marker from temp object lat/long
                     LatLng tempLatLng;
-                    tempLatLng = getLocationFromAddress(DriverMainMap.this, temp.getStartLocation());
+                    tempLatLng = getLocationFromAddress(temp.getStartLocation());
 
                     // adding marker to show on map
                     Marker marker = ActualMap.addMarker(new MarkerOptions().position(tempLatLng).title(
@@ -208,6 +219,13 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         });
 
     }
+
+
+
+
+
+
+
     //creates map fragment
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -216,36 +234,15 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     }
 
     /**
-     * requests the location permissions from the user
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        LocationPermission = false;
-        switch (requestCode) {
-            case 1515: {
-                for (int i = 0; i < grantResults.length; ++i) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                        LocationPermission = false;
-                        return;
-                    }
-                }
-                LocationPermission = true;
-                MapInit();
-            }
-        }
-    }
-
-    /**
      * once the map is ready update the location with device location and the marker click function
      * @param googleMap
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
+        googleMap.setPadding(0, 0, 0, 0);
         ActualMap = googleMap;
-        if (LocationPermission) {
+        if (perms) {
             updateLocationUI();
             DeviceLocation();
             markerClick();
@@ -278,7 +275,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private void DeviceLocation() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try {
-            if (LocationPermission) {
+            if (perms) {
                 final Task locationResult = fusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(new OnCompleteListener() {
                     /**
@@ -307,7 +304,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
     //method for map camera movement
     private void mapMove(LatLng latLng, float zoom) {
-        ActualMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom), 600, null);
     }
 
     //shows the blue dot.
@@ -316,7 +313,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             return;
         }
         try {
-            if (LocationPermission) {
+            if (perms) {
                 ActualMap.setMyLocationEnabled(true);
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
@@ -331,13 +328,12 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
     /**
      * gets the coordinates of location from address and returns it
-     * @param context
      * @param strAddress
      * @return
      */
-    public LatLng getLocationFromAddress(Context context, String strAddress)
+    public LatLng getLocationFromAddress(String strAddress)
     {
-        Geocoder coder= new Geocoder(context);
+        Geocoder coder= new Geocoder(DriverMainMap.this);
         List<Address> address;
         LatLng p1 = null;
         try
