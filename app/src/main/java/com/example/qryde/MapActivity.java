@@ -1,7 +1,5 @@
 package com.example.qryde;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,12 +48,9 @@ import com.google.maps.PendingResult;
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -89,7 +85,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Button markerBut;
     private double rideCost;
 
-
     Location latlngtotempEndLocation = new Location("");
     Location endPostotempEndLocation = new Location("");
 
@@ -97,8 +92,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private boolean perms;
     private String pickupName;
     private String destinationName;
-    private ImageView logo;
+    private ImageView logo, rideLiner;
     private TextView logorequest;
+    private LinearLayout rideCalLay;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -136,6 +132,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapMarkerStart = new MapMarker();
         markerPin = new MarkerPin();
 
+        rideLiner = findViewById(R.id.rideline);
+        rideCalLay = findViewById(R.id.rideCal);
         distanceView = findViewById(R.id.distance);
         durationView = findViewById(R.id.time);
         costView = findViewById(R.id.cost);
@@ -284,17 +282,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                      */
                     @Override
                     public void onClick(View v) {
-                        if (polyline != null) polyline.remove();
+                        ActualMap.clear();
                         DeviceLocation();
-                        if (endPos != null) {
+                        if (endPos != null || latlngtotempEndLocation !=null) {
                             startPos = null;
                             calculateDirections();
                         }
                     }
                 });
-
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(true);
-                ActualMap.getUiSettings().setZoomControlsEnabled(true);
             } else {
                 ActualMap.setMyLocationEnabled(false);
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -342,6 +338,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Objects.requireNonNull(autocompleteSupportFragment.getView()).findViewById(R.id.places_autocomplete_clear_button).setOnClickListener(v -> {
             logo.setVisibility(View.GONE);
             logorequest.setVisibility(View.GONE);
+            rideLiner.setVisibility(View.GONE);
+            rideCalLay.setVisibility(View.GONE);
             startPos = null;
             autocompleteSupportFragment.setText("");
             if (endPos != null || latlngtotempEndLocation != null) {
@@ -361,7 +359,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 logo.setVisibility(View.GONE);
                 logorequest.setVisibility(View.GONE);
-                polyline.remove();
+                markerBut.setVisibility(View.GONE);
+                rideLiner.setVisibility(View.GONE);
+                rideCalLay.setVisibility(View.GONE);
                 ActualMap.clear();
                 endPos = null;
                 if (startPos == null) {
@@ -419,11 +419,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         } else {
             endPosLatLng = new LatLng(endPos.getLatLng().latitude, endPos.getLatLng().longitude);
         }
+        ActualMap.clear();
 
-        if (polyline != null) { //removes a poly line if exists
-            polyline.remove();
-            ActualMap.clear();
-        }
         mapMarker.MapMarkerAdd(ActualMap,endPosLatLng, MapActivity.this, R.drawable.ic_place_black_24dp);
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(endPosLatLng.latitude, endPosLatLng.longitude);
 
@@ -456,8 +453,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 addPolylinesToMap(result);
 
                 //displaying the variables calculated onto the activity
-                distanceView.setText(String.format("Distance: %s km", rideCalculator.getKilometres()));
-                durationView.setText(String.format("Time: %s minutes", rideCalculator.getMinutes()));
+                distanceView.setText(String.format("Distance: %s km", Math.round(rideCalculator.getKilometres())));
+                durationView.setText(String.format("Time: %s mins", Math.round(rideCalculator.getMinutes())));
                 costView.setText(String.format("Cost: $%s", rideCalculator.getCost()));
                 rideCost = rideCalculator.getCost();
             }
@@ -498,6 +495,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             polylineZoom(polyline.getPoints());
             logo.setVisibility(View.VISIBLE);
             logorequest.setVisibility(View.VISIBLE);
+            rideLiner.setVisibility(View.VISIBLE);
+            rideCalLay.setVisibility(View.VISIBLE);
         });
     }
 
