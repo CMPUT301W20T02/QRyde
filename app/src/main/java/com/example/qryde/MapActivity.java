@@ -79,12 +79,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private MapMarker mapMarker, mapMarkerStart;
     private RideCalculator rideCalculator;
 
-    private TextView distanceView;
-    private TextView durationView;
-    private TextView costView;
     private TextView usernameView;
     private Button markerBut;
+
     private double rideCost;
+    private double rideDuration;
+    private double rideDistance;
 
     Location latlngtotempEndLocation = new Location("");
     Location endPostotempEndLocation = new Location("");
@@ -135,9 +135,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         rideLiner = findViewById(R.id.rideline);
         rideCalLay = findViewById(R.id.rideCal);
-        distanceView = findViewById(R.id.distance);
-        durationView = findViewById(R.id.time);
-        costView = findViewById(R.id.cost);
 
         // Getting username from logon activity
         Bundle incomingData = getIntent().getExtras();
@@ -175,6 +172,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 intent.putExtra("pickup", pickupName);
                 intent.putExtra("destination", destinationName);
                 intent.putExtra("ride_cost", rideCost);
+                intent.putExtra("ride_distance", rideDistance);
+                intent.putExtra("ride_duration", rideDuration);
+
                 startActivity(intent);
             }
         });
@@ -194,6 +194,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        assert mapFragment != null;
         mapView = mapFragment.getView();
         mapFragment.getMapAsync(MapActivity.this);
         if (geoApiContext == null) {
@@ -462,11 +463,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 rideCalculator = new RideCalculator(result);
                 addPolylinesToMap(result);
 
-                //displaying the variables calculated onto the activity
-                distanceView.setText(String.format("Distance: %s km", Math.round(rideCalculator.getKilometres())));
-                durationView.setText(String.format("Time: %s mins", Math.round(rideCalculator.getMinutes())));
-                costView.setText(String.format("Cost: $%s", rideCalculator.getCost()));
+                //calculating the route variables
                 rideCost = rideCalculator.getCost();
+                rideDuration = rideCalculator.getMinutes();
+                rideDistance = rideCalculator.getKilometres();
             }
 
 
