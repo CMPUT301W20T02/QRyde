@@ -86,7 +86,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
     private boolean perms;
 
-    private boolean perms;
 
 
     @Override
