@@ -67,10 +67,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="136dp"
         android:layout_marginLeft="136dp"
+        android:layout_marginEnd="52dp"
+        android:layout_marginRight="52dp"
         android:layout_marginBottom="40dp"
         android:background="@drawable/rounded_rectangle_blue"
         android:text="confirm"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/cancel" />
 
     <Button
