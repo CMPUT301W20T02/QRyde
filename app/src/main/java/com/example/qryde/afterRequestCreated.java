@@ -279,6 +279,7 @@ public class afterRequestCreated extends AppCompatActivity {
                                                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                                                         float likes = parseFloat(document.getData().get("thumbsUp").toString());
                                                                         float dislikes = parseFloat(document.getData().get("thumbsDown").toString());
+                                                                        float rating = (likes/(dislikes+likes)*100);
                                                                         DecimalFormat df = new DecimalFormat("#.#");
 
                                                                         driverName.setText(document.getData().get("name").toString());
@@ -573,10 +574,12 @@ public class afterRequestCreated extends AppCompatActivity {
         String drivername = driverName.getText().toString();
         String number = phoneNumber.getText().toString();
         String recipient = email.getText().toString();
+        String rating = driverRating.getText().toString();
         Intent intent = new Intent(getApplicationContext(), UserInfo.class);
         intent.putExtra("fullname", drivername);
         intent.putExtra("number", number);
         intent.putExtra("email", recipient);
+        intent.putExtra("rating", rating);
         startActivity(intent);
 
     }

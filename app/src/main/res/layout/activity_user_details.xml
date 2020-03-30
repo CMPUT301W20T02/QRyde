@@ -108,6 +108,13 @@
         app:layout_constraintStart_toEndOf="@+id/phone_number_tag"
         app:layout_constraintTop_toBottomOf="@+id/email" />
 
+    <TextView
+        android:id="@+id/rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="179dp"
+        tools:layout_editor_absoluteY="280dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,10 +29,12 @@ public class UserInfo extends AppCompatActivity {
     private String name;
     private String phoneNumber;
     private String email;
+    private String rating;
     private TextView fullNameTextView;
     private TextView usernameTextView;
     private TextView emailTextView;
     private TextView phoneNumberTextView;
+    private TextView ratingTextView;
     private ImageView editSymbol;
 
     @Override
@@ -53,8 +55,10 @@ public class UserInfo extends AppCompatActivity {
             name = incomingData.getString("fullname");
             phoneNumber = incomingData.getString("number");
             email = incomingData.getString("email");
+            rating = incomingData.getString("rating");
         }
         fullNameTextView.setText(name);
+        ratingTextView.setText(rating);
 
         db.collection("Users").whereEqualTo("name", name).whereEqualTo("phoneNumber", phoneNumber)
                 .get()
