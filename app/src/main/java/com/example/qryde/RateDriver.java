@@ -135,8 +135,7 @@ public class RateDriver extends AppCompatActivity implements OnMapReadyCallback 
         rideCompleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
     }

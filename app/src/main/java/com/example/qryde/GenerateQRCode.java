@@ -53,14 +53,7 @@ public class GenerateQRCode extends AppCompatActivity {
 
 
         //still figuring out how to transition from this activity to the RateDriver one, added this listener to test RateDriver for now
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), RateDriver.class);
-                intent.putExtra("driver", driverUserName);
-                startActivity(intent);
-            }
-        });
+
 
         // add event listener for when the ActiveRide is completed and deleted from Firestore
         db.collection("ActiveRides").document(rider).addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -77,6 +70,9 @@ public class GenerateQRCode extends AppCompatActivity {
                 }
 
                 if (documentSnapshot != null && !documentSnapshot.exists()) {
+                    Intent intent = new Intent(getApplicationContext(), RateDriver.class);
+                    intent.putExtra("driver", driverUserName);
+                    startActivity(intent);
                     finish();
                 }
             }
