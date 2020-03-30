@@ -191,6 +191,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
+        //to open drawer once hamburger menu button is pressed
         ImageButton navigationDrawer = (ImageButton) findViewById(R.id.hamburger_menu_button);
         navigationDrawer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -578,6 +579,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
 
             case R.id.nav_qr_wallet: {
+                break;
+            }
+            case R.id.nav_logout: {
+                finish();
                 break;
             }
             default:
