@@ -80,6 +80,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private RideCalculator rideCalculator;
 
     private TextView usernameView;
+    private TextView distanceView;
+    private TextView durationView;
+    private TextView costView;
     private Button markerBut;
 
     private double rideCost;
@@ -135,6 +138,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         rideLiner = findViewById(R.id.rideline);
         rideCalLay = findViewById(R.id.rideCal);
+        distanceView = findViewById(R.id.distance);
+        durationView = findViewById(R.id.time);
+        costView = findViewById(R.id.cost);
 
         // Getting username from logon activity
         Bundle incomingData = getIntent().getExtras();
@@ -458,6 +464,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 rideCost = rideCalculator.getCost();
                 rideDuration = rideCalculator.getMinutes();
                 rideDistance = rideCalculator.getKilometres();
+                distanceView.setText(String.format("Distance: %s km", Math.round(rideDistance)));
+                durationView.setText(String.format("Time: %s mins", Math.round(rideDuration)));
+                costView.setText(String.format("Cost: $%s", rideCost));
             }
 
 

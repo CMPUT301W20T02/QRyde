@@ -59,7 +59,29 @@
             android:orientation="horizontal"
             android:paddingTop="4dp"
             android:visibility="gone"
-            android:layout_alignTop="@+id/qryde_logo"/>
+            android:layout_alignTop="@+id/qryde_logo">
+
+            <TextView
+                android:id="@+id/cost"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#ffff"/>
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="127dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#ffff"/>
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="127dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#ffff"/>
+        </LinearLayout>
 
 
         <ImageView
