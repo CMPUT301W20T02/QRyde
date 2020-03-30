@@ -58,15 +58,15 @@ public class ScanQRCode extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.qr_scanner);
         surfaceView =  findViewById(R.id.cameraView);
-
+        textView = findViewById(R.id.txtContext);
         db = FirebaseFirestore.getInstance();
 
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE).build();
 
         cameraSource = new CameraSource.Builder(this,barcodeDetector)
-                .setRequestedPreviewSize(1280,720)
                 .setAutoFocusEnabled(true)
+                .setRequestedPreviewSize(1928,1080)
                 .build();
 
 
@@ -89,6 +89,8 @@ public class ScanQRCode extends AppCompatActivity{
 
 
             }
+
+
             /**
              * This changes the format of the surface holder already generated to new specified
              * @param holder
@@ -122,19 +124,16 @@ public class ScanQRCode extends AppCompatActivity{
 
                 if( (qrCodes.size() != 0) && (!read))
                 {
-                    textView.post(new Runnable() {
-                        @Override
-                        public void run(){
-                            String msg = qrCodes.valueAt(0).displayValue;
-                            Log.d(TAG, "run:" + msg);
-                            read = true;
+                    textView.post(() -> {
+                        String msg = qrCodes.valueAt(0).displayValue;
+                        Log.d(TAG, "run:" + msg);
+                        read = true;
 
-                            Intent intent = new Intent(getApplicationContext(), DriverQRComplete.class);
-                            intent.putExtra("iou", msg);
-                            startActivity(intent);
+                        Intent intent = new Intent(getApplicationContext(), DriverQRComplete.class);
+                        intent.putExtra("iou", msg);
+                        startActivity(intent);
 
-                            finish();
-                        }
+                        finish();
                     });
                 }
             }

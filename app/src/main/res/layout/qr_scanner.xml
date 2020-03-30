@@ -12,7 +12,14 @@
         android:id="@+id/cameraView"
         android:layout_centerInParent="true">
     </SurfaceView>
-
+    <TextView
+        android:id="@+id/txtContext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cameraView"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Scan QRBUCKS"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,7 +29,7 @@
         android:layout_marginEnd="50dp"
         android:background="@drawable/qr_background">
 
-    </View>
+            </View>
 
 
 </RelativeLayout>
