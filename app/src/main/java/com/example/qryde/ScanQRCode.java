@@ -11,6 +11,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -66,6 +68,7 @@ public class ScanQRCode extends AppCompatActivity{
         cameraSource = new CameraSource.Builder(this,barcodeDetector)
                 .setRequestedPreviewSize(640,480).build();
 
+
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback(){
             /**
              * This creates the QR code
@@ -94,7 +97,9 @@ public class ScanQRCode extends AppCompatActivity{
              */
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
-
+                View view = findViewById(R.id.qr_scanner);
+                String message = "Scan QR code";
+                int duration = Snackbar.LENGTH_INDEFINITE;
             }
             @Override
             public void surfaceDestroyed(SurfaceHolder holder){
@@ -134,6 +139,16 @@ public class ScanQRCode extends AppCompatActivity{
         });
 
 
+    }
+
+    /**
+     * method for showing snackbar message during camera view
+     * @param view
+     * @param message
+     * @param duration
+     */
+    public void showSnackbar(View view, String message, int duration){
+        Snackbar.make(view,message,duration).show();
     }
 
 

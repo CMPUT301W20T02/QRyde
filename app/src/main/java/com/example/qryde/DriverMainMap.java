@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -87,8 +88,10 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_main_map);
         db = FirebaseFirestore.getInstance();
-
         drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView  = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.username_hamb);
         final ListView availableRideListView = findViewById(R.id.list_view);
 
 
@@ -104,7 +107,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         }
 
 
-
+        navUsername.setText(user);
         ImageButton navigationDrawer = (ImageButton) findViewById(R.id.hamburger_menu_button);
         navigationDrawer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,8 +118,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
         db = FirebaseFirestore.getInstance();
 
-        final ListView availableRideListView = findViewById(R.id.list_view);
-        AvailableRide[] AvailableRideList = {};
+
         dataList = new ArrayList<>();
         dataList.addAll(Arrays.asList(AvailableRideList));
         rideAdapter = new AvailableRideAdapter(this, dataList);
@@ -357,8 +359,8 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        switch(menuItem.getItemId()){
-            case R.id.nav_profile:{
+        switch(menuItem.getItemId()) {
+            case R.id.nav_profile: {
                 Intent intent = new Intent(getApplicationContext(), UserProfile.class);
                 intent.putExtra("username", user);
                 startActivity(intent);
@@ -366,11 +368,15 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                 break;
             }
 
-            case R.id.nav_qr_wallet:{
+            case R.id.nav_qr_wallet: {
                 break;
             }
+            case R.id.nav_trip_history: {
+                break;
+            }
+            default:
+                return super.onOptionsItemSelected(menuItem);
         }
-        menuItem.setChecked(true);
         drawerLayout.closeDrawer(GravityCompat.START);
         return false;
     }
