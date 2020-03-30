@@ -328,7 +328,8 @@ public class afterRequestCreated extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
-
+                email.setVisibility(View.GONE);
+                phoneNumber.setVisibility(View.GONE);
                 db.collection("AvailableRides").document(user)
                         .update("driver", "")
                         .addOnSuccessListener(new OnSuccessListener<Void>() {

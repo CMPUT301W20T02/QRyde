@@ -133,6 +133,22 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
             }
         });
 
+        db.collection("AvailableRides").document(riderPicked).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.d(TAG, "Listen failed.", e);
+                    return;
+                }
+
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    if (documentSnapshot.getData().get("driver").toString().equals("")){
+                        finish();
+                    }
+                }
+            }
+        });
+
         cancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 finish();

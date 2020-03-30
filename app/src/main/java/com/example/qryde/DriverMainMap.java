@@ -136,7 +136,8 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
              */
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e){
-                dataList.clear();;
+                dataList.clear();
+                rideAdapter.notifyDataSetChanged();
                 assert queryDocumentSnapshots != null;
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     AvailableRide temp = new AvailableRide(doc.getData().get("rider").toString(),
@@ -145,6 +146,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                             parseFloat(doc.getData().get("amount").toString()),
                             1.3f);
                     dataList.add(temp);
+                    rideAdapter.notifyDataSetChanged();
 
                     // creating marker from temp object lat/long
                     LatLng tempLatLng;
@@ -160,7 +162,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                     // moving to next object, next marker
                     markernumber++;
 
-                    rideAdapter.notifyDataSetChanged();
                 }
             }
         });
