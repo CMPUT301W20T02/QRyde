@@ -110,7 +110,6 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
                 finish();
             }
         });
-
     }
 
     private void MapInit() {
@@ -118,6 +117,7 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(WaitingUserResponse.this);
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));

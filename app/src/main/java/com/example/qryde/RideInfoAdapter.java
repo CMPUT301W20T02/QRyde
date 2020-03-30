@@ -21,7 +21,6 @@ public class RideInfoAdapter extends ArrayAdapter<RideInformation> {
     private ArrayList<RideInformation> rideinfo;
     private Context context;
 
-
     public RideInfoAdapter(ArrayList<RideInformation> rideinfo, Context context) {
         super(context, 0, rideinfo);
         this.rideinfo = rideinfo;
@@ -40,7 +39,6 @@ public class RideInfoAdapter extends ArrayAdapter<RideInformation> {
 
         RideInformation rideInfoObject = rideinfo.get(position);
 
-        //creating textviews of the variables from the layout files
         TextView date = view.findViewById(R.id.date);
         TextView rider = view.findViewById(R.id.rider);
         TextView amount = view.findViewById(R.id.amount);
@@ -60,7 +58,6 @@ public class RideInfoAdapter extends ArrayAdapter<RideInformation> {
         amount.setText(String.format("Amount Paid: %s", amountObject));
         distanceDuration.setText(String.format("%s km (%s minutes long)", distanceObject, durationObject));
         destination.setText(String.format("Passenger destination was %s.", destinationObject));
-
 
         return view;
     }
