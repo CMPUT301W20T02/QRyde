@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -105,9 +106,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
 
         drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView  = (NavigationView) findViewById(R.id.nav_view);
         usernameView = findViewById(R.id.username_hamb);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.username_hamb);
 
 
         if (!Places.isInitialized()) {
@@ -158,7 +161,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 calculateDirections();
             }
         });
-
+        navUsername.setText(user);
         logo = findViewById(R.id.qryde_logo);
         logorequest = findViewById(R.id.request_text);
         logo.setOnClickListener(new View.OnClickListener() {
@@ -182,6 +185,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
+
+        ImageButton navigationDrawer = (ImageButton) findViewById(R.id.hamburger_menu_button);
+        navigationDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
 
     }
 
@@ -552,9 +564,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             case R.id.nav_qr_wallet: {
                 break;
             }
+            default:
+                return super.onOptionsItemSelected(menuItem);
         }
-        menuItem.setChecked(true);
         drawerLayout.closeDrawer(GravityCompat.START);
+
         return false;
     }
+
+
 }

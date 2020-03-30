@@ -1,10 +1,12 @@
 package com.example.qryde;
 
 import android.content.Intent;
+import android.media.Image;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,6 +52,10 @@ public class RideComplete extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
+    private ImageButton thumbsUp;
+    private ImageButton thumbsDown;
+
+    private boolean positive = true;
     private GoogleMap ActualMap;
 
     @Override
@@ -94,6 +100,31 @@ public class RideComplete extends AppCompatActivity implements OnMapReadyCallbac
                 intent.putExtra("username", user);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        thumbsUp = findViewById(R.id.thumbsUpButton);
+        thumbsDown = findViewById(R.id.thumbsDownButton);
+
+        thumbsUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            /**
+             * This method allows the user to give the driver positive feedback
+             * after the ride is over
+             * @param View
+             */
+            public void onClick(View v) {
+            }
+        });
+
+        thumbsDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            /**
+             * This method allows the user to give the driver negative feedback
+             * after the ride is over
+             * @param View
+             */
+            public void onClick(View v) {
             }
         });
     }

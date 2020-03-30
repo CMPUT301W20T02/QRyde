@@ -3,13 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/qr_scanner"
     >
-    <SurfaceView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/cameraView"
-        android:layout_centerInParent="true">
-    </SurfaceView>
     <TextView
         android:id="@+id/txtContext"
         android:layout_width="match_parent"
@@ -17,7 +12,15 @@
         android:layout_below="@+id/cameraView"
         android:layout_marginTop="16dp"
         android:gravity="center"
+        android:background="@drawable/rounded_rectangle_blue"
         android:text="Scan QRBUCKS"/>
+
+    <SurfaceView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/cameraView"
+        android:layout_centerInParent="true">
+    </SurfaceView>
 
 
 </RelativeLayout>

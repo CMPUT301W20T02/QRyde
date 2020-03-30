@@ -2,4 +2,5 @@
     <string name="app_name">QRyde</string>
     <string name="signup_underlined"><u>Signup</u></string>
     <string name="google_maps_key">AIzaSyAdjzIMGqa_bYOIy7dmsXYyTpl0zNcBqxc</string>
+    <string name="hamburger_menu_button"> HamburgerMenu</string>
 </resources>
