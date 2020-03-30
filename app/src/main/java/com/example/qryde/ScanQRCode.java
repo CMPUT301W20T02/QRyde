@@ -58,7 +58,6 @@ public class ScanQRCode extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.qr_scanner);
         surfaceView =  findViewById(R.id.cameraView);
-        textView =  findViewById(R.id.txtContext);
 
         db = FirebaseFirestore.getInstance();
 
@@ -66,7 +65,9 @@ public class ScanQRCode extends AppCompatActivity{
                 .setBarcodeFormats(Barcode.QR_CODE).build();
 
         cameraSource = new CameraSource.Builder(this,barcodeDetector)
-                .setRequestedPreviewSize(640,480).build();
+                .setRequestedPreviewSize(1280,720)
+                .setAutoFocusEnabled(true)
+                .build();
 
 
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback(){
@@ -98,8 +99,9 @@ public class ScanQRCode extends AppCompatActivity{
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
                 View view = findViewById(R.id.qr_scanner);
-                String message = "Scan QR code";
+                String message = "Scan QR code To earn QR Bucks";
                 int duration = Snackbar.LENGTH_INDEFINITE;
+                showSnackbar(view,message,duration);
             }
             @Override
             public void surfaceDestroyed(SurfaceHolder holder){

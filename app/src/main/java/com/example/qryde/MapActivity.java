@@ -106,7 +106,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
 
         drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView  = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView  = (NavigationView) findViewById(R.id.rider_nav_view);
         usernameView = findViewById(R.id.username_hamb);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);

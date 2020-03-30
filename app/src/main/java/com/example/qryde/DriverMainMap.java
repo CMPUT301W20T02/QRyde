@@ -94,7 +94,8 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         setContentView(R.layout.activity_driver_main_map);
         db = FirebaseFirestore.getInstance();
         drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView  = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView  = (NavigationView) findViewById(R.id.driver_nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
         TextView navUsername = (TextView) headerView.findViewById(R.id.username_hamb);
         final ListView availableRideListView = findViewById(R.id.list_view);
@@ -375,9 +376,14 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         return p1;
     }
 
+    /**
+     * Allows users to navigate to user profile and QR Wallet
+     * @param menuItem
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        switch(menuItem.getItemId()) {
+        switch (menuItem.getItemId()) {
             case R.id.nav_profile: {
                 Intent intent = new Intent(getApplicationContext(), UserProfile.class);
                 intent.putExtra("username", user);
@@ -389,6 +395,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             case R.id.nav_qr_wallet: {
                 break;
             }
+
             case R.id.nav_trip_history: {
                 break;
             }
@@ -396,8 +403,8 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                 return super.onOptionsItemSelected(menuItem);
         }
         drawerLayout.closeDrawer(GravityCompat.START);
+
         return false;
     }
-
 
 }
