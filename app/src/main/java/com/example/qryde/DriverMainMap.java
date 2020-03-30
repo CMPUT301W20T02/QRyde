@@ -388,6 +388,10 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             case R.id.nav_trip_history: {
                 break;
             }
+            case R.id.nav_logout: {
+                finish();
+                break;
+            }
             default:
                 return super.onOptionsItemSelected(menuItem);
         }
