@@ -116,6 +116,31 @@
         app:layout_constraintTop_toTopOf="@+id/emailBox"
         app:srcCompat="@drawable/email_icon" />
 
+    <ImageView
+        android:id="@+id/usernameBox"
+        android:layout_width="323dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phoneBox"
+        app:srcCompat="@drawable/rounded_rectangle" />
+
+    <EditText
+        android:id="@+id/username_edittext"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:background="@null"
+        android:ems="10"
+        android:hint="Username"
+        android:inputType="textPersonName"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/usernameBox"
+        app:layout_constraintEnd_toEndOf="@+id/usernameBox"
+        app:layout_constraintStart_toEndOf="@+id/usernameLogo"
+        app:layout_constraintTop_toTopOf="@+id/usernameBox" />
+
     <EditText
         android:id="@+id/email_edittext"
         android:layout_width="0dp"
@@ -153,16 +178,6 @@
         app:srcCompat="@drawable/qryde_logo" />
 
     <ImageView
-        android:id="@+id/usernameBox"
-        android:layout_width="323dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneBox"
-        app:srcCompat="@drawable/rounded_rectangle" />
-
-    <ImageView
         android:id="@+id/usernameLogo"
         android:layout_width="27dp"
         android:layout_height="32dp"
@@ -193,21 +208,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:id="@+id/username_edittext"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:background="@null"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:textSize="18sp"
-        android:hint="Username"
-        app:layout_constraintBottom_toBottomOf="@+id/usernameBox"
-        app:layout_constraintEnd_toEndOf="@+id/usernameBox"
-        app:layout_constraintStart_toEndOf="@+id/usernameLogo"
-        app:layout_constraintTop_toTopOf="@+id/usernameBox" />
 
     <EditText
         android:id="@+id/password_edittext"
@@ -277,7 +277,7 @@
         android:layout_width="109dp"
         android:layout_height="37dp"
         android:text="Driver"
-        tools:layout_editor_absoluteX="44dp"
-        tools:layout_editor_absoluteY="700dp" />
+        app:layout_constraintStart_toStartOf="@+id/reenterPasswordBox"
+        app:layout_constraintTop_toBottomOf="@+id/reenterPasswordBox" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

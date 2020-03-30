@@ -94,6 +94,43 @@ public class DriverQRComplete extends AppCompatActivity {
                                 data.put("rider", msg_split[0]);
                                 db.collection("QRTransactions").document(Integer.toString(numTransactions)).set(data);
 
+                                // transfer the document from ActiveRides to RideHistories
+                                db.collection("ActiveRides")
+                                        .whereEqualTo("rider", msg_split[0])
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        // get all of the information
+                                                        String old_amount = document.getData().get("amount").toString();
+                                                        String old_datetime = document.getData().get("datetime").toString();
+                                                        String old_driverName = document.getData().get("driver").toString();
+                                                        String old_endLocation = document.getData().get("endLocation").toString();
+                                                        String old_startLocation = document.getData().get("startLocation").toString();
+                                                        String old_rider = document.getData().get("rider").toString();
+
+                                                        Map<String, Object> data = new HashMap<>();
+                                                        data.put("amount", Float.parseFloat(old_amount));
+                                                        data.put("datetime", old_datetime);
+                                                        data.put("driver", old_driverName);
+                                                        data.put("endLocation", old_endLocation);
+                                                        data.put("startLocation", old_startLocation);
+                                                        data.put("rider", old_rider);
+                                                        data.put("id", numTransactions);
+
+                                                        db.collection("RideHistories").document(Integer.toString(numTransactions)).set(data);
+
+
+                                                    }
+                                                } else {
+                                                    Log.d(TAG, "onComplete: failed to retrieve document");
+                                                }
+                                            }
+                                        });
+
+
                                 db.collection("ActiveRides").document(msg_split[0])
                                         .delete()
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
