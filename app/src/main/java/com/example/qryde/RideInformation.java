@@ -1,4 +1,9 @@
 package com.example.qryde;
+
+/**
+ * This class defines variables relating to the information
+ * of a single drive made by a driver.
+ */
 public class RideInformation {
     private String date;
     private String rider;
