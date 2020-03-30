@@ -144,7 +144,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                             doc.getData().get("startLocation").toString(),
                             doc.getData().get("endLocation").toString(),
                             parseFloat(doc.getData().get("amount").toString()),
-                            1.3f);
+                            parseFloat(doc.getData().get("distance").toString()));
                     dataList.add(temp);
                     rideAdapter.notifyDataSetChanged();
 

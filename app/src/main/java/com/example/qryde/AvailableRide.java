@@ -9,7 +9,7 @@ public class AvailableRide {
     private String startLocation;
     private String endLocation;
     private float amountOffered;
-    private float distanceAway;
+    private double distanceAway;
 
     /**
      * getters and setters for rider username, start location, end location, amount offered
@@ -20,7 +20,7 @@ public class AvailableRide {
      * @param amountOffered
      * @param distanceAway
      */
-    public AvailableRide(String riderUsername, String startLocation, String endLocation, float amountOffered, float distanceAway){
+    public AvailableRide(String riderUsername, String startLocation, String endLocation, float amountOffered, double distanceAway){
         this.riderUsername = riderUsername;
         this.startLocation = startLocation;
         this.endLocation = endLocation;
@@ -96,7 +96,7 @@ public class AvailableRide {
      * return distance away
      * @return
      */
-    public float getDistanceAway() {
+    public double getDistanceAway() {
         return this.distanceAway;
     }
 
@@ -104,7 +104,7 @@ public class AvailableRide {
      * set distance away
      * @param distanceAway
      */
-    public void setDistanceAway(float distanceAway) {
+    public void setDistanceAway(double distanceAway) {
         this.distanceAway = distanceAway;
     }
 }
