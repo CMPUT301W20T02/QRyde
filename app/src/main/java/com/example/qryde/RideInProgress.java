@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,7 +36,13 @@ public class RideInProgress extends AppCompatActivity implements OnMapReadyCallb
     private FirebaseFirestore db;
     private String user;
     private String riderPicked;
+    private String riderName;
+    private String number;
+    private String email;
     float amountOffered;
+    private TextView riderTextView;
+
+
 
 
     private GoogleMap ActualMap;
@@ -43,6 +51,9 @@ public class RideInProgress extends AppCompatActivity implements OnMapReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ride_in_progress);
+
+        riderTextView = findViewById(R.id.rider);
+
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
             user = incomingData.getString("username");
@@ -50,7 +61,11 @@ public class RideInProgress extends AppCompatActivity implements OnMapReadyCallb
             amountOffered = incomingData.getFloat("amount");
         }
 
+
         MapInit();
+
+        riderTextView.setText(riderPicked);
+
 
         db = FirebaseFirestore.getInstance();
 
@@ -79,7 +94,34 @@ public class RideInProgress extends AppCompatActivity implements OnMapReadyCallb
                 }
             }
         });
+        riderTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.collection("Users").whereEqualTo("username", riderPicked)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if(task.isSuccessful()){
+                                    for(QueryDocumentSnapshot document : task.getResult()){
+                                        riderName = document.getData().get("name").toString();
+                                        number = document.getData().get("phoneNumber").toString();
+                                        email = document.getData().get("email").toString();
+
+                                    }
+                                }
+                            }
+                        });
+
+                Intent intent = new Intent(getApplicationContext(), UserInfo.class);
+                intent.putExtra("fullname", riderName);
+                intent.putExtra("number", number);
+                intent.putExtra("email", email);
+                startActivity(intent);
+            }
+        });
     }
+
 
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -92,5 +134,7 @@ public class RideInProgress extends AppCompatActivity implements OnMapReadyCallb
         googleMap.setPadding(0, 0, 0, 0);
         ActualMap = googleMap;
     }
+
+
 
 }

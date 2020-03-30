@@ -48,7 +48,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/rounded_rectangle_white" />
+        app:srcCompat="@drawable/rounded_rectangle_white"
+        />
     <TextView
         android:id="@+id/ride_in_progress_text"
         android:layout_width="wrap_content"
@@ -62,6 +63,7 @@
         app:layout_constraintEnd_toEndOf="@+id/ride_in_progress_box"
         app:layout_constraintStart_toStartOf="@+id/ride_in_progress_box"
         app:layout_constraintTop_toTopOf="@+id/ride_in_progress_box" />
+
     <TextView
         android:id="@+id/startLocationText"
         android:layout_width="wrap_content"
@@ -89,9 +91,16 @@
         app:layout_constraintStart_toStartOf="@+id/endLocationBox"
         app:layout_constraintTop_toTopOf="@+id/endLocationBox" />
 
-
-
-
+    <TextView
+        android:id="@+id/rider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/ride_in_progress_box"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ride_in_progress_text"
+        app:layout_constraintVertical_bias="0.133" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
