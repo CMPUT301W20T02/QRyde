@@ -157,7 +157,7 @@ public class ConfirmAmount extends AppCompatActivity {
         destinationName = intent.getStringExtra("destination");
         rideCost = intent.getDoubleExtra("ride_cost", 0);
         rideDistance = intent.getDoubleExtra("ride_distance", 0);
-        rideDuration = intent.getDoubleExtra("ride_distance", 0);
+        rideDuration = intent.getDoubleExtra("ride_duration", 0);
 
     }
 }
