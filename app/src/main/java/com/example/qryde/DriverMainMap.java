@@ -4,20 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -27,7 +22,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -55,7 +49,6 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import static java.lang.Float.parseFloat;
 
@@ -144,10 +137,10 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                 dataList.clear();;
                 assert queryDocumentSnapshots != null;
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    AvailableRide temp = new AvailableRide(Objects.requireNonNull(doc.getData().get("rider")).toString(),
-                            Objects.requireNonNull(doc.getData().get("startLocation")).toString(),
-                            Objects.requireNonNull(doc.getData().get("endLocation")).toString(),
-                            parseFloat(Objects.requireNonNull(doc.getData().get("amount")).toString()),
+                    AvailableRide temp = new AvailableRide(doc.getData().get("rider").toString(),
+                            doc.getData().get("startLocation").toString(),
+                            doc.getData().get("endLocation").toString(),
+                            parseFloat(doc.getData().get("amount").toString()),
                             1.3f);
                     dataList.add(temp);
 
@@ -240,13 +233,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         });
 
     }
-
-
-
-
-
-
-
     //creates map fragment
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -309,10 +295,10 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
                             locationCurr = (Location) task.getResult();
-                            mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 11f);
+                            mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
 
                         } else {
-                            mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude), 11f);
+                            mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude));
                             ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
                     }
@@ -324,8 +310,8 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     }
 
     //method for map camera movement
-    private void mapMove(LatLng latLng, float zoom) {
-        ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom), 600, null);
+    private void mapMove(LatLng latLng) {
+        ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, (float) 11.0), 600, null);
     }
 
     //shows the blue dot.
