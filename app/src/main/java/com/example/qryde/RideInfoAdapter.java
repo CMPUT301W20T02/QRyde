@@ -59,7 +59,7 @@ public class RideInfoAdapter extends ArrayAdapter<RideInformation> {
         rider.setText(String.format("Name of the Passenger: %s", riderObject));
         amount.setText(String.format("Amount Paid: %s", amountObject));
         distanceDuration.setText(String.format("%s km (%s minutes long)", distanceObject, durationObject));
-        destination.setText(String.format("Passenger desination was %s.", destinationObject));
+        destination.setText(String.format("Passenger destination was %s.", destinationObject));
 
 
         return view;

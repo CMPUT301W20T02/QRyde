@@ -49,6 +49,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static java.lang.Float.parseFloat;
 
@@ -114,11 +115,12 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e){
                 dataList.clear();;
+                assert queryDocumentSnapshots != null;
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    AvailableRide temp = new AvailableRide(doc.getData().get("rider").toString(),
-                            doc.getData().get("startLocation").toString(),
-                            doc.getData().get("endLocation").toString(),
-                            parseFloat(doc.getData().get("amount").toString()),
+                    AvailableRide temp = new AvailableRide(Objects.requireNonNull(doc.getData().get("rider")).toString(),
+                            Objects.requireNonNull(doc.getData().get("startLocation")).toString(),
+                            Objects.requireNonNull(doc.getData().get("endLocation")).toString(),
+                            parseFloat(Objects.requireNonNull(doc.getData().get("amount")).toString()),
                             1.3f);
                     dataList.add(temp);
 
