@@ -78,6 +78,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private DrawerLayout drawerLayout;
 
     private boolean perms;
+    private MarkerPin markerPin;
 
 
 
@@ -104,6 +105,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         if (perms) {
             MapInit();
         }
+        markerPin = new MarkerPin();
 
 
         navUsername.setText(user);
@@ -149,7 +151,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                     tempLatLng = getLocationFromAddress(temp.getStartLocation());
 
                     // adding marker to show on map
-                    Marker marker = ActualMap.addMarker(new MarkerOptions().position(tempLatLng).title(
+                    Marker marker = ActualMap.addMarker(new MarkerOptions().position(tempLatLng).icon(markerPin.bitmapDescriptorFromVector(DriverMainMap.this, R.drawable.ic_person_pin_circle_black_24dp)).title(
                             temp.getRiderUsername() + markernumber));
 
                     // setting integer id for each marker and temp object
