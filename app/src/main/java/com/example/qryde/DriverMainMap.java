@@ -380,11 +380,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                 Log.d("xd", "xd");
                 break;
             }
-
-            case R.id.nav_qr_wallet: {
-                break;
-            }
-
             case R.id.nav_trip_history: {
                 break;
             }
