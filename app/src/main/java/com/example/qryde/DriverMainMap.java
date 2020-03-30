@@ -2,12 +2,14 @@ package com.example.qryde;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -75,6 +77,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private Integer markernumber = 0;
 
     private boolean perms;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,42 +157,54 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
              */
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), WaitingUserResponse.class);
-                intent.putExtra("rider", dataList.get(position).getRiderUsername());
-                intent.putExtra("username", user);
-                intent.putExtra("amount", dataList.get(position).getAmountOffered());
 
-                // updating firebase
-                db.collection("AvailableRides").document(dataList.get(position).getRiderUsername())
-                        .update("driver", user)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                new AlertDialog.Builder(DriverMainMap.this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Accept this ride?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "onSuccess: Successfully updated document");
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(getApplicationContext(), WaitingUserResponse.class);
+                                intent.putExtra("rider", dataList.get(position).getRiderUsername());
+                                intent.putExtra("username", user);
+                                intent.putExtra("amount", dataList.get(position).getAmountOffered());
+
+                                // updating firebase
+                                db.collection("AvailableRides").document(dataList.get(position).getRiderUsername())
+                                        .update("driver", user)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "onSuccess: Successfully updated document");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d(TAG, "onFailure: Failed to updated document");
+                                            }
+                                        });
+                                db.collection("AvailableRides").document(dataList.get(position).getRiderUsername())
+                                        .update("status", true)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "onSuccess: Successfully updated document");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d(TAG, "onFailure: Failed to updated document");
+                                            }
+                                        });
+
+                                startActivity(intent);
                             }
                         })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "onFailure: Failed to updated document");
-                            }
-                        });
-                db.collection("AvailableRides").document(dataList.get(position).getRiderUsername())
-                        .update("status", true)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "onSuccess: Successfully updated document");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "onFailure: Failed to updated document");
-                            }
-                        });
+                        .setNegativeButton("No", null)
+                        .show();
 
-                startActivity(intent);
                 return true;
             }
 
