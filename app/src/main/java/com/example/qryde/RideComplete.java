@@ -10,6 +10,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
@@ -18,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * Driver scans QR Bucks from Rider's phone
  */
 
-public class RideComplete extends AppCompatActivity {
+public class RideComplete extends AppCompatActivity implements OnMapReadyCallback {
 
     private String TAG = "RideInProgress";
 
@@ -40,7 +44,7 @@ public class RideComplete extends AppCompatActivity {
     private ImageButton thumbsUp;
     private ImageButton thumbsDown;
 
-    private boolean positive = true;
+    private GoogleMap ActualMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +62,7 @@ public class RideComplete extends AppCompatActivity {
             riderPicked = incomingData.getString("rider");
             amountOffered = incomingData.getFloat("amount");
         }
-
+        MapInit();
         amountOfferedString = "$"+amountOffered;
         amountOfferedTv.setText(amountOfferedString);
 
@@ -103,4 +107,15 @@ public class RideComplete extends AppCompatActivity {
         });
     }
 
+    private void MapInit() {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(RideComplete.this);
+    }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
+        googleMap.setPadding(0, 0, 0, 0);
+        ActualMap = googleMap;
+    }
 }

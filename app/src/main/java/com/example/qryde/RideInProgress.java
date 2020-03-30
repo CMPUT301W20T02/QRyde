@@ -1,6 +1,7 @@
 package com.example.qryde;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -8,6 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -20,7 +27,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 /**
  * This class deals with the app activity while the ride is in progress.
  */
-public class RideInProgress extends AppCompatActivity {
+public class RideInProgress extends AppCompatActivity implements OnMapReadyCallback {
 
     private String TAG = "RideInProgress";
 
@@ -28,6 +35,9 @@ public class RideInProgress extends AppCompatActivity {
     private String user;
     private String riderPicked;
     float amountOffered;
+
+
+    private GoogleMap ActualMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +49,8 @@ public class RideInProgress extends AppCompatActivity {
             riderPicked = incomingData.getString("rider");
             amountOffered = incomingData.getFloat("amount");
         }
+
+        MapInit();
 
         db = FirebaseFirestore.getInstance();
 
@@ -67,6 +79,18 @@ public class RideInProgress extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void MapInit() {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(RideInProgress.this);
+    }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
+        googleMap.setPadding(0, 0, 0, 0);
+        ActualMap = googleMap;
     }
 
 }
