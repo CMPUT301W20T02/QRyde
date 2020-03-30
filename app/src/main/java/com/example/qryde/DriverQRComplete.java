@@ -103,7 +103,7 @@ public class DriverQRComplete extends AppCompatActivity {
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     for (QueryDocumentSnapshot document : task.getResult()) {
-                                                        // get all of the information
+//                                                         get all of the information
                                                         String old_amount = document.getData().get("amount").toString();
                                                         String old_datetime = document.getData().get("datetime").toString();
                                                         String old_driverName = document.getData().get("driver").toString();
@@ -122,6 +122,22 @@ public class DriverQRComplete extends AppCompatActivity {
 
                                                         db.collection("RideHistories").document(Integer.toString(numTransactions)).set(data);
 
+                                                        db.collection("ActiveRides").document(msg_split[0])
+                                                                .delete()
+                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Log.d(TAG, "onSuccess: Successfully deleted document");
+                                                                    }
+                                                                })
+                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Log.d(TAG, "onFailure: Failed to delete document");
+                                                                    }
+                                                                });
+
+
 
                                                     }
                                                 } else {
@@ -129,23 +145,6 @@ public class DriverQRComplete extends AppCompatActivity {
                                                 }
                                             }
                                         });
-
-
-                                db.collection("ActiveRides").document(msg_split[0])
-                                        .delete()
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Log.d(TAG, "onSuccess: Successfully deleted document");
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.d(TAG, "onFailure: Failed to delete document");
-                                            }
-                                        });
-
 
 
                             } else {
