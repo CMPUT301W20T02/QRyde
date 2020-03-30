@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import java.lang.Math;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,7 +62,7 @@ public class AvailableRideAdapter extends ArrayAdapter<AvailableRide> {
 
         //Build new strings to display
         String nameText = currentRide.getRiderUsername();
-        String distanceText = currentRide.getDistanceAway() + " km";
+        String distanceText = Math.round(currentRide.getDistanceAway()) + " km";
         String AmountText = "$" + currentRide.getAmountOffered();
         String startText = currentRide.getStartLocation();
         String endText = currentRide.getEndLocation();
