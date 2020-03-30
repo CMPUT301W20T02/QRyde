@@ -374,6 +374,21 @@ public class afterRequestCreated extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                db.collection("ActiveRides").document(user)
+                        .delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error deleting document", e);
+                            }
+                        });
+
                 if (!isCancelDriver) {
                     db.collection("AvailableRides").document(user)
                             .delete()

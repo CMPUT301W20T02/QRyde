@@ -92,6 +92,9 @@ public class RideInProgress extends AppCompatActivity implements OnMapReadyCallb
                         finish();
                     }
                 }
+                else{
+                    finish();
+                }
             }
         });
         riderTextView.setOnClickListener(new View.OnClickListener() {
