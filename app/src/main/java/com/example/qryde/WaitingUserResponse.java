@@ -1,6 +1,7 @@
 package com.example.qryde;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -25,7 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot;
  * This class describes the app activity while the rider is waiting
  * for the ride to be accepted
  */
-public class WaitingUserResponse extends AppCompatActivity {
+public class WaitingUserResponse extends AppCompatActivity implements OnMapReadyCallback {
 
     private String TAG = "WaitingUserResponse";
 
@@ -38,6 +45,8 @@ public class WaitingUserResponse extends AppCompatActivity {
     private String riderPicked;
     float amountOffered;
     private Button cancelButton;
+
+    private GoogleMap ActualMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +63,8 @@ public class WaitingUserResponse extends AppCompatActivity {
             riderPicked = incomingData.getString("rider");
             amountOffered = incomingData.getFloat("amount");
         }
+
+        MapInit();
 
         db = FirebaseFirestore.getInstance();
         db.collection("AvailableRides")
@@ -100,5 +111,17 @@ public class WaitingUserResponse extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void MapInit() {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(WaitingUserResponse.this);
+    }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
+        googleMap.setPadding(0, 0, 0, 0);
+        ActualMap = googleMap;
     }
 }

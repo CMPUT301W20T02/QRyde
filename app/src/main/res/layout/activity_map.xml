@@ -32,6 +32,15 @@
             android:layout_marginBottom="-30dp" />
         <!--hides google logo - against google TOS but since school project YOLO-->
 
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MapsActivity"
+            android:layout_marginBottom="-30dp" />
+        <!--hides google logo - against google TOS but since school project YOLO-->
+
         <ImageButton
             android:id="@+id/hamburger_menu_button"
             android:layout_width="24dp"
@@ -61,7 +70,29 @@
             android:orientation="horizontal"
             android:paddingTop="4dp"
             android:visibility="gone"
-            android:layout_alignTop="@+id/qryde_logo"/>
+            android:layout_alignTop="@+id/qryde_logo">
+
+            <TextView
+                android:id="@+id/cost"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#ffff"/>
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="127dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#ffff"/>
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="127dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#ffff"/>
+        </LinearLayout>
 
 
         <ImageView
@@ -151,4 +182,4 @@
         app:menu="@menu/hamb_rider_menu"
         app:headerLayout="@layout/hamb_header"
         />
-    </androidx.drawerlayout.widget.DrawerLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

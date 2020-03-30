@@ -18,6 +18,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class UserProfile extends AppCompatActivity implements EditUserProfileFragment.OnFragmentInteractionListener {
     private String TAG = "temp";
@@ -57,12 +58,12 @@ public class UserProfile extends AppCompatActivity implements EditUserProfileFra
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                fullNameTextView.setText(document.getData().get("name").toString());
-                                phoneNumberTextView.setText(document.getData().get("phoneNumber").toString());
-                                phoneNumber = document.getData().get("phoneNumber").toString();
-                                emailTextView.setText(document.getData().get("email").toString());
-                                email = document.getData().get("email").toString();
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                fullNameTextView.setText(Objects.requireNonNull(document.getData().get("name")).toString());
+                                phoneNumberTextView.setText(Objects.requireNonNull(document.getData().get("phoneNumber")).toString());
+                                phoneNumber = Objects.requireNonNull(document.getData().get("phoneNumber")).toString();
+                                emailTextView.setText(Objects.requireNonNull(document.getData().get("email")).toString());
+                                email = Objects.requireNonNull(document.getData().get("email")).toString();
                             }
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());

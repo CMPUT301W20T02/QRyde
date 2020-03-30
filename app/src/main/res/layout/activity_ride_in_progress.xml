@@ -4,30 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WaitingUserResponse">
+    tools:context=".RideInProgress">
 
-    <ImageView
-        android:id="@+id/mapBackground"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/edmonton_map" />
-    <ImageView
-        android:id="@+id/hamburger_menu"
-        android:layout_width="29dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/hamburger_icon" />
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".RideInProgress"
+        android:layout_marginBottom="-30dp"/>
 
     <ImageView
         android:id="@+id/startLocationBox"
@@ -62,7 +48,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/rounded_rectangle_white" />
+        app:srcCompat="@drawable/rounded_rectangle_white"
+        />
     <TextView
         android:id="@+id/ride_in_progress_text"
         android:layout_width="wrap_content"
@@ -76,6 +63,7 @@
         app:layout_constraintEnd_toEndOf="@+id/ride_in_progress_box"
         app:layout_constraintStart_toStartOf="@+id/ride_in_progress_box"
         app:layout_constraintTop_toTopOf="@+id/ride_in_progress_box" />
+
     <TextView
         android:id="@+id/startLocationText"
         android:layout_width="wrap_content"
@@ -103,9 +91,16 @@
         app:layout_constraintStart_toStartOf="@+id/endLocationBox"
         app:layout_constraintTop_toTopOf="@+id/endLocationBox" />
 
-
-
-
+    <TextView
+        android:id="@+id/rider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/ride_in_progress_box"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ride_in_progress_text"
+        app:layout_constraintVertical_bias="0.133" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -41,7 +41,6 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
@@ -80,6 +79,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private RideCalculator rideCalculator;
 
     private TextView usernameView;
+    private TextView distanceView;
+    private TextView durationView;
+    private TextView costView;
     private Button markerBut;
 
     private double rideCost;
@@ -137,6 +139,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         rideLiner = findViewById(R.id.rideline);
         rideCalLay = findViewById(R.id.rideCal);
+        distanceView = findViewById(R.id.distance);
+        durationView = findViewById(R.id.time);
+        costView = findViewById(R.id.cost);
 
         // Getting username from logon activity
         Bundle incomingData = getIntent().getExtras();
@@ -258,24 +263,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         autocompleteSupportFragment.setText(String.format("%s", addressString.getCompleteAddressString(locationCurr)));
                         pickupName = addressString.getCompleteAddressString(locationCurr);
                         if (endPos == null) {
-                            mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
+                            mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
                         }
 
                     } else {
-                        mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude), 15f);
+                        mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude));
                         Toast.makeText(MapActivity.this, "Could not find your location.", Toast.LENGTH_SHORT).show();
                         ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
                     }
                 });
             }
         } catch (SecurityException e) {
-            Log.e("Exception: %s", e.getMessage());
+            Log.e("Exception: %s", Objects.requireNonNull(e.getMessage()));
         }
     }
 
     //moves the map camera
-    private void mapMove(LatLng latLng, float zoom) {
-        ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom), 600, null);
+    private void mapMove(LatLng latLng) {
+        ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, (float) 15.0), 600, null);
     }
 
     //shows the blue dot on the map as the current GPs location of the user
@@ -328,7 +333,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Log.i("AutoComplete", "Place: " + place.getName() + ", " + place.getId() + place.getLatLng());
 
                 startPos = place;
-                mapMove(place.getLatLng(), 15f);
+                mapMove(place.getLatLng());
                 if (endPos != null || latlngtotempEndLocation !=null) {
                     calculateDirections();
                 }
@@ -378,10 +383,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 ActualMap.clear();
                 endPos = null;
                 if (startPos == null) {
-                    mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
+                    mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
                     autocompleteSupportFragmentdest.setText("");
                 } else {
-                    mapMove(startPos.getLatLng(), 15f);
+                    mapMove(startPos.getLatLng());
                     autocompleteSupportFragmentdest.setText("");
                 }
 
@@ -469,6 +474,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 rideCost = rideCalculator.getCost();
                 rideDuration = rideCalculator.getMinutes();
                 rideDistance = rideCalculator.getKilometres();
+
+                distanceView.setText(String.format("Distance: %s km", Math.round(rideDistance)));
+                durationView.setText(String.format("Time: %s mins", Math.round(rideDuration)));
+                costView.setText(String.format("Cost: $%s", rideCost));
             }
 
 
@@ -536,9 +545,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
-
     /**
-     * When a menu item is selected from navigation drawer, go to the activity
+     * Allows users to navigate to user profile and QR Wallet
      * @param menuItem
      * @return
      */
