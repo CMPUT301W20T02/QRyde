@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -48,6 +49,8 @@ public class ConfirmAmount extends AppCompatActivity {
     private String user;
     private String pickupName;
     private String destinationName;
+    private double starLat, startLng, endLat, endLng;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +91,8 @@ public class ConfirmAmount extends AppCompatActivity {
                 HashMap<String, Object> data = new HashMap<>();
                 if(amount.getText().toString().length() > 0){
                     amount_value = Float.parseFloat(amount.getText().toString());
+                    data.put("LatLng",new GeoPoint(starLat, startLng));
+                    data.put("LatLngDest", new GeoPoint(endLat, endLng));
                     data.put("amount", amount_value);
                     data.put("datetime", dateformat.format(date));
                     data.put("driver", "");
@@ -158,6 +163,10 @@ public class ConfirmAmount extends AppCompatActivity {
         rideCost = intent.getDoubleExtra("ride_cost", 0);
         rideDistance = intent.getDoubleExtra("ride_distance", 0);
         rideDuration = intent.getDoubleExtra("ride_duration", 0);
+        starLat = intent.getDoubleExtra("startLat", 0);
+        startLng = intent.getDoubleExtra("startLng", 0);
+        endLat = intent.getDoubleExtra("endLat", 0);
+        endLng = intent.getDoubleExtra("endLng", 0);
 
     }
 }

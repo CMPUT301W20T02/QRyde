@@ -90,6 +90,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     Location latlngtotempEndLocation = new Location("");
     Location endPostotempEndLocation = new Location("");
+    private double starLat, startLng, endLat, endLng;
 
     private String user;
     private boolean perms;
@@ -123,8 +124,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragmentdest = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragmentdes);
 
-        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
-        autocompleteSupportFragmentdest.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
+        autocompleteSupportFragmentdest.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
 
         //initializing countries to search from and adding hints to the search bar
         autocompleteSupportFragment.setCountries("CA"); // sets for now the location for autocomplete
@@ -181,6 +182,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 intent.putExtra("ride_cost", rideCost);
                 intent.putExtra("ride_distance", rideDistance);
                 intent.putExtra("ride_duration", rideDuration);
+                intent.putExtra("startLat", starLat);
+                intent.putExtra("startLng", startLng);
+                intent.putExtra("endLat", endLat);
+                intent.putExtra("endLng", endLng);
 
                 startActivity(intent);
             }
@@ -244,8 +249,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 latlngtotempEndLocation.setLatitude(point.latitude);
                 latlngtotempEndLocation.setLongitude(point.longitude);
                 ActualMap.addMarker(new MarkerOptions().position(point).icon(markerPin.bitmapDescriptorFromVector(this, R.drawable.ic_place_black_24dp)));
-                destinationName = addressString.getCompleteAddressString(latlngtotempEndLocation);
-                autocompleteSupportFragmentdest.setText(String.format("%s", destinationName));
+                autocompleteSupportFragmentdest.setText(String.format("%s", addressString.getCompleteAddressString(latlngtotempEndLocation)));
             }
         });
     }
@@ -261,7 +265,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         locationCurr = (Location) task.getResult();
                         Log.d("test", "TESTING PICKUPNAME22" + addressString.getCompleteAddressString(locationCurr));
                         autocompleteSupportFragment.setText(String.format("%s", addressString.getCompleteAddressString(locationCurr)));
-                        pickupName = addressString.getCompleteAddressString(locationCurr);
                         if (endPos == null) {
                             mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
                         }
@@ -434,9 +437,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         LatLng endPosLatLng;
         if (latlngtotempEndLocation != null) {
             endPosLatLng = new LatLng(latlngtotempEndLocation.getLatitude(),latlngtotempEndLocation.getLongitude());
+            destinationName = addressString.getCompleteAddressString(latlngtotempEndLocation);
         } else {
             endPosLatLng = new LatLng(endPos.getLatLng().latitude, endPos.getLatLng().longitude);
+            destinationName = endPos.getAddress();
         }
+        endLat = endPosLatLng.latitude;
+        endLng = endPosLatLng.longitude;
+
         ActualMap.clear();
 
         mapMarker.MapMarkerAdd(ActualMap,endPosLatLng, MapActivity.this, R.drawable.ic_place_black_24dp);
@@ -445,9 +453,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
         if (startPos == null) {
             directions.origin(new com.google.maps.model.LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
+            pickupName = addressString.getCompleteAddressString(locationCurr);
+            starLat = locationCurr.getLatitude();
+            startLng = locationCurr.getLongitude();
+
         } else {
             mapMarkerStart.MapMarkerAdd(ActualMap,startPos.getLatLng(), MapActivity.this, R.drawable.ic_person_pin_circle_black_24dp);
             directions.origin(new com.google.maps.model.LatLng(startPos.getLatLng().latitude, startPos.getLatLng().longitude));
+            pickupName = startPos.getAddress();
+            starLat = startPos.getLatLng().latitude;
+            starLat = startPos.getLatLng().longitude;
+
         }
 
         Log.d("Directions", "calculateDirections: destination: " + destination.toString());
