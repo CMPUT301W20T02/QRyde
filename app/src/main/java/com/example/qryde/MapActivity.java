@@ -463,7 +463,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             directions.origin(new com.google.maps.model.LatLng(startPos.getLatLng().latitude, startPos.getLatLng().longitude));
             pickupName = startPos.getAddress();
             starLat = startPos.getLatLng().latitude;
-            starLat = startPos.getLatLng().longitude;
+            startLng = startPos.getLatLng().longitude;
 
         }
 
