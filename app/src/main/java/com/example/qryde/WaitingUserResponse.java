@@ -59,6 +59,7 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
 
     private TextView tvStartLocation;
     private TextView tvEndLocation;
+    private TextView boxTitleTextView;
 
     private String user;
     private GeoApiContext geoApiContext = null;
@@ -79,6 +80,7 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
 
         tvStartLocation = findViewById(R.id.tvStartLocation);
         tvEndLocation = findViewById(R.id.tvEndLocation);
+        boxTitleTextView = findViewById(R.id.box_title);
 //        cancelButton = findViewById(R.id.cancel);
 
         Bundle incomingData = getIntent().getExtras();
@@ -122,7 +124,10 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
                 if (documentSnapshot != null && documentSnapshot.exists()) {
                     if (documentSnapshot.getData().get("status").toString().equals("false")) {
                         Log.d(TAG, "xd.", e);
-                        Intent intent = new Intent(getApplicationContext(), RideInProgress.class);
+                        boxTitleTextView.setText("Ride in Progress...");
+                    }
+                    if (documentSnapshot.getData().get("status").toString().equals("true")) {
+                        Intent intent = new Intent(getApplicationContext(), RideComplete.class);
                         intent.putExtra("rider", riderPicked);
                         intent.putExtra("user", user);
                         intent.putExtra("amount", amountOffered);
