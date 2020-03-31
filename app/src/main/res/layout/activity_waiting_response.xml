@@ -76,7 +76,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/rounded_rectangle_white" />
     <TextView
-        android:id="@+id/waiting_text"
+        android:id="@+id/box_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
