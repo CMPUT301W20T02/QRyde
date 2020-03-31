@@ -154,7 +154,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
                     // adding marker to show on map
                     Marker marker = ActualMap.addMarker(new MarkerOptions().position(tempLatLng).icon(markerPin.bitmapDescriptorFromVector(DriverMainMap.this, R.drawable.ic_person_pin_circle_black_24dp)).title(
-                            temp.getRiderUsername() + markernumber));
+                            temp.getRiderUsername()));
 
                     // setting integer id for each marker and temp object
                     marker.setTag(markernumber);
