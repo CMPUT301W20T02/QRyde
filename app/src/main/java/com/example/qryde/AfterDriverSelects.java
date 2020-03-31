@@ -135,8 +135,11 @@ public class AfterDriverSelects extends AppCompatActivity implements OnMapReadyC
                         amountOfferedTv.setText(amountOfferedString);
                         ScanButton.setVisibility(View.VISIBLE);
                     }
+                    else{
+                        finish();
+                        }
+                    }
                 }
-            }
         });
         ScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
