@@ -21,7 +21,7 @@
         app:srcCompat="@drawable/newyorkatnight" />
 
     <TextView
-        android:id="@+id/phone_number"
+        android:id="@+id/profile_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="PROFILE"
@@ -33,21 +33,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.108" />
 
-    <TextView
-        android:id="@+id/phone_number_tag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Phone Number"
-        android:textColor="#535353"
-        app:layout_constraintStart_toStartOf="@+id/email"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+    <ImageView
+        android:id="@+id/user_image"
+        android:layout_width="165dp"
+        android:layout_height="133dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_text"
+        app:srcCompat="@drawable/name" />
 
     <TextView
-        android:id="@+id/email"
+        android:id="@+id/user_full_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="TextView"
         android:textColor="@color/quantum_black_text"
         android:textStyle="bold"
@@ -56,7 +54,7 @@
         app:layout_constraintTop_toBottomOf="@+id/user_image" />
 
     <TextView
-        android:id="@+id/email_tag3"
+        android:id="@+id/username_tag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="88dp"
@@ -82,7 +80,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/username_tag"
+        android:id="@+id/email_tag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="88dp"
@@ -95,7 +93,7 @@
         app:layout_constraintTop_toBottomOf="@+id/username_tag" />
 
     <TextView
-        android:id="@+id/user_full_name"
+        android:id="@+id/phone_number_tag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="88dp"
@@ -105,10 +103,10 @@
         android:textColor="@color/quantum_black_text"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_image" />
+        app:layout_constraintTop_toBottomOf="@+id/email_tag" />
 
     <TextView
-        android:id="@+id/profile_text"
+        android:id="@+id/email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="56dp"
@@ -142,6 +140,8 @@
         android:layout_marginBottom="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phone_number_tag"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@android:drawable/ic_menu_manage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
