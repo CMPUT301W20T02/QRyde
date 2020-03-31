@@ -29,7 +29,7 @@
             tools:ignore="LockedOrientationActivity"/>
         <activity android:name=".GenerateQRCode" android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
-        <activity android:name=".signup" android:screenOrientation="portrait"
+        <activity android:name=".Signup" android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".AfterRequestCreated"

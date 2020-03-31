@@ -81,6 +81,10 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private MarkerPin markerPin;
 
 
+    @Override
+    public void onBackPressed() {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,6 +239,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             }
 
         });
+
 
     }
     //creates map fragment

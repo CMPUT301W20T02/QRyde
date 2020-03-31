@@ -100,6 +100,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private TextView logorequest;
     private LinearLayout rideCalLay;
 
+    @Override
+    public void onBackPressed() {
+
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,6 +204,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
+
+
 
 
     }
