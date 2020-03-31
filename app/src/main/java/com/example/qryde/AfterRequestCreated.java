@@ -44,7 +44,7 @@ import static java.lang.Integer.parseInt;
  * class for functions after request has been created, includes cancel button, ride status listener,
  * confirm button, decline driver button, and active ride converter, linked to firebase
  */
-public class afterRequestCreated extends AppCompatActivity {
+public class AfterRequestCreated extends AppCompatActivity {
     private String TAG = "temp";
     private FirebaseFirestore db;
 
@@ -431,6 +431,8 @@ public class afterRequestCreated extends AppCompatActivity {
 
                                                     driverName.setText("");
                                                     driverRating.setText("");
+                                                    phoneNumber.setText("");
+                                                    email.setText("");
                                                     findingText.setText("Finding you a driver ...");
                                                     cancel.setText("Cancel");
 

@@ -103,7 +103,7 @@ public class ConfirmAmount extends AppCompatActivity {
                     data.put("distance", rideDistance);
                     db.collection("AvailableRides").document(user).set(data);
 
-                    Intent intent3 = new Intent(getApplicationContext(), afterRequestCreated.class);
+                    Intent intent3 = new Intent(getApplicationContext(), AfterRequestCreated.class);
                     intent3.putExtra("username", user);
                     startActivity(intent3);
                     finish();

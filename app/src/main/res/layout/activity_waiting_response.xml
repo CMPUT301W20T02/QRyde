@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WaitingUserResponse">
+    tools:context=".AfterDriverSelects">
 
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".WaitingUserResponse" />
+        tools:context=".AfterDriverSelects" />
 
     <ImageView
         android:id="@+id/rideline"
@@ -76,7 +76,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/rounded_rectangle_white" />
     <TextView
-        android:id="@+id/waiting_text"
+        android:id="@+id/box_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -104,19 +104,34 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/rounded_rectangle_white" />
+
     <Button
-        android:id="@+id/cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
-        android:layout_marginLeft="52dp"
-        android:layout_marginBottom="40dp"
+        android:id="@+id/close_button"
+        android:layout_width="159dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="124dp"
+        android:layout_marginLeft="124dp"
+        android:layout_marginBottom="64dp"
         android:background="@drawable/rounded_rectangle_blue"
-        android:text="cancel"
+        android:text="Scan QR Bucks"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-
+    <TextView
+        android:id="@+id/qr_amount_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:textColor="#000000"
+        android:textSize="16dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/waiting_user_box"
+        app:layout_constraintStart_toStartOf="@+id/waiting_user_box"
+        app:layout_constraintTop_toTopOf="@+id/waiting_user_box" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
