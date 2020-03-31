@@ -32,7 +32,7 @@
         <activity android:name=".signup" android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".afterRequestCreated"
+            android:name=".AfterRequestCreated"
             android:theme="@style/AppTheme.CustomPopUpTheme" android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
 
