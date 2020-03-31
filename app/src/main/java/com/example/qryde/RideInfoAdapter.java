@@ -42,22 +42,21 @@ public class RideInfoAdapter extends ArrayAdapter<RideInformation> {
         TextView date = view.findViewById(R.id.date_view);
         TextView rider = view.findViewById(R.id.rider_view);
         TextView amount = view.findViewById(R.id.amount_view);
-        TextView distanceDuration = view.findViewById(R.id.distance_duration_view);
+        TextView start = view.findViewById(R.id.start_view);
         TextView destination = view.findViewById(R.id.destination_view);
 
         //getting the variables from the rideInfo object
         String dateObject = rideInfoObject.getDate();
         String riderObject = rideInfoObject.getRider();
         String amountObject = rideInfoObject.getAmount();
-        String distanceObject = rideInfoObject.getDistance();
-        String durationObject = rideInfoObject.getDuration();
+        String startObject = rideInfoObject.getStart();
         String destinationObject = rideInfoObject.getDestination();
 
         date.setText(String.format("Date of Ride: %s", dateObject));
         rider.setText(String.format("Name of the Passenger: %s", riderObject));
         amount.setText(String.format("Amount Paid: %s", amountObject));
-        distanceDuration.setText(String.format("%s km (%s minutes long)", distanceObject, durationObject));
-        destination.setText(String.format("Passenger destination was %s.", destinationObject));
+        start.setText(String.format("Start: %s", startObject));
+        destination.setText(String.format("Destination: %s", destinationObject));
 
         return view;
     }
