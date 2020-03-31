@@ -190,7 +190,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(getApplicationContext(), WaitingUserResponse.class);
+                                Intent intent = new Intent(getApplicationContext(), AfterDriverSelects.class);
                                 intent.putExtra("rider", dataList.get(position).getRiderUsername());
                                 intent.putExtra("username", user);
                                 intent.putExtra("amount", dataList.get(position).getAmountOffered());

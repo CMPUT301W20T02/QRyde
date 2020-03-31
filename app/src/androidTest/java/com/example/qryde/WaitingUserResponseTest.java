@@ -1,7 +1,6 @@
 package com.example.qryde;
 
 import android.app.Activity;
-import android.util.Log;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -9,26 +8,17 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.robotium.solo.Solo;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.sql.Driver;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Test class for MainActivity. All the UI tests are written here. Robotium test framework is
@@ -62,7 +52,7 @@ public class WaitingUserResponseTest{
         solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
         createAvailableRide();
         solo.clickLongInList(0);
-        solo.assertCurrentActivity("Wrong Activity", WaitingUserResponse.class);
+        solo.assertCurrentActivity("Wrong Activity", AfterDriverSelects.class);
         deleteAvailableRide();
 
     }
@@ -75,7 +65,7 @@ public class WaitingUserResponseTest{
         solo.clickOnButton("Login");
         solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
         solo.clickLongInList(0);
-        solo.assertCurrentActivity("Wrong Activity", WaitingUserResponse.class);
+        solo.assertCurrentActivity("Wrong Activity", AfterDriverSelects.class);
         solo.clickOnButton("cancel");
         solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
     }

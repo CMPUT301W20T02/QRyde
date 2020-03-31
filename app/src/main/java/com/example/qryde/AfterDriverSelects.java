@@ -1,9 +1,6 @@
 package com.example.qryde;
 
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,7 +8,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -51,7 +46,7 @@ import java.util.List;
  * This class describes the app activity while the rider is waiting
  * for the ride to be accepted
  */
-public class WaitingUserResponse extends AppCompatActivity implements OnMapReadyCallback {
+public class AfterDriverSelects extends AppCompatActivity implements OnMapReadyCallback {
 
     private String TAG = "WaitingUserResponse";
 
@@ -60,7 +55,10 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
     private TextView tvStartLocation;
     private TextView tvEndLocation;
     private TextView boxTitleTextView;
+    private TextView amountOfferedTv;
 
+
+    private Button ScanButton;
     private String user;
     private GeoApiContext geoApiContext = null;
     private GeoPoint geoPoint;
@@ -81,6 +79,11 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
         tvStartLocation = findViewById(R.id.tvStartLocation);
         tvEndLocation = findViewById(R.id.tvEndLocation);
         boxTitleTextView = findViewById(R.id.box_title);
+        amountOfferedTv = findViewById(R.id.qr_amount_text);
+        ScanButton = findViewById(R.id.close_button);
+
+        ScanButton.setVisibility(View.GONE);
+
 //        cancelButton = findViewById(R.id.cancel);
 
         Bundle incomingData = getIntent().getExtras();
@@ -127,16 +130,29 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
                         boxTitleTextView.setText("Ride in Progress...");
                     }
                     if (documentSnapshot.getData().get("status").toString().equals("true")) {
-                        Intent intent = new Intent(getApplicationContext(), RideComplete.class);
-                        intent.putExtra("rider", riderPicked);
-                        intent.putExtra("user", user);
-                        intent.putExtra("amount", amountOffered);
-                        startActivity(intent);
-                        finish();
+                        boxTitleTextView.setText("Ride is Complete!");
+                        String amountOfferedString = "$ " + amountOffered;
+                        amountOfferedTv.setText(amountOfferedString);
+                        ScanButton.setVisibility(View.VISIBLE);
                     }
                 }
             }
         });
+        ScanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            /**
+             * This method starts a new app activity after the scan button is clicked
+             * @param View
+             * @return ScanQrCode.class             *
+             */
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ScanQRCode.class);
+                intent.putExtra("username", user);
+                startActivity(intent);
+                finish();
+            }
+        });
+
 
         db.collection("AvailableRides").document(riderPicked).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -164,7 +180,7 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(WaitingUserResponse.this);
+        mapFragment.getMapAsync(AfterDriverSelects.this);
         if (geoApiContext == null) {
             geoApiContext = new GeoApiContext.Builder()
                     .apiKey(getString(R.string.google_maps_key))
@@ -224,8 +240,8 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
             polyline = ActualMap.addPolyline(new PolylineOptions()
                     .addAll(newDecodedPath)
                     .color(getColor(R.color.QrydeB)));
-            mapMarkerEnd.MapMarkerAdd(ActualMap, new LatLng(geoPointDest.getLatitude(), geoPointDest.getLongitude()), WaitingUserResponse.this, R.drawable.ic_place_black_24dp);
-            mapMarkerStart.MapMarkerAdd(ActualMap, new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()), WaitingUserResponse.this, R.drawable.ic_person_pin_circle_black_24dp);
+            mapMarkerEnd.MapMarkerAdd(ActualMap, new LatLng(geoPointDest.getLatitude(), geoPointDest.getLongitude()), AfterDriverSelects.this, R.drawable.ic_place_black_24dp);
+            mapMarkerStart.MapMarkerAdd(ActualMap, new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()), AfterDriverSelects.this, R.drawable.ic_person_pin_circle_black_24dp);
             polylineZoom(polyline.getPoints());
         });
     }
