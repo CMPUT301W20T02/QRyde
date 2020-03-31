@@ -35,6 +35,8 @@ public class RideHistoryList extends AppCompatActivity {
     ListView rideHistoryList;
     private FirebaseFirestore db;
 
+    String driver;
+
     String TAG = "RideHistoryList";
 
 
@@ -48,6 +50,12 @@ public class RideHistoryList extends AppCompatActivity {
         setContentView(R.layout.activity_ride_history_list);
 
         db = FirebaseFirestore.getInstance();
+
+        Bundle incomingData = getIntent().getExtras();
+        if (incomingData != null) {
+            driver = incomingData.getString("driver");
+        }
+
 
         RideInformation[] RideInfo = {};
 
@@ -80,15 +88,18 @@ public class RideHistoryList extends AppCompatActivity {
                 rideInfoAdapter.notifyDataSetChanged();
                 assert queryDocumentSnapshots != null;
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    RideInformation temp = new RideInformation(
-                            doc.getData().get("datetime").toString(),
-                            doc.getData().get("rider").toString(),
-                            doc.getData().get("amount").toString(),
-                            doc.getData().get("startLocation").toString(),
-                            doc.getData().get("endLocation").toString());
-                    rideInfoDataList.add(temp);
-                    rideInfoAdapter.notifyDataSetChanged();
-                    Log.d(TAG, "onCreate: " + temp.getDate() + temp.getRider() + temp.getAmount() + temp.getStart() + temp.getDestination());
+                    if (doc.getData().get("driver").toString().equals(driver)) {
+                        RideInformation temp = new RideInformation(
+                                doc.getData().get("datetime").toString(),
+                                doc.getData().get("rider").toString(),
+                                doc.getData().get("amount").toString(),
+                                doc.getData().get("startLocation").toString(),
+                                doc.getData().get("endLocation").toString());
+                        rideInfoDataList.add(temp);
+                        rideInfoAdapter.notifyDataSetChanged();
+                        Log.d(TAG, "onCreate: " + temp.getDate() + temp.getRider() + temp.getAmount() + temp.getStart() + temp.getDestination());
+
+                    }
                 }
             }
         });

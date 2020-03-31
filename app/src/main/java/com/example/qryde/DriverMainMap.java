@@ -383,6 +383,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             }
             case R.id.nav_trip_history: {
                 Intent intent = new Intent(getApplicationContext(), RideHistoryList.class);
+                intent.putExtra("driver", user);
                 startActivity(intent);
                 break;
             }
