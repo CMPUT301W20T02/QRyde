@@ -52,7 +52,7 @@
         android:layout_marginBottom="16dp"
         android:hint="Enter an Amount"
         android:imeOptions="actionDone"
-        android:inputType="number"
+        android:inputType="number|numberDecimal"
         android:textColor="@android:color/holo_red_dark"
         android:textColorHint="@android:color/holo_red_dark"
         app:layout_constraintBottom_toTopOf="@+id/cancel"
