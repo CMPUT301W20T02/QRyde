@@ -21,6 +21,8 @@ public class RideInfoAdapter extends ArrayAdapter<RideInformation> {
     private ArrayList<RideInformation> rideinfo;
     private Context context;
 
+    String TAG = "RideInfoAdapter";
+
     public RideInfoAdapter(ArrayList<RideInformation> rideinfo, Context context) {
         super(context, 0, rideinfo);
         this.rideinfo = rideinfo;
