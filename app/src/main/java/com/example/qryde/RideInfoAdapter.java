@@ -39,11 +39,11 @@ public class RideInfoAdapter extends ArrayAdapter<RideInformation> {
 
         RideInformation rideInfoObject = rideinfo.get(position);
 
-        TextView date = view.findViewById(R.id.date);
-        TextView rider = view.findViewById(R.id.rider);
-        TextView amount = view.findViewById(R.id.amount);
-        TextView distanceDuration = view.findViewById(R.id.distance_duration);
-        TextView destination = view.findViewById(R.id.destination);
+        TextView date = view.findViewById(R.id.date_view);
+        TextView rider = view.findViewById(R.id.rider_view);
+        TextView amount = view.findViewById(R.id.amount_view);
+        TextView distanceDuration = view.findViewById(R.id.distance_duration_view);
+        TextView destination = view.findViewById(R.id.destination_view);
 
         //getting the variables from the rideInfo object
         String dateObject = rideInfoObject.getDate();
