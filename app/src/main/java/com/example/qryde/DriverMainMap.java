@@ -186,6 +186,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                 new AlertDialog.Builder(DriverMainMap.this)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Accept this ride?")
+                        .setMessage("You will be committing to this ride")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

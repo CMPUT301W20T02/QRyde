@@ -67,7 +67,7 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
     private Polyline polyline;
     private String riderPicked;
     private float amountOffered;
-    private Button cancelButton;
+//    private Button cancelButton;
 
     private GoogleMap ActualMap;
     private MapMarker mapMarkerStart, mapMarkerEnd;
@@ -79,7 +79,7 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
 
         tvStartLocation = findViewById(R.id.tvStartLocation);
         tvEndLocation = findViewById(R.id.tvEndLocation);
-        cancelButton = findViewById(R.id.cancel);
+//        cancelButton = findViewById(R.id.cancel);
 
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
@@ -149,11 +149,11 @@ public class WaitingUserResponse extends AppCompatActivity implements OnMapReady
             }
         });
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                finish();
-            }
-        });
+//        cancelButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                finish();
+//            }
+//        });
     }
 
     private void MapInit() {
