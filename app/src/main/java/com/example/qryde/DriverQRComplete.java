@@ -12,6 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,7 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DriverQRComplete extends AppCompatActivity {
+public class DriverQRComplete extends AppCompatActivity implements OnMapReadyCallback {
 
     String TAG = "DriverQRComplete";
 
@@ -51,6 +55,8 @@ public class DriverQRComplete extends AppCompatActivity {
     private RideInformation rideInformationObj;
     private ArrayList<RideInformation> rideInfoList = new ArrayList<>();
 
+    private GoogleMap ActualMap;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +65,6 @@ public class DriverQRComplete extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        //loading shared preferences data
-        loadData();
-
         msg = findViewById(R.id.qr_amount_text);
         completeButton = findViewById(R.id.close_button);
 
@@ -69,6 +72,9 @@ public class DriverQRComplete extends AppCompatActivity {
         if (incomingData != null) {
             IOUMsg = incomingData.getString("iou");
         }
+
+        //initializing map in the background
+        MapInit();
 
         // get num of transactions from metadata
         db.collection("QRTransactions")
@@ -183,33 +189,17 @@ public class DriverQRComplete extends AppCompatActivity {
         msg.setText(IOUMsg);
     }
 
-    /**
-     * Saving data that is entered locally
-     */
-    private void saveData()
-    {
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(rideInfoList);
-        editor.putString("task list", json);
-        editor.apply();
+    private void MapInit() {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        assert mapFragment != null;
+        mapFragment.getMapAsync(DriverQRComplete.this);
     }
 
-    /**
-     * Method for loading data(called onCreate)
-     */
-    private void loadData()
-    {
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("task list", null);
-        Type type = new TypeToken<ArrayList<RideInformation>>() {}.getType();
-        rideInfoList = gson.fromJson(json, type);
-
-        if(rideInfoList == null)
-        {
-            rideInfoList = new ArrayList<>();
-        }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
+        googleMap.setPadding(0, 0, 0, 0);
+        ActualMap = googleMap;
     }
 }

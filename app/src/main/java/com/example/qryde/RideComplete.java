@@ -35,25 +35,12 @@ public class RideComplete extends AppCompatActivity implements OnMapReadyCallbac
 
     private String TAG = "RideInProgress";
 
-    private FirebaseFirestore db;
     private String user;
-    private String riderPicked;
     private Button ScanButton;
-    private float amountOffered;
-    private String amountOfferedString;
-    private TextView amountOfferedTv;
     private TextView rideComplete;
-    private String destinationName;
-    private String rideDistance;
-    private String rideDuration;
-    private Date todayDate;
 
     private static RideComplete instance;
 
-
-
-    private ImageButton thumbsUp;
-    private ImageButton thumbsDown;
 
     private boolean positive = true;
     private GoogleMap ActualMap;
@@ -64,29 +51,16 @@ public class RideComplete extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_ride_complete);
         Bundle incomingData = getIntent().getExtras();
         ScanButton = findViewById(R.id.close_button);
-        amountOfferedTv = findViewById(R.id.qr_amount_text);
         rideComplete = findViewById(R.id.ride_complete_text);
 
         instance = this; // for calling functions
 
         if (incomingData != null) {
             user = incomingData.getString("username");
-            riderPicked = incomingData.getString("rider");
-            amountOffered = incomingData.getFloat("amount");
-            destinationName = incomingData.getString("destination");
-            rideDistance = String.valueOf(incomingData.getDouble("ride_distance", 0));
-            rideDuration = String.valueOf(incomingData.getDouble("ride_duration", 0));
         }
 
         //initializing map in the background
         MapInit();
-
-        amountOfferedString = "$"+amountOffered;
-        amountOfferedTv.setText(amountOfferedString);
-
-        //todays date
-        todayDate = new Date();
-        todayDate = getInstance().getTime();
 
         ScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,31 +76,6 @@ public class RideComplete extends AppCompatActivity implements OnMapReadyCallbac
                 finish();
             }
         });
-
-        thumbsUp = findViewById(R.id.thumbsUpButton);
-        thumbsDown = findViewById(R.id.thumbsDownButton);
-
-        thumbsUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            /**
-             * This method allows the user to give the driver positive feedback
-             * after the ride is over
-             * @param View
-             */
-            public void onClick(View v) {
-            }
-        });
-
-        thumbsDown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            /**
-             * This method allows the user to give the driver negative feedback
-             * after the ride is over
-             * @param View
-             */
-            public void onClick(View v) {
-            }
-        });
     }
 
     private void MapInit() {
@@ -135,6 +84,7 @@ public class RideComplete extends AppCompatActivity implements OnMapReadyCallbac
         assert mapFragment != null;
         mapFragment.getMapAsync(RideComplete.this);
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
