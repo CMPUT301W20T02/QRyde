@@ -35,6 +35,8 @@
             android:name=".afterRequestCreated"
             android:theme="@style/AppTheme.CustomPopUpTheme" android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
+        <activity android:name=".RideHistoryList" android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
 
         <meta-data
             android:name="com.google.android.gms.version"

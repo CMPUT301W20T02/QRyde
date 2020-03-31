@@ -3,9 +3,11 @@ package com.example.qryde;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,10 +20,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +41,16 @@ public class DriverQRComplete extends AppCompatActivity {
     int numTransactions;
     Button completeButton;
 
+    private String old_amount;
+    private String old_datetime;
+    private String old_driverName;
+    private String old_endLocation;
+    private String old_startLocation;
+    private String old_rider;
+
+    private RideInformation rideInformationObj;
+    private ArrayList<RideInformation> rideInfoList = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +58,9 @@ public class DriverQRComplete extends AppCompatActivity {
         setContentView(R.layout.activity_driver_qr_complete);
 
         db = FirebaseFirestore.getInstance();
+
+        //loading shared preferences data
+        loadData();
 
         msg = findViewById(R.id.qr_amount_text);
         completeButton = findViewById(R.id.close_button);
@@ -104,12 +123,12 @@ public class DriverQRComplete extends AppCompatActivity {
                                                 if (task.isSuccessful()) {
                                                     for (QueryDocumentSnapshot document : task.getResult()) {
 //                                                         get all of the information
-                                                        String old_amount = document.getData().get("amount").toString();
-                                                        String old_datetime = document.getData().get("datetime").toString();
-                                                        String old_driverName = document.getData().get("driver").toString();
-                                                        String old_endLocation = document.getData().get("endLocation").toString();
-                                                        String old_startLocation = document.getData().get("startLocation").toString();
-                                                        String old_rider = document.getData().get("rider").toString();
+                                                        old_amount = document.getData().get("amount").toString();
+                                                        old_datetime = document.getData().get("datetime").toString();
+                                                        old_driverName = document.getData().get("driver").toString();
+                                                        old_endLocation = document.getData().get("endLocation").toString();
+                                                        old_startLocation = document.getData().get("startLocation").toString();
+                                                        old_rider = document.getData().get("rider").toString();
 
                                                         Map<String, Object> data = new HashMap<>();
                                                         data.put("amount", Float.parseFloat(old_amount));
@@ -137,16 +156,14 @@ public class DriverQRComplete extends AppCompatActivity {
                                                                     }
                                                                 });
 
-
-
+                                                        //saving variables to Driver Ride History
+                                                        rideHistorySave();
                                                     }
                                                 } else {
                                                     Log.d(TAG, "onComplete: failed to retrieve document");
                                                 }
                                             }
                                         });
-
-
                             } else {
                                 Log.d(TAG, "onComplete: No such document");
                             }
@@ -163,22 +180,56 @@ public class DriverQRComplete extends AppCompatActivity {
             }
         });
 
-
-
-
-
-
-
-
-
-
         msg.setText(IOUMsg);
+    }
 
+    /**
+     * Saving data that is entered locally
+     */
+    private void saveData()
+    {
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(rideInfoList);
+        editor.putString("task list", json);
+        editor.apply();
+    }
 
+    /**
+     * Method for loading data(called onCreate)
+     */
+    private void loadData()
+    {
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("task list", null);
+        Type type = new TypeToken<ArrayList<RideInformation>>() {}.getType();
+        rideInfoList = gson.fromJson(json, type);
 
+        if(rideInfoList == null)
+        {
+            rideInfoList = new ArrayList<>();
+        }
+    }
 
+    /**
+     * Methods to save varibles from Firebase to Driver Ride History
+     */
+    private void rideHistorySave()
+    {
+        //initializing the custom list adaptor
+        final ArrayAdapter rideInfoAdapter = new RideInfoAdapter(rideInfoList, getApplicationContext());
 
+        //saving ridehistory data into a class object
+        rideInformationObj = new RideInformation(old_datetime, old_rider, old_amount, old_endLocation, "10.0", "10.0");
 
+        rideInfoList.add(rideInformationObj);
 
+        //saving data locally
+        saveData();
+
+        //notifying adapter of change to list
+        rideInfoAdapter.notifyDataSetChanged();
     }
 }
