@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/background"
-        android:layout_width="637dp"
-        android:layout_height="812dp"
+        android:layout_width="652dp"
+        android:layout_height="861dp"
         android:alpha="0.3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

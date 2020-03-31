@@ -141,15 +141,4 @@ public class RideComplete extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.setPadding(0, 0, 0, 0);
         ActualMap = googleMap;
     }
-
-//    //saving data that is entered locally
-//    private void saveData(ArrayList<String> rideInfo)
-//    {
-//        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        Gson gson = new Gson();
-//        String json = gson.toJson(rideInfo);
-//        editor.putString("ride_info", json);
-//        editor.apply();
-//    }
 }

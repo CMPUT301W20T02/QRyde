@@ -212,24 +212,4 @@ public class DriverQRComplete extends AppCompatActivity {
             rideInfoList = new ArrayList<>();
         }
     }
-
-    /**
-     * Methods to save varibles from Firebase to Driver Ride History
-     */
-//    private void rideHistorySave()
-//    {
-//        //initializing the custom list adaptor
-//        final ArrayAdapter rideInfoAdapter = new RideInfoAdapter(rideInfoList, getApplicationContext());
-//
-//        //saving ridehistory data into a class object
-//        rideInformationObj = new RideInformation(old_datetime, old_rider, old_amount, old_endLocation, "10.0", "10.0");
-//
-//        rideInfoList.add(rideInformationObj);
-//
-//        //saving data locally
-//        saveData();
-//
-//        //notifying adapter of change to list
-//        rideInfoAdapter.notifyDataSetChanged();
-//    }
 }

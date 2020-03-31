@@ -9,23 +9,15 @@ import android.widget.ListView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static java.lang.Float.parseFloat;
 
 /**
  * List View class that allows drivers to view their Ride history offline
@@ -39,10 +31,8 @@ public class RideHistoryList extends AppCompatActivity {
 
     String TAG = "RideHistoryList";
 
-
     //initializing datalist and its objects
     ArrayList<RideInformation> rideInfoDataList;
-    private ArrayList<RideInformation> rideInfo = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +46,7 @@ public class RideHistoryList extends AppCompatActivity {
             driver = incomingData.getString("driver");
         }
 
-
         RideInformation[] RideInfo = {};
-
-
-        //loading data
-//        loadData();
 
         //initializing the data-list and the list from the view
         rideInfoDataList = new ArrayList<>();
@@ -104,19 +89,4 @@ public class RideHistoryList extends AppCompatActivity {
             }
         });
     }
-//
-//    //method for loading data(called onCreate)
-//    private void loadData()
-//    {
-//        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-//        Gson gson = new Gson();
-//        String json = sharedPreferences.getString("task list", null);
-//        Type type = new TypeToken<ArrayList<RideInformation>>() {}.getType();
-//        rideInfo = gson.fromJson(json, type);
-//
-//        if(rideInfo == null)
-//        {
-//            rideInfo = new ArrayList<>();
-//        }
-//    }
 }
