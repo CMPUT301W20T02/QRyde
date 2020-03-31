@@ -2,6 +2,7 @@ package com.example.qryde;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -22,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static java.lang.Float.parseFloat;
 
@@ -32,6 +34,8 @@ import static java.lang.Float.parseFloat;
 public class RideHistoryList extends AppCompatActivity {
     ListView rideHistoryList;
     private FirebaseFirestore db;
+
+    String TAG = "RideHistoryList";
 
 
     //initializing datalist and its objects
@@ -45,15 +49,19 @@ public class RideHistoryList extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
+        RideInformation[] RideInfo = {};
+
+
         //loading data
 //        loadData();
 
         //initializing the data-list and the list from the view
         rideInfoDataList = new ArrayList<>();
+        rideInfoDataList.addAll(Arrays.asList(RideInfo));
         rideHistoryList = findViewById(R.id.ride_history_list);
 
         //initializing the custom list adaptor
-        final ArrayAdapter rideInfoAdapter = new RideInfoAdapter(rideInfo, this);
+        final ArrayAdapter rideInfoAdapter = new RideInfoAdapter(rideInfoDataList, this);
 
         rideHistoryList.setAdapter(rideInfoAdapter);
 
@@ -80,6 +88,7 @@ public class RideHistoryList extends AppCompatActivity {
                             doc.getData().get("endLocation").toString());
                     rideInfoDataList.add(temp);
                     rideInfoAdapter.notifyDataSetChanged();
+                    Log.d(TAG, "onCreate: " + temp.getDate() + temp.getRider() + temp.getAmount() + temp.getStart() + temp.getDestination());
                 }
             }
         });
