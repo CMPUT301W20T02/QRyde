@@ -7,10 +7,7 @@
             android:id="@+id/nav_profile"
             android:icon="@drawable/username_logo"
             android:title="Profile" />
-        <item
-            android:id="@+id/nav_qr_wallet"
-            android:icon="@drawable/ic_account_balance_wallet_24px"
-            android:title="QR Wallet" />
+
         <item
             android:id="@+id/nav_trip_history"
             android:icon="@drawable/baseline_history_black_48dp"

@@ -45,7 +45,7 @@ public class GenerateQRCode extends AppCompatActivity {
             driverUserName = incomingData.getString("driver_user_name");
         }
 
-        String qrMsg = rider + " owes " + driverName + " $" + amount;
+        String qrMsg = rider + " owes " + driverUserName + " $" + amount;
 
         imageView = findViewById(R.id.imageView);
 
