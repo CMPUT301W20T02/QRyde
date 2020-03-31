@@ -21,7 +21,7 @@ public class RideInformation {
      */
     public RideInformation(String date, String user, String amount, String start, String destination) {
         this.date = date;
-        this.rider = rider;
+        this.rider = user;
         this.amount = amount;
         this.destination = destination;
         this.start = start;
