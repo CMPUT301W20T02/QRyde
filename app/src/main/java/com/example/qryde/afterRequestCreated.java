@@ -29,6 +29,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -374,7 +375,8 @@ public class afterRequestCreated extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
-
+                email.setText("");
+                phoneNumber.setText("");
                 db.collection("ActiveRides").document(user)
                         .delete()
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -490,6 +492,10 @@ public class afterRequestCreated extends AppCompatActivity {
                                             String old_endLocation = document.getData().get("endLocation").toString();
                                             String old_startLocation = document.getData().get("startLocation").toString();
                                             String old_rider = document.getData().get("rider").toString();
+                                            GeoPoint old_LatLng = document.getGeoPoint("LatLng");
+                                            GeoPoint old_LatLngDest = document.getGeoPoint("LatLngDest");
+
+
 
                                             Map<String, Object> data = new HashMap<>();
                                             data.put("amount", Float.parseFloat(old_amount));
@@ -499,6 +505,9 @@ public class afterRequestCreated extends AppCompatActivity {
                                             data.put("startLocation", old_startLocation);
                                             data.put("rider", old_rider);
                                             data.put("status", false);
+                                            data.put("LatLng", old_LatLng);
+                                            data.put("LatLngDest", old_LatLngDest);
+
                                             db.collection("ActiveRides").document(user).set(data);
 
                                             amount = Float.parseFloat(old_amount);
