@@ -10,14 +10,13 @@
 
     <ImageView
         android:id="@+id/background"
-        android:layout_width="637dp"
-        android:layout_height="812dp"
+        android:layout_width="629dp"
+        android:layout_height="876dp"
         android:alpha="0.3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.506"
         app:srcCompat="@drawable/newyorkatnight" />
 
     <ImageView
@@ -59,7 +58,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/usernameBox"
         app:layout_constraintStart_toStartOf="@+id/usernameBox"
         app:layout_constraintTop_toTopOf="@+id/usernameBox"
-        app:srcCompat="@drawable/username_logo" />
+        app:srcCompat="@drawable/username_logo"
+        android:layout_marginLeft="16dp" />
 
     <ImageView
         android:id="@+id/passwordLogo"
@@ -69,7 +69,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/passwordBox"
         app:layout_constraintStart_toStartOf="@+id/passwordBox"
         app:layout_constraintTop_toTopOf="@+id/passwordBox"
-        app:srcCompat="@drawable/password_logo" />
+        app:srcCompat="@drawable/password_logo"
+        android:layout_marginLeft="16dp" />
 
     <Button
         android:id="@+id/login_button"
@@ -104,7 +105,8 @@
         android:textColor="#4C96D7"
         android:textSize="18sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/SignupMessage"
-        app:layout_constraintStart_toEndOf="@+id/SignupMessage" />
+        app:layout_constraintStart_toEndOf="@+id/SignupMessage"
+        android:layout_marginLeft="8dp" />
 
     <EditText
         android:id="@+id/username_edittext"
@@ -119,7 +121,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/usernameBox"
         app:layout_constraintEnd_toEndOf="@+id/usernameBox"
         app:layout_constraintStart_toEndOf="@+id/usernameLogo"
-        app:layout_constraintTop_toTopOf="@+id/usernameBox" />
+        app:layout_constraintTop_toTopOf="@+id/usernameBox"
+        android:layout_marginLeft="16dp" />
 
     <EditText
         android:id="@+id/password_edittext"
@@ -133,7 +136,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/passwordBox"
         app:layout_constraintEnd_toEndOf="@+id/passwordBox"
         app:layout_constraintStart_toEndOf="@+id/passwordLogo"
-        app:layout_constraintTop_toTopOf="@+id/passwordBox" />
+        app:layout_constraintTop_toTopOf="@+id/passwordBox"
+        android:layout_marginLeft="16dp" />
 
     <TextView
         android:id="@+id/incorrect"
