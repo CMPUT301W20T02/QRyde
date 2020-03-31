@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/background"
-        android:layout_width="637dp"
-        android:layout_height="812dp"
+        android:layout_width="668dp"
+        android:layout_height="861dp"
         android:alpha="0.3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -139,7 +139,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/usernameBox"
         app:layout_constraintEnd_toEndOf="@+id/usernameBox"
         app:layout_constraintStart_toEndOf="@+id/usernameLogo"
-        app:layout_constraintTop_toTopOf="@+id/usernameBox" />
+        app:layout_constraintTop_toTopOf="@+id/usernameBox"
+        android:layout_marginLeft="16dp" />
 
     <EditText
         android:id="@+id/email_edittext"
@@ -185,7 +186,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/usernameBox"
         app:layout_constraintStart_toStartOf="@+id/usernameBox"
         app:layout_constraintTop_toTopOf="@+id/usernameBox"
-        app:srcCompat="@drawable/username_logo" />
+        app:srcCompat="@drawable/username_logo"
+        android:layout_marginLeft="16dp" />
 
     <ImageView
         android:id="@+id/passwordLogo"
@@ -195,7 +197,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/passwordBox"
         app:layout_constraintStart_toStartOf="@+id/passwordBox"
         app:layout_constraintTop_toTopOf="@+id/passwordBox"
-        app:srcCompat="@drawable/password_logo" />
+        app:srcCompat="@drawable/password_logo"
+        android:layout_marginLeft="16dp" />
 
     <Button
         android:id="@+id/signup_button"
@@ -221,7 +224,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/passwordBox"
         app:layout_constraintEnd_toEndOf="@+id/passwordBox"
         app:layout_constraintStart_toEndOf="@+id/passwordLogo"
-        app:layout_constraintTop_toTopOf="@+id/passwordBox" />
+        app:layout_constraintTop_toTopOf="@+id/passwordBox"
+        android:layout_marginLeft="16dp" />
 
     <ImageView
         android:id="@+id/reenterPasswordBox"
@@ -276,6 +280,9 @@
         android:id="@+id/userType"
         android:layout_width="109dp"
         android:layout_height="37dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="16dp"
         android:text="Driver"
         app:layout_constraintStart_toStartOf="@+id/reenterPasswordBox"
         app:layout_constraintTop_toBottomOf="@+id/reenterPasswordBox" />
