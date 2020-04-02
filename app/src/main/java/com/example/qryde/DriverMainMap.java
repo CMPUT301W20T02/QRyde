@@ -130,7 +130,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         availableRideListView.setAdapter(rideAdapter);
 
         final CollectionReference collectionReference = db.collection("AvailableRides");
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        collectionReference.orderBy("datetime").addSnapshotListener(new EventListener<QuerySnapshot>() {
             /**
              * sets the rider name, start location,
              * end location and cost amount to instance of available ride.
