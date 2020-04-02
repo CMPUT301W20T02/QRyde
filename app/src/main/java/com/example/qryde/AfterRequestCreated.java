@@ -32,7 +32,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.ObjectStreamException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,9 +46,7 @@ import static java.lang.Integer.parseInt;
 public class AfterRequestCreated extends AppCompatActivity {
     private String TAG = "temp";
     private FirebaseFirestore db;
-
-    private TextView startLocation;
-    private TextView endLocation;
+    
     private String user;
 
     private ImageView findingBox;
@@ -92,9 +89,7 @@ public class AfterRequestCreated extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_temp);
-        startLocation = findViewById(R.id.startLocationText);
-        endLocation = findViewById(R.id.endLocationText);
+        setContentView(R.layout.activity_after_request_created);
 
         findingBox = findViewById(R.id.findingDriverBox);
         findingText = findViewById(R.id.findingText);

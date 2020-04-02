@@ -169,12 +169,6 @@ public class AfterDriverSelects extends AppCompatActivity implements OnMapReadyC
                 }
             }
         });
-
-//        cancelButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                finish();
-//            }
-//        });
     }
 
     private void MapInit() {

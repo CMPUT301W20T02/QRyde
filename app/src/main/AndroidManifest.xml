@@ -64,13 +64,9 @@
             tools:ignore="LockedOrientationActivity" />
         <activity android:name=".AvailableRideAdapter" android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".RideComplete" android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity"/>
         <activity android:name=".DriverMainMap" android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
         <activity android:name=".UserProfile" android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity"/>
-        <activity android:name=".RideInProgress" android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
         <activity android:name=".ScanQRCode" android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
