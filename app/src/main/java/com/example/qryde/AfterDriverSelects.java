@@ -74,7 +74,7 @@ public class AfterDriverSelects extends AppCompatActivity implements OnMapReadyC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_after_driver_selects);
+        setContentView(R.layout.activity_waiting_response);
 
         tvStartLocation = findViewById(R.id.tvStartLocation);
         tvEndLocation = findViewById(R.id.tvEndLocation);
