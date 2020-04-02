@@ -63,7 +63,6 @@ public class DriverTest {
         solo.clickOnButton("Login");
         solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
         createAvailableRide();
-        solo.sleep(2000);
         solo.clickLongInList(0);
         solo.clickOnView(solo.getView(android.R.id.button1));
         solo.assertCurrentActivity("Wrong Activity", AfterDriverSelects.class);
@@ -81,7 +80,7 @@ public class DriverTest {
 
 
     @Test
-    public void riderCanceledTest() throws Exception{
+    public void riderCanceledRide() throws Exception {
         deleteAvailableRide();
         deleteActiveRide();
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
@@ -90,12 +89,16 @@ public class DriverTest {
         solo.clickOnButton("Login");
         solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
         createAvailableRide();
-        solo.sleep(2000);
         solo.clickLongInList(0);
         solo.clickOnView(solo.getView(android.R.id.button1));
         solo.assertCurrentActivity("Wrong Activity", AfterDriverSelects.class);
+        TextView titleTextView = (TextView)solo.getView(R.id.box_title);
+        assertEquals("Waiting for User Response", titleTextView.getText().toString());
+        solo.sleep(2000);
         updateAvailableRide();
         solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
+        deleteAvailableRide();
+        deleteActiveRide();
     }
 
     public void createAvailableRide() {
