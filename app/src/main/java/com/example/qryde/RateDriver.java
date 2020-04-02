@@ -76,8 +76,6 @@ public class RateDriver extends AppCompatActivity implements OnMapReadyCallback 
                                         thumbsUp.setVisibility(View.GONE);
                                         thumbsDown.setVisibility(View.GONE);
                                         titleText.setText("Thank you for your rating!");
-
-                                        rideCompleteButtonOnClick();
                                     }
                                 } else {
                                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -104,14 +102,19 @@ public class RateDriver extends AppCompatActivity implements OnMapReadyCallback 
                                         thumbsUp.setVisibility(View.GONE);
                                         thumbsDown.setVisibility(View.GONE);
                                         titleText.setText("Thank you for your rating!");
-
-                                        rideCompleteButtonOnClick();
                                     }
                                 } else {
                                     Log.d(TAG, "Error getting documents: ", task.getException());
                                 }
                             }
                         });
+            }
+        });
+
+        rideCompleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 
@@ -128,16 +131,6 @@ public class RateDriver extends AppCompatActivity implements OnMapReadyCallback 
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
         googleMap.setPadding(0, 0, 0, 0);
         ActualMap = googleMap;
-    }
-
-    private void rideCompleteButtonOnClick()
-    {
-        rideCompleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
     }
 }
 

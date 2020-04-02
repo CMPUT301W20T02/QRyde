@@ -89,7 +89,7 @@ public class ConfirmAmount extends AppCompatActivity {
                 Boolean status = false;
 
                 HashMap<String, Object> data = new HashMap<>();
-                if(amount.getText().toString().length() > 0){
+                if(amount.getText().toString().length() > 0 && Float.parseFloat(amount.getText().toString()) >= rideCost){
                     amount_value = Float.parseFloat(amount.getText().toString());
                     data.put("LatLng",new GeoPoint(starLat, startLng));
                     data.put("LatLngDest", new GeoPoint(endLat, endLng));

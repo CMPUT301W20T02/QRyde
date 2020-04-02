@@ -50,20 +50,20 @@ public class UserInfo extends AppCompatActivity {
 
         Bundle incomingData = getIntent().getExtras();
         if(incomingData != null){
-            name = incomingData.getString("fullname");
+            name = incomingData.getString("name");
             phoneNumber = incomingData.getString("number");
             email = incomingData.getString("email");
         }
-        fullNameTextView.setText(name);
+        usernameTextView.setText(name);
 
-        db.collection("Users").whereEqualTo("name", name).whereEqualTo("phoneNumber", phoneNumber)
+        db.collection("Users").whereEqualTo("username", name)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                usernameTextView.setText(document.getData().get("username").toString());
+                                fullNameTextView.setText(document.getData().get("name").toString());
                                 phoneNumberTextView.setText(document.getData().get("phoneNumber").toString());
                                 phoneNumber = document.getData().get("phoneNumber").toString();
                                 emailTextView.setText(document.getData().get("email").toString());

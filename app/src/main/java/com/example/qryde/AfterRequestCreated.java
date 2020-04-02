@@ -46,7 +46,7 @@ import static java.lang.Integer.parseInt;
 public class AfterRequestCreated extends AppCompatActivity {
     private String TAG = "temp";
     private FirebaseFirestore db;
-    
+
     private String user;
 
     private ImageView findingBox;
@@ -56,12 +56,11 @@ public class AfterRequestCreated extends AppCompatActivity {
     private TextView driverName;
     private TextView driverRating;
     private TextView email;
+    private TextView phoneNumber;
 
     private Button confirm;
     private Button cancel;
     private float amount;
-
-    private TextView phoneNumber;
 
     private boolean isCancelDriver = false;
 
@@ -278,11 +277,11 @@ public class AfterRequestCreated extends AppCompatActivity {
                                                                         DecimalFormat df = new DecimalFormat("#.#");
 
                                                                         driverName.setText(document.getData().get("name").toString());
-                                                                        driverRating.setText(df.format(likes / (dislikes+likes) * 100)  + "%");
+                                                                        driverRating.setText("Rating: " + df.format(likes / (dislikes+likes) * 100)  + "%");
                                                                         findingText.setText("Driver found!");
                                                                         cancel.setText(" DECLINE ");
-                                                                        phoneNumber.setText(document.getData().get("phoneNumber").toString());
-                                                                        email.setText(document.getData().get("email").toString());
+                                                                        phoneNumber.setText("Phone: " + document.getData().get("phoneNumber").toString());
+                                                                        email.setText("Email: " + document.getData().get("email").toString());
 
                                                                         isCancelDriver = true;
 
@@ -588,9 +587,7 @@ public class AfterRequestCreated extends AppCompatActivity {
         String number = phoneNumber.getText().toString();
         String recipient = email.getText().toString();
         Intent intent = new Intent(getApplicationContext(), UserInfo.class);
-        intent.putExtra("fullname", drivername);
-        intent.putExtra("number", number);
-        intent.putExtra("email", recipient);
+        intent.putExtra("name", driver);
         startActivity(intent);
 
     }
