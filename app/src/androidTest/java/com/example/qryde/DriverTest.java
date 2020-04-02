@@ -71,8 +71,31 @@ public class DriverTest {
         assertEquals("Waiting for User Response", titleTextView.getText().toString());
         createActiveRide();
         assertEquals("Ride in Progress...", titleTextView.getText().toString());
+        updateActiveRide();
+        assertEquals("Ride is Complete!", titleTextView.getText().toString());
+        solo.clickOnButton("Scan QR Bucks");
+        solo.assertCurrentActivity("Wrong Activity", ScanQRCode.class);
         deleteAvailableRide();
         deleteActiveRide();
+    }
+
+
+    @Test
+    public void riderCanceledTest() throws Exception{
+        deleteAvailableRide();
+        deleteActiveRide();
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.username_edittext), "driver");
+        solo.enterText((EditText) solo.getView(R.id.password_edittext), "123");
+        solo.clickOnButton("Login");
+        solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
+        createAvailableRide();
+        solo.sleep(2000);
+        solo.clickLongInList(0);
+        solo.clickOnView(solo.getView(android.R.id.button1));
+        solo.assertCurrentActivity("Wrong Activity", AfterDriverSelects.class);
+        updateAvailableRide();
+        solo.assertCurrentActivity("Wrong Activity", DriverMainMap.class);
     }
 
     public void createAvailableRide() {
@@ -109,7 +132,18 @@ public class DriverTest {
         db.collection("ActiveRides").document("TESTING").set(data);
         solo.sleep(2000);
     }
-
+    public void updateAvailableRide(){
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("driver", "");
+        db.collection("AvailableRides").document("TESTING").update(data);
+        solo.sleep(2000);
+    }
+    public void updateActiveRide(){
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("status", true);
+        db.collection("ActiveRides").document("TESTING").update(data);
+        solo.sleep(2000);
+    }
     public void deleteAvailableRide() {
         // delete the document in AvailableRides
         db.collection("AvailableRides").document("TESTING")
@@ -139,6 +173,12 @@ public class DriverTest {
                     public void onFailure(@NonNull Exception e) {
                     }
                 });
+    }
+
+    @After
+    public void tearDown() throws Exception{
+        deleteActiveRide();
+        deleteAvailableRide();
     }
 
 
