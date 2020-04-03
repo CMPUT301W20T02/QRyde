@@ -7,6 +7,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+/**
+ * This class enables the app add marker pins based on a user's latitude and
+ * longitude information
+ */
 public class MapMarker {
 
     private MarkerPin markerPin;

@@ -21,6 +21,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * This class displays the information of another user associated with a current active ride
+ */
 public class UserInfo extends AppCompatActivity {
 
     private String TAG = "USERINFO";
@@ -52,22 +55,25 @@ public class UserInfo extends AppCompatActivity {
 
         Bundle incomingData = getIntent().getExtras();
         if(incomingData != null){
-            name = incomingData.getString("fullname");
+            name = incomingData.getString("name");
             phoneNumber = incomingData.getString("number");
             email = incomingData.getString("email");
             rating = incomingData.getString("rating");
         }
-        fullNameTextView.setText(name);
-        ratingTextView.setText(rating);
+        usernameTextView.setText(name);
 
-        db.collection("Users").whereEqualTo("name", name).whereEqualTo("phoneNumber", phoneNumber)
+        db.collection("Users").whereEqualTo("username", name)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    /**
+                     * This method displays the user information to this activity
+                     * @param task
+                     */
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                usernameTextView.setText(document.getData().get("username").toString());
+                                fullNameTextView.setText(document.getData().get("name").toString());
                                 phoneNumberTextView.setText(document.getData().get("phoneNumber").toString());
                                 phoneNumber = document.getData().get("phoneNumber").toString();
                                 emailTextView.setText(document.getData().get("email").toString());
@@ -78,7 +84,7 @@ public class UserInfo extends AppCompatActivity {
                         }
                     }
                 });
-        
+
 
     }
 }

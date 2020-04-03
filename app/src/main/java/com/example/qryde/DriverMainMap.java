@@ -2,16 +2,14 @@ package com.example.qryde;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.Manifest;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -23,7 +21,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -32,6 +30,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -70,7 +69,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private FirebaseFirestore db;
     private String user;
 
-    private Boolean LocationPermission = false;
     private GoogleMap ActualMap;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Location locationCurr;
@@ -79,14 +77,27 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private Integer markernumber = 0;
     private DrawerLayout drawerLayout;
 
+    private boolean perms;
+    private MarkerPin markerPin;
+
+    /**
+     * This method overrides the back button and makes it do nothing when pressed
+     */
+    @Override
+    public void onBackPressed() {
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_main_map);
-        getLocationPermission();
         db = FirebaseFirestore.getInstance();
-
         drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView  = (NavigationView) findViewById(R.id.driver_nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.username_hamb);
         final ListView availableRideListView = findViewById(R.id.list_view);
 
 
@@ -95,8 +106,15 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
             user = incomingData.getString("username");
+            perms = incomingData.getBoolean("permissions");
         }
+        if (perms) {
+            MapInit();
+        }
+        markerPin = new MarkerPin();
 
+
+        navUsername.setText(user);
         ImageButton navigationDrawer = (ImageButton) findViewById(R.id.hamburger_menu_button);
         navigationDrawer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,15 +123,16 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             }
         });
 
+        db = FirebaseFirestore.getInstance();
+
+
         dataList = new ArrayList<>();
         dataList.addAll(Arrays.asList(AvailableRideList));
         rideAdapter = new AvailableRideAdapter(this, dataList);
-
         availableRideListView.setAdapter(rideAdapter);
 
         final CollectionReference collectionReference = db.collection("AvailableRides");
-
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        collectionReference.orderBy("datetime").addSnapshotListener(new EventListener<QuerySnapshot>() {
             /**
              * sets the rider name, start location,
              * end location and cost amount to instance of available ride.
@@ -123,22 +142,25 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
              */
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e){
-                dataList.clear();;
+                dataList.clear();
+                rideAdapter.notifyDataSetChanged();
+                assert queryDocumentSnapshots != null;
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     AvailableRide temp = new AvailableRide(doc.getData().get("rider").toString(),
                             doc.getData().get("startLocation").toString(),
                             doc.getData().get("endLocation").toString(),
                             parseFloat(doc.getData().get("amount").toString()),
-                            1.3f);
+                            parseFloat(doc.getData().get("distance").toString()));
                     dataList.add(temp);
+                    rideAdapter.notifyDataSetChanged();
 
                     // creating marker from temp object lat/long
                     LatLng tempLatLng;
-                    tempLatLng = getLocationFromAddress(DriverMainMap.this, temp.getStartLocation());
+                    tempLatLng = getLocationFromAddress(temp.getStartLocation());
 
                     // adding marker to show on map
-                    Marker marker = ActualMap.addMarker(new MarkerOptions().position(tempLatLng).title(
-                            temp.getRiderUsername() + markernumber));
+                    Marker marker = ActualMap.addMarker(new MarkerOptions().position(tempLatLng).icon(markerPin.bitmapDescriptorFromVector(DriverMainMap.this, R.drawable.ic_person_pin_circle_black_24dp)).title(
+                            temp.getRiderUsername()));
 
                     // setting integer id for each marker and temp object
                     marker.setTag(markernumber);
@@ -146,7 +168,6 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                     // moving to next object, next marker
                     markernumber++;
 
-                    rideAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -167,46 +188,60 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
              */
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), WaitingUserResponse.class);
-                intent.putExtra("rider", dataList.get(position).getRiderUsername());
-                intent.putExtra("username", user);
-                intent.putExtra("amount", dataList.get(position).getAmountOffered());
 
-                // updating firebase
-                db.collection("AvailableRides").document(dataList.get(position).getRiderUsername())
-                        .update("driver", user)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                new AlertDialog.Builder(DriverMainMap.this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Accept this ride?")
+                        .setMessage("You will be committing to this ride")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "onSuccess: Successfully updated document");
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(getApplicationContext(), AfterDriverSelects.class);
+                                intent.putExtra("rider", dataList.get(position).getRiderUsername());
+                                intent.putExtra("username", user);
+                                intent.putExtra("amount", dataList.get(position).getAmountOffered());
+
+                                // updating firebase
+                                db.collection("AvailableRides").document(dataList.get(position).getRiderUsername())
+                                        .update("driver", user)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "onSuccess: Successfully updated document");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d(TAG, "onFailure: Failed to updated document");
+                                            }
+                                        });
+                                db.collection("AvailableRides").document(dataList.get(position).getRiderUsername())
+                                        .update("status", true)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "onSuccess: Successfully updated document");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d(TAG, "onFailure: Failed to updated document");
+                                            }
+                                        });
+
+                                startActivity(intent);
                             }
                         })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "onFailure: Failed to updated document");
-                            }
-                        });
-                db.collection("AvailableRides").document(dataList.get(position).getRiderUsername())
-                        .update("status", true)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "onSuccess: Successfully updated document");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "onFailure: Failed to updated document");
-                            }
-                        });
+                        .setNegativeButton("No", null)
+                        .show();
 
-                startActivity(intent);
                 return true;
             }
 
         });
+
 
     }
     //creates map fragment
@@ -216,52 +251,16 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         mapFragment.getMapAsync(DriverMainMap.this);
     }
 
-    //checks for location permissions on phone
-    private void getLocationPermission() {
-        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                LocationPermission = true;
-                MapInit();
-            } else {
-                ActivityCompat.requestPermissions(this, permissions, 1515);
-            }
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, 1515);
-        }
-    }
-
-    /**
-     * requests the location permissions from the user
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        LocationPermission = false;
-        switch (requestCode) {
-            case 1515: {
-                for (int i = 0; i < grantResults.length; ++i) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                        LocationPermission = false;
-                        return;
-                    }
-                }
-                LocationPermission = true;
-                MapInit();
-            }
-        }
-    }
-
     /**
      * once the map is ready update the location with device location and the marker click function
      * @param googleMap
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));
+        googleMap.setPadding(0, 0, 0, 0);
         ActualMap = googleMap;
-        if (LocationPermission) {
+        if (perms) {
             updateLocationUI();
             DeviceLocation();
             markerClick();
@@ -294,23 +293,23 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private void DeviceLocation() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try {
-            if (LocationPermission) {
+            if (perms) {
                 final Task locationResult = fusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(new OnCompleteListener() {
                     /**
                      * Once the location for device is accessed,
                      * if location is accessed successfully set the current location and move the map to it
                      * otherwise move map to default location
-                     * @param task
+                     * @param task the task to be completed
                      */
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
                             locationCurr = (Location) task.getResult();
-                            mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 11f);
+                            mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
 
                         } else {
-                            mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude), 11f);
+                            mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude));
                             ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
                     }
@@ -322,8 +321,8 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     }
 
     //method for map camera movement
-    private void mapMove(LatLng latLng, float zoom) {
-        ActualMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    private void mapMove(LatLng latLng) {
+        ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, (float) 11.0), 600, null);
     }
 
     //shows the blue dot.
@@ -332,14 +331,13 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
             return;
         }
         try {
-            if (LocationPermission) {
+            if (perms) {
                 ActualMap.setMyLocationEnabled(true);
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
                 ActualMap.setMyLocationEnabled(false);
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
                 locationCurr = null;
-                getLocationPermission();
             }
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
@@ -348,13 +346,12 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
 
     /**
      * gets the coordinates of location from address and returns it
-     * @param context
      * @param strAddress
-     * @return
+     * @return the LatLng object
      */
-    public LatLng getLocationFromAddress(Context context, String strAddress)
+    public LatLng getLocationFromAddress(String strAddress)
     {
-        Geocoder coder= new Geocoder(context);
+        Geocoder coder= new Geocoder(DriverMainMap.this);
         List<Address> address;
         LatLng p1 = null;
         try
@@ -376,25 +373,37 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
         return p1;
     }
 
+    /**
+     * Allows users to navigate to user profile and QR Wallet
+     * @param menuItem
+     * @return the menu item selected or false
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        switch(menuItem.getItemId()){
-            case R.id.nav_profile:{
+        switch (menuItem.getItemId()) {
+            case R.id.nav_profile: {
                 Intent intent = new Intent(getApplicationContext(), UserProfile.class);
                 intent.putExtra("username", user);
                 startActivity(intent);
                 Log.d("xd", "xd");
                 break;
             }
-
-            case R.id.nav_qr_wallet:{
+            case R.id.nav_trip_history: {
+                Intent intent = new Intent(getApplicationContext(), RideHistoryList.class);
+                intent.putExtra("driver", user);
+                startActivity(intent);
                 break;
             }
+            case R.id.nav_logout: {
+                finish();
+                break;
+            }
+            default:
+                return super.onOptionsItemSelected(menuItem);
         }
-        menuItem.setChecked(true);
         drawerLayout.closeDrawer(GravityCompat.START);
+
         return false;
     }
-
 
 }

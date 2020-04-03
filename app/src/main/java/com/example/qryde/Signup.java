@@ -26,7 +26,7 @@ import java.util.Map;
  * This class describes the app activity when a new user is signing up into the app
  */
 
-public class signup extends AppCompatActivity {
+public class Signup extends AppCompatActivity {
 
     private String TAG = "Signup";
 

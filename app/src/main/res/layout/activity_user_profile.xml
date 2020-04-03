@@ -7,12 +7,25 @@
 
     tools:context=".UserProfile">
 
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="652dp"
+        android:layout_height="861dp"
+        android:alpha="0.3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.712"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.512"
+        app:srcCompat="@drawable/newyorkatnight" />
 
     <TextView
         android:id="@+id/profile_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="PROFILE"
+        android:textColor="@color/quantum_black_text"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,6 +47,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
+        android:textColor="@color/quantum_black_text"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/user_image" />
@@ -42,9 +57,11 @@
         android:id="@+id/username_tag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginLeft="100dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginLeft="88dp"
         android:text="Username:"
+        android:textColor="@color/quantum_black_text"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -53,12 +70,12 @@
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
-        android:text="TextView"
+        android:layout_marginStart="56dp"
+        android:layout_marginLeft="56dp"
+        android:text="username"
+        android:textColor="@color/quantum_black_text"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/username_tag"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -66,10 +83,12 @@
         android:id="@+id/email_tag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginLeft="100dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginLeft="88dp"
         android:layout_marginTop="72dp"
         android:text="Email:"
+        android:textColor="@color/quantum_black_text"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username_tag" />
 
@@ -77,10 +96,12 @@
         android:id="@+id/phone_number_tag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginLeft="100dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginLeft="88dp"
         android:layout_marginTop="72dp"
         android:text="Phone Number:"
+        android:textColor="@color/quantum_black_text"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email_tag" />
 
@@ -88,23 +109,25 @@
         android:id="@+id/email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:layout_marginLeft="56dp"
         android:layout_marginTop="72dp"
-        android:layout_marginEnd="112dp"
-        android:layout_marginRight="112dp"
         android:text="email:"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/quantum_black_text"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/email_tag"
         app:layout_constraintTop_toBottomOf="@+id/username" />
 
     <TextView
         android:id="@+id/phone_number"
-        android:layout_width="63dp"
-        android:layout_height="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:layout_marginLeft="56dp"
         android:layout_marginTop="72dp"
-        android:layout_marginEnd="96dp"
-        android:layout_marginRight="96dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:text="username"
+        android:textColor="@color/quantum_black_text"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/phone_number_tag"
         app:layout_constraintTop_toBottomOf="@+id/email" />
 

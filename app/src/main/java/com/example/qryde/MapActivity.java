@@ -1,7 +1,5 @@
 package com.example.qryde;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +41,6 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
@@ -50,12 +48,9 @@ import com.google.maps.PendingResult;
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -83,22 +78,35 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private MapMarker mapMarker, mapMarkerStart;
     private RideCalculator rideCalculator;
 
+    private TextView usernameView;
     private TextView distanceView;
     private TextView durationView;
     private TextView costView;
-    private TextView usernameView;
     private Button markerBut;
 
+    private double rideCost;
+    private double rideDuration;
+    private double rideDistance;
 
     Location latlngtotempEndLocation = new Location("");
     Location endPostotempEndLocation = new Location("");
+    private double starLat, startLng, endLat, endLng;
 
     private String user;
     private boolean perms;
     private String pickupName;
     private String destinationName;
-    private ImageView logo;
+    private ImageView logo, rideLiner;
     private TextView logorequest;
+    private LinearLayout rideCalLay;
+
+    /**
+     * This method sets the back button to do nothnig during this app activity
+     */
+    @Override
+    public void onBackPressed() {
+
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -107,9 +115,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
 
         drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView  = (NavigationView) findViewById(R.id.rider_nav_view);
         usernameView = findViewById(R.id.username_hamb);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.username_hamb);
 
 
         if (!Places.isInitialized()) {
@@ -122,8 +132,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         autocompleteSupportFragmentdest = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragmentdes);
 
-        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
-        autocompleteSupportFragmentdest.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
+        autocompleteSupportFragmentdest.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
 
         //initializing countries to search from and adding hints to the search bar
         autocompleteSupportFragment.setCountries("CA"); // sets for now the location for autocomplete
@@ -136,6 +146,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapMarkerStart = new MapMarker();
         markerPin = new MarkerPin();
 
+        rideLiner = findViewById(R.id.rideline);
+        rideCalLay = findViewById(R.id.rideCal);
         distanceView = findViewById(R.id.distance);
         durationView = findViewById(R.id.time);
         costView = findViewById(R.id.cost);
@@ -158,7 +170,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 calculateDirections();
             }
         });
-
+        navUsername.setText(user);
         logo = findViewById(R.id.qryde_logo);
         logorequest = findViewById(R.id.request_text);
         logo.setOnClickListener(new View.OnClickListener() {
@@ -175,10 +187,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 intent.putExtra("username", user);
                 intent.putExtra("pickup", pickupName);
                 intent.putExtra("destination", destinationName);
+                intent.putExtra("ride_cost", rideCost);
+                intent.putExtra("ride_distance", rideDistance);
+                intent.putExtra("ride_duration", rideDuration);
+                intent.putExtra("startLat", starLat);
+                intent.putExtra("startLng", startLng);
+                intent.putExtra("endLat", endLat);
+                intent.putExtra("endLng", endLng);
+
                 startActivity(intent);
             }
         });
 
+        //to open drawer once hamburger menu button is pressed
         ImageButton navigationDrawer = (ImageButton) findViewById(R.id.hamburger_menu_button);
         navigationDrawer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,12 +209,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
 
+
+
     }
 
     //creates map fragment
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        assert mapFragment != null;
         mapView = mapFragment.getView();
         mapFragment.getMapAsync(MapActivity.this);
         if (geoApiContext == null) {
@@ -236,8 +260,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 latlngtotempEndLocation.setLatitude(point.latitude);
                 latlngtotempEndLocation.setLongitude(point.longitude);
                 ActualMap.addMarker(new MarkerOptions().position(point).icon(markerPin.bitmapDescriptorFromVector(this, R.drawable.ic_place_black_24dp)));
-                destinationName = addressString.getCompleteAddressString(latlngtotempEndLocation);
-                autocompleteSupportFragmentdest.setText(String.format("%s", destinationName));
+                autocompleteSupportFragmentdest.setText(String.format("%s", addressString.getCompleteAddressString(latlngtotempEndLocation)));
             }
         });
     }
@@ -253,26 +276,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         locationCurr = (Location) task.getResult();
                         Log.d("test", "TESTING PICKUPNAME22" + addressString.getCompleteAddressString(locationCurr));
                         autocompleteSupportFragment.setText(String.format("%s", addressString.getCompleteAddressString(locationCurr)));
-                        pickupName = addressString.getCompleteAddressString(locationCurr);
                         if (endPos == null) {
-                            mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
+                            mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
                         }
 
                     } else {
-                        mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude), 15f);
+                        mapMove(new LatLng(EarthDefaultLocation.latitude, EarthDefaultLocation.longitude));
                         Toast.makeText(MapActivity.this, "Could not find your location.", Toast.LENGTH_SHORT).show();
                         ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
                     }
                 });
             }
         } catch (SecurityException e) {
-            Log.e("Exception: %s", e.getMessage());
+            Log.e("Exception: %s", Objects.requireNonNull(e.getMessage()));
         }
     }
 
     //moves the map camera
-    private void mapMove(LatLng latLng, float zoom) {
-        ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom), 600, null);
+    private void mapMove(LatLng latLng) {
+        ActualMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, (float) 15.0), 600, null);
     }
 
     //shows the blue dot on the map as the current GPs location of the user
@@ -292,17 +314,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                      */
                     @Override
                     public void onClick(View v) {
-                        if (polyline != null) polyline.remove();
+                        ActualMap.clear();
                         DeviceLocation();
-                        if (endPos != null) {
+                        if (endPos != null || latlngtotempEndLocation !=null) {
                             startPos = null;
                             calculateDirections();
                         }
                     }
                 });
-
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(true);
-                ActualMap.getUiSettings().setZoomControlsEnabled(true);
             } else {
                 ActualMap.setMyLocationEnabled(false);
                 ActualMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -327,7 +347,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Log.i("AutoComplete", "Place: " + place.getName() + ", " + place.getId() + place.getLatLng());
 
                 startPos = place;
-                mapMove(place.getLatLng(), 15f);
+                mapMove(place.getLatLng());
                 if (endPos != null || latlngtotempEndLocation !=null) {
                     calculateDirections();
                 }
@@ -350,6 +370,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Objects.requireNonNull(autocompleteSupportFragment.getView()).findViewById(R.id.places_autocomplete_clear_button).setOnClickListener(v -> {
             logo.setVisibility(View.GONE);
             logorequest.setVisibility(View.GONE);
+            rideLiner.setVisibility(View.GONE);
+            rideCalLay.setVisibility(View.GONE);
             startPos = null;
             autocompleteSupportFragment.setText("");
             if (endPos != null || latlngtotempEndLocation != null) {
@@ -369,14 +391,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 logo.setVisibility(View.GONE);
                 logorequest.setVisibility(View.GONE);
-                polyline.remove();
+                markerBut.setVisibility(View.GONE);
+                rideLiner.setVisibility(View.GONE);
+                rideCalLay.setVisibility(View.GONE);
                 ActualMap.clear();
                 endPos = null;
                 if (startPos == null) {
-                    mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()), 15f);
+                    mapMove(new LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
                     autocompleteSupportFragmentdest.setText("");
                 } else {
-                    mapMove(startPos.getLatLng(), 15f);
+                    mapMove(startPos.getLatLng());
                     autocompleteSupportFragmentdest.setText("");
                 }
 
@@ -424,23 +448,33 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         LatLng endPosLatLng;
         if (latlngtotempEndLocation != null) {
             endPosLatLng = new LatLng(latlngtotempEndLocation.getLatitude(),latlngtotempEndLocation.getLongitude());
+            destinationName = addressString.getCompleteAddressString(latlngtotempEndLocation);
         } else {
             endPosLatLng = new LatLng(endPos.getLatLng().latitude, endPos.getLatLng().longitude);
+            destinationName = endPos.getAddress();
         }
+        endLat = endPosLatLng.latitude;
+        endLng = endPosLatLng.longitude;
 
-        if (polyline != null) { //removes a poly line if exists
-            polyline.remove();
-            ActualMap.clear();
-        }
+        ActualMap.clear();
+
         mapMarker.MapMarkerAdd(ActualMap,endPosLatLng, MapActivity.this, R.drawable.ic_place_black_24dp);
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(endPosLatLng.latitude, endPosLatLng.longitude);
 
         DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
         if (startPos == null) {
             directions.origin(new com.google.maps.model.LatLng(locationCurr.getLatitude(), locationCurr.getLongitude()));
+            pickupName = addressString.getCompleteAddressString(locationCurr);
+            starLat = locationCurr.getLatitude();
+            startLng = locationCurr.getLongitude();
+
         } else {
             mapMarkerStart.MapMarkerAdd(ActualMap,startPos.getLatLng(), MapActivity.this, R.drawable.ic_person_pin_circle_black_24dp);
             directions.origin(new com.google.maps.model.LatLng(startPos.getLatLng().latitude, startPos.getLatLng().longitude));
+            pickupName = startPos.getAddress();
+            starLat = startPos.getLatLng().latitude;
+            startLng = startPos.getLatLng().longitude;
+
         }
 
         Log.d("Directions", "calculateDirections: destination: " + destination.toString());
@@ -463,10 +497,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 rideCalculator = new RideCalculator(result);
                 addPolylinesToMap(result);
 
-                //displaying the variables calculated onto the activity
-                distanceView.setText(String.format("Distance: %s km", rideCalculator.getKilometres()));
-                durationView.setText(String.format("Time: %s minutes", rideCalculator.getMinutes()));
-                costView.setText(String.format("Cost: $%s", rideCalculator.getCost()));
+                //calculating the route variables
+                rideCost = rideCalculator.getCost();
+                rideDuration = rideCalculator.getMinutes();
+                rideDistance = rideCalculator.getKilometres();
+
+                distanceView.setText(String.format("Distance: %s km", Math.round(rideDistance)));
+                durationView.setText(String.format("Time: %s mins", Math.round(rideDuration)));
+                costView.setText(String.format("Cost: $%s", rideCost));
             }
 
 
@@ -505,6 +543,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             polylineZoom(polyline.getPoints());
             logo.setVisibility(View.VISIBLE);
             logorequest.setVisibility(View.VISIBLE);
+            rideLiner.setVisibility(View.VISIBLE);
+            rideCalLay.setVisibility(View.VISIBLE);
         });
     }
 
@@ -532,9 +572,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
-
     /**
-     * When a menu item is selected from navigation drawer, go to the activity
+     * Allows users to navigate to user profile and QR Wallet
      * @param menuItem
      * @return
      */
@@ -548,13 +587,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Log.d("xd", "xd");
                 break;
             }
-
-            case R.id.nav_qr_wallet: {
+            case R.id.nav_logout: {
+                finish();
                 break;
             }
+            default:
+                return super.onOptionsItemSelected(menuItem);
         }
-        menuItem.setChecked(true);
         drawerLayout.closeDrawer(GravityCompat.START);
+
         return false;
     }
 

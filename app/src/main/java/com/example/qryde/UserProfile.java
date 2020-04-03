@@ -18,7 +18,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+/**
+ * This class displays the users profile and gives them the ability to edit that information
+ */
 public class UserProfile extends AppCompatActivity implements EditUserProfileFragment.OnFragmentInteractionListener {
     private String TAG = "temp";
     private FirebaseFirestore db;
@@ -49,15 +53,23 @@ public class UserProfile extends AppCompatActivity implements EditUserProfileFra
         if (incomingData != null) {
             user = incomingData.getString("username");
         }
+
+        //Setting the username Textview since we received it from the intent extras
         usernameTextView.setText(user);
 
+        //Query the users collection for the user passed through the intent
         db.collection("Users").whereEqualTo("username", user)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    /**
+                     * This method displays the users information when the app loads this activity
+                     * @param task
+                     */
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
+                                //Set TextViews from the info retrieved from the document
                                 fullNameTextView.setText(document.getData().get("name").toString());
                                 phoneNumberTextView.setText(document.getData().get("phoneNumber").toString());
                                 phoneNumber = document.getData().get("phoneNumber").toString();
@@ -69,7 +81,12 @@ public class UserProfile extends AppCompatActivity implements EditUserProfileFra
                         }
                     }
                 });
+        //Open dialog fragment to edit email and phone
         editSymbol.setOnClickListener(new View.OnClickListener() {
+            /**
+             * This method enables the user to laod the fragment that allows the user edit their account information
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
@@ -83,6 +100,11 @@ public class UserProfile extends AppCompatActivity implements EditUserProfileFra
 
     }
 
+    /**
+     * This method allows the new account info to be stored after the ok button is pressed
+     * @param newEmail
+     * @param newPhone
+     */
     @Override
     public void onOkPressed(String newEmail, String newPhone) {
         emailTextView.setText(newEmail);

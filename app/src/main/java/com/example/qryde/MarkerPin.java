@@ -10,8 +10,17 @@ import androidx.core.content.ContextCompat;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
+/**
+ * This class generates a marker pin that would be used to denote a user's location on the map
+ */
 public class MarkerPin {
 
+    /**
+     * This method draws the markerpin
+     * @param context the app activity that the method is to be called in
+     * @param vectorResId
+     * @return returns a drawn bitmap image of the marker pin
+     */
     public BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());

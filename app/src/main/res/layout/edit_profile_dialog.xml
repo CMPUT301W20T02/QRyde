@@ -17,6 +17,6 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="(Phone Number)"
-        android:inputType="textPersonName" />
+        android:inputType="number"/>
 
 </LinearLayout>

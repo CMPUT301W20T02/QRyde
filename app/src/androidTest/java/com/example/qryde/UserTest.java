@@ -69,13 +69,13 @@ public class UserTest {
         solo.clickOnButton("Login");
         solo.assertCurrentActivity("Wrong Activity", MapActivity.class);
 
-        solo.clickOnScreen(766,424);
+        solo.clickOnScreen(766,600);
         solo.sendKey(KeyEvent.KEYCODE_E);
         solo.sendKey(KeyEvent.KEYCODE_T);
         solo.sendKey(KeyEvent.KEYCODE_L);
         solo.sendKey(KeyEvent.KEYCODE_C);
 
-        solo.clickOnScreen(744,430);
+        solo.clickOnScreen(708,450);
 
         View view = solo.getView(R.id.qryde_logo);
         solo.clickOnView(view);
@@ -130,13 +130,13 @@ public class UserTest {
         solo.clickOnButton("Login");
         solo.assertCurrentActivity("Wrong Activity", MapActivity.class);
 
-        solo.clickOnScreen(766,424);
+        solo.clickOnScreen(766,600);
         solo.sendKey(KeyEvent.KEYCODE_E);
         solo.sendKey(KeyEvent.KEYCODE_T);
         solo.sendKey(KeyEvent.KEYCODE_L);
         solo.sendKey(KeyEvent.KEYCODE_C);
 
-        solo.clickOnScreen(744,430);
+        solo.clickOnScreen(744,450);
 
         View view = solo.getView(R.id.qryde_logo);
         solo.clickOnView(view);
@@ -161,7 +161,7 @@ public class UserTest {
 
         solo.sleep(500);
 
-        // update firebase so that next action occurs
+        // update firebase that a driver has been found so that next action occurs
         db.collection("AvailableRides").document("bigtodd")
                 .update("driver", "driver")
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -197,7 +197,7 @@ public class UserTest {
 
         solo.sleep(1000);
 
-        // check that firebase updated successfully
+        // check that firebase updated successfully, should have moved to ActiveRides
         db.collection("ActiveRides")
                 .whereEqualTo("rider", "bigtodd")
                 .get()
@@ -217,6 +217,10 @@ public class UserTest {
         solo.clickOnButton("Ride Complete");
         solo.assertCurrentActivity("Wrong Activity", GenerateQRCode.class);
 
+        solo.sleep(1000);
+
+
+        // delete document, which is what happens when driver scans it
         db.collection("ActiveRides").document("bigtodd")
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -232,8 +236,24 @@ public class UserTest {
                     }
                 });
 
+        solo.assertCurrentActivity("Wrong Activity", RateDriver.class);
 
-        solo.sleep(2000);
+        // rate the driver
+        ImageView thumbsUp = (ImageView) solo.getView("thumbsUpButton");
+        solo.clickOnView(thumbsUp);
+
+        solo.clickOnButton("Complete Ride");
+
+        ImageView thumbsUp2 = (ImageView) solo.getView("thumbsUpButton");
+        solo.clickOnView(thumbsUp2);
+
+        solo.clickOnButton("Complete Ride");
+
+        solo.assertCurrentActivity("Wrong Activity", MapActivity.class);
+
+
+
+        solo.sleep(3000);
 
 
     }

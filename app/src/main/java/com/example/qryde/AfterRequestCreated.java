@@ -32,7 +32,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.ObjectStreamException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,12 +43,10 @@ import static java.lang.Integer.parseInt;
  * class for functions after request has been created, includes cancel button, ride status listener,
  * confirm button, decline driver button, and active ride converter, linked to firebase
  */
-public class afterRequestCreated extends AppCompatActivity {
+public class AfterRequestCreated extends AppCompatActivity {
     private String TAG = "temp";
     private FirebaseFirestore db;
 
-    private TextView startLocation;
-    private TextView endLocation;
     private String user;
 
     private ImageView findingBox;
@@ -59,12 +56,11 @@ public class afterRequestCreated extends AppCompatActivity {
     private TextView driverName;
     private TextView driverRating;
     private TextView email;
+    private TextView phoneNumber;
 
     private Button confirm;
     private Button cancel;
     private float amount;
-
-    private TextView phoneNumber;
 
     private boolean isCancelDriver = false;
 
@@ -92,9 +88,7 @@ public class afterRequestCreated extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_temp);
-        startLocation = findViewById(R.id.startLocationText);
-        endLocation = findViewById(R.id.endLocationText);
+        setContentView(R.layout.activity_after_request_created);
 
         findingBox = findViewById(R.id.findingDriverBox);
         findingText = findViewById(R.id.findingText);
@@ -199,13 +193,12 @@ public class afterRequestCreated extends AppCompatActivity {
         activeRideConverter();
     }
 
+
     private void activeRideConverter() {
         // listening for when activeRideRequest is changed to true
         db.collection("ActiveRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             /**
-             * when the ride is completed, set switch activity to generate a qrcode
-             * @param documentSnapshot
-             * @param e
+             * This method calls the GenerateQRCode class when the status of a ride is changed to true
              */
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
@@ -224,6 +217,7 @@ public class afterRequestCreated extends AppCompatActivity {
                         intent.putExtra("amount", amount);
 
                         startActivity(intent);
+                        finish();
 
 
                     }
@@ -236,9 +230,7 @@ public class afterRequestCreated extends AppCompatActivity {
     private void rideStatusListener() {
         db.collection("AvailableRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             /**
-             * Listener for the ride status
-             * @param documentSnapshot
-             * @param e
+             * This method listens for when the status of a ride changes
              */
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
@@ -255,7 +247,7 @@ public class afterRequestCreated extends AppCompatActivity {
                         driverRatingAnimationDown.start();
                         cancelAnimationDown.start();
 
-
+                        //Querying AvailableRides collection with the rider's name
                         db.collection("AvailableRides").whereEqualTo("rider", user).get()
                                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
@@ -277,17 +269,18 @@ public class afterRequestCreated extends AppCompatActivity {
                                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                                 if (task.isSuccessful()) {
                                                                     for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                        //Set the TextViews with the info retrieved from the queried document
                                                                         float likes = parseFloat(document.getData().get("thumbsUp").toString());
                                                                         float dislikes = parseFloat(document.getData().get("thumbsDown").toString());
                                                                         float rating = (likes/(dislikes+likes)*100);
                                                                         DecimalFormat df = new DecimalFormat("#.#");
-
+                                                                        //setting
                                                                         driverName.setText(document.getData().get("name").toString());
-                                                                        driverRating.setText(df.format(likes / (dislikes+likes) * 100)  + "%");
+                                                                        driverRating.setText("Rating: " + df.format(likes / (dislikes+likes) * 100)  + "%");
                                                                         findingText.setText("Driver found!");
                                                                         cancel.setText(" DECLINE ");
-                                                                        phoneNumber.setText(document.getData().get("phoneNumber").toString());
-                                                                        email.setText(document.getData().get("email").toString());
+                                                                        phoneNumber.setText("Phone: " + document.getData().get("phoneNumber").toString());
+                                                                        email.setText("Email: " + document.getData().get("email").toString());
 
                                                                         isCancelDriver = true;
 
@@ -320,15 +313,18 @@ public class afterRequestCreated extends AppCompatActivity {
         });
     }
 
+
     private void declineDriverButton() {
         View.OnClickListener declineDriverOnClickListener = new View.OnClickListener() {
             /**
-             * when decline driver is pressed, update rider and driver in firebase accordingly
-             * @param v
+             * This method listens for when the decline button is clicked and deletes the driver value
+             * and converts the status of the ride to true in the AvailableRides document
+             * @param v This is the view to be pressed
              */
             @Override
             public void onClick(View v) {
-
+                email.setVisibility(View.GONE);
+                phoneNumber.setVisibility(View.GONE);
                 db.collection("AvailableRides").document(user)
                         .update("driver", "")
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -367,12 +363,27 @@ public class afterRequestCreated extends AppCompatActivity {
 //        View.OnClickListener cancelOnClickListener = new View.OnClickListener() {
         cancel.setOnClickListener(new View.OnClickListener() {
             /**
-             * when cancel button is pressed, updated firebase to cancel current driver,
-             * find a new driver as well afterward
-             * @param v
+             * This method listens for when the cancel button is pressed and deletes the ride from the
+             * AvailableRides document when the button is pressed
+             * @param v This is the view to be clicked
              */
             @Override
             public void onClick(View v) {
+
+                db.collection("ActiveRides").document(user)
+                        .delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error deleting document", e);
+                            }
+                        });
 
                 if (!isCancelDriver) {
                     db.collection("AvailableRides").document(user)
@@ -415,6 +426,8 @@ public class afterRequestCreated extends AppCompatActivity {
 
                                                     driverName.setText("");
                                                     driverRating.setText("");
+                                                    phoneNumber.setText("");
+                                                    email.setText("");
                                                     findingText.setText("Finding you a driver ...");
                                                     cancel.setText("Cancel");
 
@@ -449,12 +462,13 @@ public class afterRequestCreated extends AppCompatActivity {
         });
     }
 
+
     private void confirmButton() {
         confirm.setOnClickListener(new View.OnClickListener() {
             /**
-             * on click for confirm button
-             * updates firebase accordingly to link rider and driver with the appropiate info for ride
-             * @param v
+             * This method listens for when the the confirm button is pressed and
+             * sets the status of the ride to true in the ActiveRides document in firebase
+             * @param v This is the button view to be pressed
              */
             @Override
             public void onClick(View v) {
@@ -553,6 +567,9 @@ public class afterRequestCreated extends AppCompatActivity {
         });
     }
 
+    /**
+     * This method sets the display dimensions
+     */
     private void setWindowSize() {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -562,7 +579,13 @@ public class afterRequestCreated extends AppCompatActivity {
         getWindow().setGravity(Gravity.BOTTOM);
     }
 
+    /**
+     * This method allows the user to send emails to an email address attached to the
+     * driver's account
+     */
     private void sendEmail(){
+        //Sending an email via an intent
+        //citation: Coding in Flow, How to Send an Email via Intent - Android Studio Tutorial, https://www.youtube.com/watch?v=tZ2YEw6SoBU&feature=emb_title
         String[] recipients = {email.getText().toString()};
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_EMAIL, recipients);
@@ -570,22 +593,23 @@ public class afterRequestCreated extends AppCompatActivity {
         startActivity(Intent.createChooser(intent, "Choose an email client"));
     }
 
+    /**
+     * This method takes transfers the drivers information to the UserInfo class
+     */
     private void getUserInfo(){
-        String drivername = driverName.getText().toString();
-        String number = phoneNumber.getText().toString();
-        String recipient = email.getText().toString();
-        String rating = driverRating.getText().toString();
+        //passes the driver's name to UserInfo class
         Intent intent = new Intent(getApplicationContext(), UserInfo.class);
-        intent.putExtra("fullname", drivername);
-        intent.putExtra("number", number);
-        intent.putExtra("email", recipient);
-        intent.putExtra("rating", rating);
+        intent.putExtra("name", driver);
         startActivity(intent);
 
     }
 
+    /**
+     * This method allows the user dial a phone number attached to a drivers' account
+     */
     private void makePhoneCall(){
-        //remember to source coding in flow!
+        //makes a phone call using the number in the phoneNumber TextView
+        //citation: How to Make a Phone Call from Your App (+ Permission Request) - Android Studio Tutorial, https://www.youtube.com/watch?v=UDwj5j4tBYg&
         String number = phoneNumber.getText().toString();
         if (number.trim().length() > 0) {
 
@@ -603,8 +627,16 @@ public class afterRequestCreated extends AppCompatActivity {
         }
     }
 
+    /**
+     * The app uses this method to ask for permission to use the phone
+     * @param requestCode The request code to be passed
+     * @param permissions The permission to be granted. Not null
+     * @param grantResults This grants results to corresponding permissions
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //citation: How to Make a Phone Call from Your App (+ Permission Request) - Android Studio Tutorial, https://www.youtube.com/watch?v=UDwj5j4tBYg&
+        //Requests the phone permission if needed
         if (requestCode == REQUEST_CALL) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 makePhoneCall();

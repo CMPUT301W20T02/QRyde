@@ -55,7 +55,7 @@ public class MainActivityTest{
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
         solo.clickOnText("Signup");
-        solo.assertCurrentActivity("Wrong Activity", signup.class);
+        solo.assertCurrentActivity("Wrong Activity", Signup.class);
         solo.enterText((EditText) solo.getView(R.id.name_edittext), "Test User's Name");
         solo.enterText((EditText) solo.getView(R.id.phone_edittext), "12345678");
         solo.enterText((EditText) solo.getView(R.id.username_edittext), "testUsername");

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -56,15 +58,17 @@ public class ScanQRCode extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.qr_scanner);
         surfaceView =  findViewById(R.id.cameraView);
-        textView =  findViewById(R.id.txtContext);
-
+        textView = findViewById(R.id.txtContext);
         db = FirebaseFirestore.getInstance();
 
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE).build();
 
         cameraSource = new CameraSource.Builder(this,barcodeDetector)
-                .setRequestedPreviewSize(640,480).build();
+                .setAutoFocusEnabled(true)
+                .setRequestedPreviewSize(1928,1080)
+                .build();
+
 
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback(){
             /**
@@ -85,6 +89,8 @@ public class ScanQRCode extends AppCompatActivity{
 
 
             }
+
+
             /**
              * This changes the format of the surface holder already generated to new specified
              * @param holder
@@ -94,7 +100,10 @@ public class ScanQRCode extends AppCompatActivity{
              */
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
-
+                View view = findViewById(R.id.qr_scanner);
+                String message = "Scan QR code To earn QR Bucks";
+                int duration = Snackbar.LENGTH_INDEFINITE;
+                showSnackbar(view,message,duration);
             }
             @Override
             public void surfaceDestroyed(SurfaceHolder holder){
@@ -109,31 +118,44 @@ public class ScanQRCode extends AppCompatActivity{
             public void release(){
 
             }
+
+            /**
+             * This methed handles detecting and reading the QRcode and opens a new activity after the
+             * QRcode is read
+             * @param detections
+             */
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections){
                 final SparseArray<Barcode> qrCodes = detections.getDetectedItems();
 
                 if( (qrCodes.size() != 0) && (!read))
                 {
-                    textView.post(new Runnable() {
-                        @Override
-                        public void run(){
-                            String msg = qrCodes.valueAt(0).displayValue;
-                            Log.d(TAG, "run:" + msg);
-                            read = true;
+                    textView.post(() -> {
+                        String msg = qrCodes.valueAt(0).displayValue;
+                        Log.d(TAG, "run:" + msg);
+                        read = true;
 
-                            Intent intent = new Intent(getApplicationContext(), DriverQRComplete.class);
-                            intent.putExtra("iou", msg);
-                            startActivity(intent);
+                        Intent intent = new Intent(getApplicationContext(), DriverQRComplete.class);
+                        intent.putExtra("iou", msg);
+                        startActivity(intent);
 
-                            finish();
-                        }
+                        finish();
                     });
                 }
             }
         });
 
 
+    }
+
+    /**
+     * method for showing snackbar message during camera view
+     * @param view
+     * @param message
+     * @param duration
+     */
+    public void showSnackbar(View view, String message, int duration){
+        Snackbar.make(view,message,duration).show();
     }
 
 
