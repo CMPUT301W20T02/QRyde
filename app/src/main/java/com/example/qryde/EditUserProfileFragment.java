@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 public class EditUserProfileFragment extends DialogFragment {
+    //citation: University of Alberta, Lab 3, https://eclass.srv.ualberta.ca/course/view.php?id=57571
     private EditText emailEditText;
     private EditText phoneEditText;
     private OnFragmentInteractionListener listener;

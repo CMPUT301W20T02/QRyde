@@ -250,7 +250,7 @@ public class AfterRequestCreated extends AppCompatActivity {
                         driverRatingAnimationDown.start();
                         cancelAnimationDown.start();
 
-
+                        //Querying AvailableRides collection with the rider's name
                         db.collection("AvailableRides").whereEqualTo("rider", user).get()
                                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
@@ -272,10 +272,11 @@ public class AfterRequestCreated extends AppCompatActivity {
                                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                                 if (task.isSuccessful()) {
                                                                     for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                        //Set the TextViews with the info retrieved from the queried document
                                                                         float likes = parseFloat(document.getData().get("thumbsUp").toString());
                                                                         float dislikes = parseFloat(document.getData().get("thumbsDown").toString());
                                                                         DecimalFormat df = new DecimalFormat("#.#");
-
+                                                                        //setting
                                                                         driverName.setText(document.getData().get("name").toString());
                                                                         driverRating.setText("Rating: " + df.format(likes / (dislikes+likes) * 100)  + "%");
                                                                         findingText.setText("Driver found!");
@@ -575,6 +576,8 @@ public class AfterRequestCreated extends AppCompatActivity {
     }
 
     private void sendEmail(){
+        //Sending an email via an intent
+        //citation: Coding in Flow, How to Send an Email via Intent - Android Studio Tutorial, https://www.youtube.com/watch?v=tZ2YEw6SoBU&feature=emb_title
         String[] recipients = {email.getText().toString()};
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_EMAIL, recipients);
@@ -583,9 +586,7 @@ public class AfterRequestCreated extends AppCompatActivity {
     }
 
     private void getUserInfo(){
-        String drivername = driverName.getText().toString();
-        String number = phoneNumber.getText().toString();
-        String recipient = email.getText().toString();
+        //passes the driver's name to UserInfo class
         Intent intent = new Intent(getApplicationContext(), UserInfo.class);
         intent.putExtra("name", driver);
         startActivity(intent);
@@ -593,7 +594,8 @@ public class AfterRequestCreated extends AppCompatActivity {
     }
 
     private void makePhoneCall(){
-        //remember to source coding in flow!
+        //makes a phone call using the number in the phoneNumber TextView
+        //citation: How to Make a Phone Call from Your App (+ Permission Request) - Android Studio Tutorial, https://www.youtube.com/watch?v=UDwj5j4tBYg&
         String number = phoneNumber.getText().toString();
         if (number.trim().length() > 0) {
 
@@ -613,6 +615,8 @@ public class AfterRequestCreated extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //citation: How to Make a Phone Call from Your App (+ Permission Request) - Android Studio Tutorial, https://www.youtube.com/watch?v=UDwj5j4tBYg&
+        //Requests the phone permission if needed
         if (requestCode == REQUEST_CALL) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 makePhoneCall();

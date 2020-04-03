@@ -50,8 +50,11 @@ public class UserProfile extends AppCompatActivity implements EditUserProfileFra
         if (incomingData != null) {
             user = incomingData.getString("username");
         }
+
+        //Setting the username Textview since we received it from the intent extras
         usernameTextView.setText(user);
 
+        //Query the users collection for the user passed through the intent
         db.collection("Users").whereEqualTo("username", user)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -59,6 +62,7 @@ public class UserProfile extends AppCompatActivity implements EditUserProfileFra
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
+                                //Set TextViews from the info retrieved from the document
                                 fullNameTextView.setText(document.getData().get("name").toString());
                                 phoneNumberTextView.setText(document.getData().get("phoneNumber").toString());
                                 phoneNumber = document.getData().get("phoneNumber").toString();
@@ -70,6 +74,7 @@ public class UserProfile extends AppCompatActivity implements EditUserProfileFra
                         }
                     }
                 });
+        //Open dialog fragment to edit email and phone
         editSymbol.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

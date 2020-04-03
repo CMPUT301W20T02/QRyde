@@ -66,7 +66,6 @@ public class AfterDriverSelects extends AppCompatActivity implements OnMapReadyC
     private Polyline polyline;
     private String riderPicked;
     private float amountOffered;
-//    private Button cancelButton;
 
     private GoogleMap ActualMap;
     private MapMarker mapMarkerStart, mapMarkerEnd;
@@ -84,8 +83,6 @@ public class AfterDriverSelects extends AppCompatActivity implements OnMapReadyC
 
         ScanButton.setVisibility(View.GONE);
 
-//        cancelButton = findViewById(R.id.cancel);
-
         Bundle incomingData = getIntent().getExtras();
         if (incomingData != null) {
             user = incomingData.getString("username");
@@ -102,6 +99,7 @@ public class AfterDriverSelects extends AppCompatActivity implements OnMapReadyC
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
+                                //Set location texts, and geopoints, and markers from the document's fields
                                 tvStartLocation.setText("From: " + document.getData().get("startLocation").toString());
                                 tvEndLocation.setText("To: "+ document.getData().get("endLocation").toString());
                                 geoPoint = document.getGeoPoint("LatLng");
@@ -116,6 +114,8 @@ public class AfterDriverSelects extends AppCompatActivity implements OnMapReadyC
                         }
                     }
                 });
+
+        //Listen for changes in ActiveRides
         db.collection("ActiveRides").document(riderPicked).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
@@ -124,6 +124,7 @@ public class AfterDriverSelects extends AppCompatActivity implements OnMapReadyC
                     return;
                 }
 
+                //If status in the current ride is false, means ride is in progress, else the ride is over
                 if (documentSnapshot != null && documentSnapshot.exists()) {
                     if (documentSnapshot.getData().get("status").toString().equals("false")) {
                         Log.d(TAG, "xd.", e);
@@ -153,7 +154,7 @@ public class AfterDriverSelects extends AppCompatActivity implements OnMapReadyC
             }
         });
 
-
+        //If the driver field in the document is changed to "", it means the ride has been canceled by the rider
         db.collection("AvailableRides").document(riderPicked).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
@@ -171,6 +172,7 @@ public class AfterDriverSelects extends AppCompatActivity implements OnMapReadyC
         });
     }
 
+    //Setting up the map fragment
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
