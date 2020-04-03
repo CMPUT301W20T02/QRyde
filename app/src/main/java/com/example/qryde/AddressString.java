@@ -9,15 +9,30 @@ import android.util.Log;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * This class converts a locations latitude and longitude information into an address string
+ */
+
+
 public class AddressString {
 
     private Activity activity;
 
+    /**
+     * This method gets the context  of the app activity for this class
+     * @param activity
+     */
     public AddressString(Activity activity) {
         this.activity = activity;
 
     }
 
+    /**
+     * This method deals with the conversion of latitude and longitude information into an address string that
+     * the user can read and maybe identify
+     * @param location contains the latitude and longitude location to be convertes
+     * @return the address string representing the locations latitude and longitude information
+     */
     public String getCompleteAddressString(Location location) {
         //converting a location to an address
         String returnedAddress = "";

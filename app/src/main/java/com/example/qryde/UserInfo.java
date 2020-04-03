@@ -21,6 +21,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * This class displays the information of another user associated with a current active ride
+ */
 public class UserInfo extends AppCompatActivity {
 
     private String TAG = "USERINFO";
@@ -59,6 +62,10 @@ public class UserInfo extends AppCompatActivity {
         db.collection("Users").whereEqualTo("username", name)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    /**
+                     * This method displays the user information to this activity
+                     * @param task
+                     */
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {

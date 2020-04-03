@@ -193,13 +193,12 @@ public class AfterRequestCreated extends AppCompatActivity {
         activeRideConverter();
     }
 
+
     private void activeRideConverter() {
         // listening for when activeRideRequest is changed to true
         db.collection("ActiveRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             /**
-             * when the ride is completed, set switch activity to generate a qrcode
-             * @param documentSnapshot
-             * @param e
+             * This method calls the GenerateQRCode class when the status of a ride is changed to true
              */
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
@@ -231,9 +230,7 @@ public class AfterRequestCreated extends AppCompatActivity {
     private void rideStatusListener() {
         db.collection("AvailableRides").document(user).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             /**
-             * Listener for the ride status
-             * @param documentSnapshot
-             * @param e
+             * This method listens for when the status of a ride changes
              */
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
@@ -315,11 +312,13 @@ public class AfterRequestCreated extends AppCompatActivity {
         });
     }
 
+
     private void declineDriverButton() {
         View.OnClickListener declineDriverOnClickListener = new View.OnClickListener() {
             /**
-             * when decline driver is pressed, update rider and driver in firebase accordingly
-             * @param v
+             * This method listens for when the decline button is clicked and deletes the driver value
+             * and converts the status of the ride to true in the AvailableRides document
+             * @param v This is the view to be pressed
              */
             @Override
             public void onClick(View v) {
@@ -363,9 +362,9 @@ public class AfterRequestCreated extends AppCompatActivity {
 //        View.OnClickListener cancelOnClickListener = new View.OnClickListener() {
         cancel.setOnClickListener(new View.OnClickListener() {
             /**
-             * when cancel button is pressed, updated firebase to cancel current driver,
-             * find a new driver as well afterward
-             * @param v
+             * This method listens for when the cancel button is pressed and deletes the ride from the
+             * AvailableRides document when the button is pressed
+             * @param v This is the view to be clicked
              */
             @Override
             public void onClick(View v) {
@@ -462,12 +461,13 @@ public class AfterRequestCreated extends AppCompatActivity {
         });
     }
 
+
     private void confirmButton() {
         confirm.setOnClickListener(new View.OnClickListener() {
             /**
-             * on click for confirm button
-             * updates firebase accordingly to link rider and driver with the appropiate info for ride
-             * @param v
+             * This method listens for when the the confirm button is pressed and
+             * sets the status of the ride to true in the ActiveRides document in firebase
+             * @param v This is the button view to be pressed
              */
             @Override
             public void onClick(View v) {
@@ -566,6 +566,9 @@ public class AfterRequestCreated extends AppCompatActivity {
         });
     }
 
+    /**
+     * This method sets the display dimensions
+     */
     private void setWindowSize() {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -575,6 +578,10 @@ public class AfterRequestCreated extends AppCompatActivity {
         getWindow().setGravity(Gravity.BOTTOM);
     }
 
+    /**
+     * This method allows the user to send emails to an email address attached to the
+     * driver's account
+     */
     private void sendEmail(){
         //Sending an email via an intent
         //citation: Coding in Flow, How to Send an Email via Intent - Android Studio Tutorial, https://www.youtube.com/watch?v=tZ2YEw6SoBU&feature=emb_title
@@ -585,6 +592,9 @@ public class AfterRequestCreated extends AppCompatActivity {
         startActivity(Intent.createChooser(intent, "Choose an email client"));
     }
 
+    /**
+     * This method takes transfers the drivers information to the UserInfo class
+     */
     private void getUserInfo(){
         //passes the driver's name to UserInfo class
         Intent intent = new Intent(getApplicationContext(), UserInfo.class);
@@ -593,6 +603,9 @@ public class AfterRequestCreated extends AppCompatActivity {
 
     }
 
+    /**
+     * This method allows the user dial a phone number attached to a drivers' account
+     */
     private void makePhoneCall(){
         //makes a phone call using the number in the phoneNumber TextView
         //citation: How to Make a Phone Call from Your App (+ Permission Request) - Android Studio Tutorial, https://www.youtube.com/watch?v=UDwj5j4tBYg&
@@ -613,6 +626,12 @@ public class AfterRequestCreated extends AppCompatActivity {
         }
     }
 
+    /**
+     * The app uses this method to ask for permission to use the phone
+     * @param requestCode The request code to be passed
+     * @param permissions The permission to be granted. Not null
+     * @param grantResults This grants results to corresponding permissions
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //citation: How to Make a Phone Call from Your App (+ Permission Request) - Android Studio Tutorial, https://www.youtube.com/watch?v=UDwj5j4tBYg&

@@ -23,12 +23,25 @@ public class RideInfoAdapter extends ArrayAdapter<RideInformation> {
 
     String TAG = "RideInfoAdapter";
 
+    /**
+     * This method creates the ride info adapter that shows the driver a list of rides
+     * that they have made
+     * @param rideinfo information on the ride
+     * @param context the context of this activity that uses this method
+     */
     public RideInfoAdapter(ArrayList<RideInformation> rideinfo, Context context) {
         super(context, 0, rideinfo);
         this.rideinfo = rideinfo;
         this.context = context;
     }
 
+    /**
+     * This method displays the ride information
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return view that contains all the information
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){

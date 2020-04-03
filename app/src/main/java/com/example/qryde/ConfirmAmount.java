@@ -76,12 +76,14 @@ public class ConfirmAmount extends AppCompatActivity {
         cancelButton();
     }
 
+
     private void confirmButton() {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             /**
-             * on click of the confirm button put data of the active ride into firebase,
-             * starts the afterRequestCreated activity
-             * @param v
+             * This method listens for when the confirm button is clicked and then puts the
+             * ride information into the AvailableRide collection. It also starts the
+             * AfterRequestCreated class
+             * @param v the view to be clicked
              */
             @Override
             public void onClick(View v) {
@@ -112,11 +114,12 @@ public class ConfirmAmount extends AppCompatActivity {
         });
     }
 
+
     private void cancelButton() {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             /**
-             * when cancel button is clicked, finishes activity
-             * @param v
+             * This method listens for when the cancel button is pressed and finishes the activity if it is
+             * @param v the view to be clicked
              */
             @Override
             public void onClick(View v) {
@@ -140,6 +143,7 @@ public class ConfirmAmount extends AppCompatActivity {
         });
     }
 
+    //This method sets the display dimensions
     private void setWindowSize() {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);

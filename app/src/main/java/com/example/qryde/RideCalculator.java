@@ -5,6 +5,9 @@ import com.google.maps.model.DirectionsResult;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * This class calculates the cost of a ride based on the distance and the estimated time a ride would take
+ */
 public class RideCalculator {
 
     private double seconds, minutes, kilometres, cost;
@@ -26,7 +29,6 @@ public class RideCalculator {
      * @param distance
      * @return
      */
-
     public double costCalculator(double minutes, double distance) {
         double baseCost = 2.00;
         double minimumFare = 4.00;
@@ -40,21 +42,33 @@ public class RideCalculator {
     /**
      * rounding up decimal numbers to a precision point
      *
-     * @param number
-     * @param precision
-     * @return
+     * @param number number to be rounded up
+     * @param precision places it should be rounded up to
+     * @return rounded up number
      */
     public double roundUp(double number, int precision) {
         BigDecimal bd = new BigDecimal(number).setScale(precision, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
 
+    /**
+     * This method returns the cost
+     * @return the cost of the trip
+     */
     public double getCost() {
         return cost;
     }
+
+    /**
+     * @return the number of minutes the trip would take
+     */
     public double getMinutes() {
         return minutes;
     }
+
+    /**
+     * @return the length of a trip distance wise
+     */
     public double getKilometres() {
         return kilometres;
     }

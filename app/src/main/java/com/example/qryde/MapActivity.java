@@ -100,6 +100,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private TextView logorequest;
     private LinearLayout rideCalLay;
 
+    /**
+     * This method sets the back button to do nothnig during this app activity
+     */
     @Override
     public void onBackPressed() {
 

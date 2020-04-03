@@ -28,6 +28,9 @@ import java.util.Objects;
 
 import static java.lang.Integer.parseInt;
 
+/**
+ * This class deals with the functionality that allows the user to rate a driver at at the end of a ride
+ */
 public class RateDriver extends AppCompatActivity implements OnMapReadyCallback {
     private String TAG = "temp";
     private FirebaseFirestore db;
@@ -60,11 +63,19 @@ public class RateDriver extends AppCompatActivity implements OnMapReadyCallback 
             driver = incomingData.getString("driver");
         }
         thumbsUp.setOnClickListener(new View.OnClickListener() {
+            /**
+             * This method listens for whether the thumbs up button was clicked
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 db.collection("Users").whereEqualTo("username", driver)
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            /**
+                             * This method increases a drivers thumbs up count which is used to calculate their rating
+                             * @param task
+                             */
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
@@ -86,11 +97,19 @@ public class RateDriver extends AppCompatActivity implements OnMapReadyCallback 
         });
 
         thumbsDown.setOnClickListener(new View.OnClickListener() {
+            /**
+             * This method listens to see if the thumbsdown button was clicked
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 db.collection("Users").whereEqualTo("username", driver)
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            /**
+                             * This method updates a driver's thumbsdown count which is used to calculate their rating
+                             * @param task
+                             */
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
@@ -112,6 +131,10 @@ public class RateDriver extends AppCompatActivity implements OnMapReadyCallback 
         });
 
         rideCompleteButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * This method finishes the activity if the rideComplete button is pressed
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 finish();
@@ -120,12 +143,18 @@ public class RateDriver extends AppCompatActivity implements OnMapReadyCallback 
 
     }
 
+    //This initializes the map fragment to the app
     private void MapInit() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         assert mapFragment != null;
         mapFragment.getMapAsync(RateDriver.this);
     }
+
+    /**
+     * This method is called when the map is ready to be used
+     * @param googleMap the map object to be used
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle));

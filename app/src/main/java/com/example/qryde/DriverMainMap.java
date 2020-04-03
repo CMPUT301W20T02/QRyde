@@ -80,7 +80,9 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     private boolean perms;
     private MarkerPin markerPin;
 
-
+    /**
+     * This method overrides the back button and makes it do nothing when pressed
+     */
     @Override
     public void onBackPressed() {
 
@@ -298,7 +300,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
                      * Once the location for device is accessed,
                      * if location is accessed successfully set the current location and move the map to it
                      * otherwise move map to default location
-                     * @param task
+                     * @param task the task to be completed
                      */
                     @Override
                     public void onComplete(@NonNull Task task) {
@@ -345,7 +347,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     /**
      * gets the coordinates of location from address and returns it
      * @param strAddress
-     * @return
+     * @return the LatLng object
      */
     public LatLng getLocationFromAddress(String strAddress)
     {
@@ -374,7 +376,7 @@ public class DriverMainMap extends AppCompatActivity implements OnMapReadyCallba
     /**
      * Allows users to navigate to user profile and QR Wallet
      * @param menuItem
-     * @return
+     * @return the menu item selected or false
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {

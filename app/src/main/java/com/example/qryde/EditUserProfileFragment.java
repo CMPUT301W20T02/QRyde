@@ -14,16 +14,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+/**
+ * This class deals with the fragment that allows the user to allow
+ * the user to edit their account information
+ */
 public class EditUserProfileFragment extends DialogFragment {
     //citation: University of Alberta, Lab 3, https://eclass.srv.ualberta.ca/course/view.php?id=57571
     private EditText emailEditText;
     private EditText phoneEditText;
     private OnFragmentInteractionListener listener;
 
+    /**
+     * This fragment defines what happens when the ok button is pressed
+     */
     public interface OnFragmentInteractionListener {
         void onOkPressed(String newEmail, String newPhone);
     }
 
+    /**
+     * This method is called when the fragment is attached to the activity
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -35,6 +46,11 @@ public class EditUserProfileFragment extends DialogFragment {
         }
     }
 
+    /**
+     * This method allows the user to edit their account information with the fragment that pops up
+     * @param savedInstanceState
+     * @return editted information
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {

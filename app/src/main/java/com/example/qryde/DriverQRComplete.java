@@ -35,6 +35,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class describes the app activity after the QR scan is completed
+ */
 public class DriverQRComplete extends AppCompatActivity implements OnMapReadyCallback {
 
     String TAG = "DriverQRComplete";
@@ -81,6 +84,11 @@ public class DriverQRComplete extends AppCompatActivity implements OnMapReadyCal
                 .document("metadata")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    /**
+                     * This method gets the number of transactions from firebase and
+                     * updates it after the scan has been succesfully completed
+                     * @param task the task to be completed
+                     */
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
@@ -124,6 +132,12 @@ public class DriverQRComplete extends AppCompatActivity implements OnMapReadyCal
                                         .whereEqualTo("rider", msg_split[0])
                                         .get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            /**
+                                             * This method deals with transferring the document from the
+                                             * ActiveRides collection to the RideHistories collection
+                                             * after the ride has been completed
+                                             * @param task
+                                             */
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {

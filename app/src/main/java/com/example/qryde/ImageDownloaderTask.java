@@ -44,6 +44,8 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
         }
     }
 
+
+    //this method downloads the bitmap that represents the  QRcode
     private Bitmap downloadBitmap(String url) {
         HttpURLConnection urlConnection = null;
         try {

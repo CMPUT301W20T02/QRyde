@@ -118,6 +118,12 @@ public class ScanQRCode extends AppCompatActivity{
             public void release(){
 
             }
+
+            /**
+             * This methed handles detecting and reading the QRcode and opens a new activity after the
+             * QRcode is read
+             * @param detections
+             */
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections){
                 final SparseArray<Barcode> qrCodes = detections.getDetectedItems();
