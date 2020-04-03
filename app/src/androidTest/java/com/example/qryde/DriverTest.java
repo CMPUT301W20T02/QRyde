@@ -74,7 +74,6 @@ public class DriverTest {
         assertEquals("Ride is Complete!", titleTextView.getText().toString());
         solo.clickOnButton("Scan QR Bucks");
         solo.assertCurrentActivity("Wrong Activity", ScanQRCode.class);
-        deleteAvailableRide();
         deleteActiveRide();
     }
 
