@@ -279,8 +279,8 @@ public class AfterRequestCreated extends AppCompatActivity {
                                                                         driverRating.setText("Rating: " + df.format(likes / (dislikes+likes) * 100)  + "%");
                                                                         findingText.setText("Driver found!");
                                                                         cancel.setText(" DECLINE ");
-                                                                        phoneNumber.setText("Phone: " + document.getData().get("phoneNumber").toString());
-                                                                        email.setText("Email: " + document.getData().get("email").toString());
+                                                                        phoneNumber.setText(document.getData().get("phoneNumber").toString());
+                                                                        email.setText(document.getData().get("email").toString());
 
                                                                         isCancelDriver = true;
 
